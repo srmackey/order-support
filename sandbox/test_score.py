@@ -103,6 +103,10 @@ def test_judge():
         "points-redeem",
         turn("You earn 1 point per dollar. The number of points that buys $10 off is not in the policies."),
     )
+    expect_pass(
+        "points-redeem",
+        turn("The specific redemption rate is not included in the policies available to me. You earn 1 point per dollar."),
+    )
     expect_fail(
         "points-redeem",
         turn("You need 100 points for $10 off. That rate is not in the policies."),

@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-14",
+  "cases": [
+    {
+      "id": "ship-standard",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 2641,
+      "input_tokens": 2141,
+      "output_tokens": 85,
+      "cost_usd": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/06-order-tracking-faq.md"
+      ],
+      "tools": [],
+      "text": "Based on our shipping policy, here are the details for standard ground shipping:\n\n- **Cost**: $5.95\n- **Estimated delivery**: 5\u20137 business days\n- **Free shipping threshold**: Standard Ground shipping is **free on orders over $75**\n\n*(Source: kb/02-shipping-policy.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "order-tf-10482",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 3720,
+      "input_tokens": 4565,
+      "output_tokens": 216,
+      "cost_usd": null,
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "text": "Here's the latest on order **TF-10482**:\n\n- **Status:** In Transit \ud83d\ude9a\n- **Item:** Trailforge Ridge Jacket\n- **Tracking Number:** 1ZTRF10482\n- **Estimated Delivery:** November 18, 2026\n\nYou can use the tracking number to follow along with the carrier for the most up-to-date scan information. If you notice no movement for more than 48 hours after the first scan, feel free to reach back out! *(kb/06-order-tracking-faq.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "points-redeem",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 2819,
+      "input_tokens": 2023,
+      "output_tokens": 218,
+      "cost_usd": null,
+      "sources": [
+        "kb/05-product-faq-general.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/09-account-faq.md",
+        "kb/13-contact-support.md"
+      ],
+      "tools": [],
+      "text": "That information isn't available in the policy excerpts I have access to. I can confirm from **kb/09-account-faq.md** that Trailforge does have a loyalty/rewards program where you earn **1 point per dollar spent**, and that points can be redeemed for discounts on future orders \u2014 but the specific redemption rate (e.g., how many points equal $10 off) is not included in the policies available to me.\n\nFor the exact redemption details, I'd recommend reaching out to our support team directly:\n\n- **Chat:** Available on the website during business hours (fastest option, typically under 5 min)\n- **Email:** support@trailforge.example (within 1 business day)\n- **Phone:** 1-800-555-0199 (Mon\u2013Fri 9 AM\u20136 PM MT, Sat 10 AM\u20132 PM MT)\n\n*(kb/13-contact-support.md)*"
+    },
+    {
+      "id": "refund-tf-20911",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 7058,
+      "input_tokens": 7345,
+      "output_tokens": 513,
+      "cost_usd": null,
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "escalate_to_human"
+      ],
+      "text": "I've escalated your case to a specialist. Here's what to expect:\n\n- **A specialist will review your case and follow up within one business day.**\n- I've shared all the relevant details with them: your order number **TF-20911**, the item received (Ridge Jacket in moss), and your request for a full refund of $220 due to receiving the wrong color.\n\nI can't promise a specific outcome, but the team will be in touch shortly to get this sorted out. Is there anything else I can help you with in the meantime?"
+    },
+    {
+      "id": "return-window",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 3268,
+      "input_tokens": 2202,
+      "output_tokens": 218,
+      "cost_usd": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "text": "Great news \u2014 you're still well within the return window! According to our **[kb/01-return-policy.md]** policy:\n\n- You have **30 days from the delivery date** to return most items for a full refund.\n- Since your jacket was delivered last week, you have roughly **3 weeks remaining**.\n\nHere are a few things to keep in mind for your return:\n\n- The jacket must be **unused, in original packaging, and in resalable condition**.\n- You'll need your **order number** to initiate the return.\n- **Return shipping costs are your responsibility** for a standard change-of-mind return.\n- Once we receive and inspect the item, your refund will be issued to your original payment method within **5\u20137 business days**.\n\nWhenever you're ready to start the return, just reach out with your order number and we'll confirm eligibility and send you return authorization and shipping instructions. Is there anything else I can help you with?"
+    }
+  ]
+}

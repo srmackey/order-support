@@ -160,7 +160,11 @@ def judge(case: dict, turn: dict) -> dict:
 
     elif case["id"] == "points-redeem":
         text = norm(reply)
-        if "not in the policies" not in text and "isn't in the policies" not in text and "not in these policies" not in text:
+        if not (
+            "not in the policies" in text
+            or "not included in the policies" in text
+            or "not available in the polic" in text
+        ):
             failures.append("The number of points that buys $10 off is not in the policies")
         if names_points_rate(reply):
             failures.append("Name a number of points that equals $10 off")
