@@ -1,0 +1,70 @@
+{
+  "as_of": "2026-11-14",
+  "orders": [
+    {
+      "order_id": "TF-10482",
+      "status": "in_transit",
+      "tracking": "1ZTRF10482",
+      "eta": "2026-11-18",
+      "delivered_on": null,
+      "total_usd": 148.0,
+      "items": [
+        {
+          "name": "Trailforge Ridge Jacket",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-20911",
+      "status": "delivered",
+      "tracking": "1ZTRF20911",
+      "eta": null,
+      "delivered_on": "2026-11-07",
+      "total_usd": 220.0,
+      "items": [
+        {
+          "name": "Trailforge Ridge Jacket",
+          "color": "moss",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-30001",
+      "status": "delivered",
+      "tracking": "1ZTRF30001",
+      "eta": null,
+      "delivered_on": "2026-09-01",
+      "total_usd": 88.0,
+      "items": [
+        {
+          "name": "Trailforge Day Pack",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-30002",
+      "status": "delivered",
+      "tracking": "1ZTRF30002",
+      "eta": null,
+      "delivered_on": "2026-11-01",
+      "total_usd": 64.0,
+      "items": [
+        {
+          "name": "Trailforge Beanie",
+          "final_sale": true,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "frozen": "2026-11-14",
+  "policies": "kb/",
+  "note": "Five cases, one of each decision in AGENTS.md. Order ids are synthetic. No order record is in this set. A pass is the decision, not a live lookup.",
+  "tools": {
+    "lookup_order_status": {
+      "required": ["order_id"],
+      "note": "The order id comes from the customer. Status, tracking, and ETA come back from the tool."
+    },
+    "check_return_eligibility": {
+      "required": ["order_id"],
+      "optional": ["reason"],
+      "note": "Reason only if the customer stated one. The delivery date and final-sale or personalized flags come from the order record. The agent does not supply them."
+    },
+    "escalate_to_human": {
+      "required": ["order_id", "summary", "policy_snippets", "tool_results", "recommended_action"],
+      "note": "tool_results may be empty. The customer is told a person will follow up. No specific outcome is promised."
+    }
+  },
+  "cases": [
+    {
+      "id": "ship-standard",
+      "kind": "grounded_answer",
+      "customer": "How much is standard shipping, and when is it free?",
+      "expect": {
+        "action": "answer",
+        "cite": "kb/02-shipping-policy.md",
+        "must_state": [
+          "Standard ground is $5.95",
+          "It is free on orders over $75",
+          "Standard ground takes 5 to 7 business days"
+        ],
+        "must_not": [
+          "Call a tool",
+          "Name a different standard-ground price"
+        ]
+      }
+    },
+    {
+      "id": "order-tf-10482",
+      "kind": "tool_call",
+      "customer": "Where is order TF-10482?",
+      "expect": {
+        "action": "tool",
+        "tool": "lookup_order_status",
+        "arguments": {
+          "order_id": "TF-10482"
+        },
+        "must_not": [
+          "State a delivery status, a tracking number, or an ETA",
+          "Call check_return_eligibility",
+          "Call escalate_to_human"
+        ]
+      }
+    },
+    {
+      "id": "points-redeem",
+      "kind": "refusal",
+      "customer": "How many points do I need for $10 off?",
+      "expect": {
+        "action": "refuse",
+        "why": "kb/09-account-faq.md says customers earn 1 point per dollar and that points can be redeemed. It does not give a redemption rate.",
+        "must_state": [
+          "The number of points that buys $10 off is not in the policies"
+        ],
+        "must_not": [
+          "Name a number of points that equals $10 off",
+          "Escalate"
+        ]
+      }
+    },
+    {
+      "id": "refund-tf-20911",
+      "kind": "escalation",
+      "customer": "The color is wrong on order TF-20911. I paid $220 and I want all of it back.",
+      "expect": {
+        "action": "tool",
+        "tool": "escalate_to_human",
+        "why": "A refund or compensation above $150 escalates. The amount is $220.",
+        "arguments": {
+          "order_id": "TF-20911"
+        },
+        "packet_facts": [
+          "The refund requested is $220",
+          "The reason is that the color is wrong"
+        ],
+        "must_state": [
+          "A specialist will follow up within one business day"
+        ],
+        "must_not": [
+          "Promise that the refund will be approved",
+          "Promise a specific dollar outcome",
+          "Treat the $220 refund as an automatic replacement under the wrong-item policy"
+        ]
+      }
+    },
+    {
+      "id": "return-window",
+      "kind": "known_wrong_answer",
+      "customer": "I changed my mind about a jacket that was delivered last week. How long do I have to return it?",
+      "expect": {
+        "action": "answer",
+        "cite": "kb/01-return-policy.md",
+        "must_state": [
+          "30 days of the delivery date"
+        ],
+        "fails_if": [
+          "The window given is 7 days",
+          "A change-of-mind return must be reported within 7 days of delivery"
+        ],
+        "why": "7 days is the damaged-on-arrival clock in kb/10-damaged-defective.md. Using it here is the known wrong answer."
+      }
+    }
+  ]
+}
