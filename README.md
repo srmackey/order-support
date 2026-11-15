@@ -60,9 +60,17 @@ The live runtime was scored on 2026-11-15, all five cases in one run (`sandbox/r
 
 Earlier runs scored the agent in this checkout before it was deployed (`sandbox/runs/2026-11-14*.json`).
 
-### A larger set, in draft
+### A larger set: 39 cases
 
-`sandbox/cases-v2.json` grows the set to 39 cases, with several per outcome and 11 on boundaries. It is not frozen or scored yet. Its judge splits the work: code checks tools, arguments, citations, and order facts, and Claude Haiku 4.5 checks claims about what the reply says, quoting its evidence. Against 62 labeled claims, the judge agreed on all 62 (`sandbox/runs/2026-11-15-calibration.json`). How the set is marked is in `sandbox/README.md`.
+`sandbox/cases-v2.json` grows the set to 39 cases, with several per outcome and 11 on boundaries. It was frozen on 2026-11-15. Its judge splits the work: code checks tools, arguments, citations, and order facts, and Claude Haiku 4.5 checks claims about what the reply says, quoting its evidence. Before the run, the judge agreed with all 62 labeled claims it was checked against (`sandbox/runs/2026-11-15-calibration.json`). How the set is marked is in `sandbox/README.md`.
+
+The live runtime was scored on 2026-11-15 (`sandbox/runs/2026-11-15-v2-runtime.json`):
+
+- **35 of 39 passed.** Answers 12 of 13, tool calls 9 of 10, refusals 8 of 8, escalations 6 of 8. Boundary cases 8 of 11.
+- `stove-fire-no-order-id` and `angry-no-order-id`: the agent asked for an order number instead of escalating. The escalation rules say a safety concern or strong frustration escalates on its own.
+- `damage-day-8`: the agent found the delivery date but did not know the current date, so it could not say the 7-day damage window had closed.
+- `ship-standard`: the reply gave the price and the free-shipping threshold but left out the 5 to 7 day delivery time.
+- Agent model cost for the run was **$0.58**, and the judge cost **$0.07**. Wall-clock latency per case was 2.7 to 10.4 seconds. Time inside the agent was 1.2 to 9.0 seconds.
 
 ## Run it
 

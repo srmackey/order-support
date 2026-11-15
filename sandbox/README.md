@@ -28,9 +28,9 @@ Tool arguments are the `arguments` object. Extra arguments fail the case, except
 
 Cost and latency are recorded per case on the run. They do not change the pass bit. A run row keeps the full tool calls, so `score.py --rescore <file> --label <name>` can judge stored replies again without a model call. The original file is never overwritten. The live-runtime score is `runs/2026-11-15-runtime.json`. What each run covers is in `../README.md`.
 
-## Set v2 (draft)
+## Set v2
 
-`cases-v2.json` holds 39 cases: 13 answers, 10 tool calls, 8 refusals, and 8 escalations. 11 sit on a boundary, such as exactly $75 for free shipping, day 30 and day 31 of the return window, and $150 against $151 for escalation. The five v1 cases come first, with the same messages. The set is a draft until its `frozen` field holds a date. After that, cases are not edited.
+`cases-v2.json` holds 39 cases: 13 answers, 10 tool calls, 8 refusals, and 8 escalations. 11 sit on a boundary, such as exactly $75 for free shipping, day 30 and day 31 of the return window, and $150 against $151 for escalation. The five v1 cases come first, with the same messages. The set was frozen on 2026-11-15, and cases are not edited after a miss. Its first score is `runs/2026-11-15-v2-runtime.json`.
 
 A v2 case declares what is right, and one judge marks every case (`judge.py`):
 

@@ -1,0 +1,2249 @@
+{
+  "date": "2026-11-15",
+  "target": "AgentCore runtime trailforge_support-JK1Y16D77l, DEFAULT endpoint, us-east-1",
+  "set": "cases-v2.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "1",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, AmazonBedrockFoundationModels, Claude Sonnet 4.6 global, us-east-1, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "ship-standard",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": false,
+      "failures": [
+        "Did not say: The reply says standard ground shipping takes 5 to 7 business days."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says standard ground shipping costs $5.95.",
+          "expect": true,
+          "holds": true,
+          "evidence": "**Standard Ground shipping** costs **$5.95**"
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says standard ground shipping is free on orders over $75.",
+          "expect": true,
+          "holds": true,
+          "evidence": "It's **free on orders over $75**"
+        },
+        {
+          "id": "state3",
+          "claim": "The reply says standard ground shipping takes 5 to 7 business days.",
+          "expect": true,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives a standard ground price other than $5.95.",
+          "expect": false,
+          "holds": false,
+          "evidence": "**Standard Ground shipping** costs **$5.95**"
+        }
+      ],
+      "judge_input_tokens": 1064,
+      "judge_output_tokens": 184,
+      "judge_cost_usd": 0.001984,
+      "latency_ms": 3233,
+      "agent_ms": 1467,
+      "input_tokens": 2102,
+      "output_tokens": 69,
+      "cost_usd": 0.007341,
+      "session_id": "score-8ffbb7a840e045cc95f62492d5b1b2e7",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Great question! Here's a quick rundown of our standard shipping pricing:\n\n- **Standard Ground shipping** costs **$5.95**\n- It's **free on orders over $75**\n\n*(Source: kb/02-shipping-policy.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "order-tf-10482",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply tells the customer the order's status or where it is.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Status: In Transit \ud83d\ude9a"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states a status, tracking number, or delivery date that is not in the tool results.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1245,
+      "judge_output_tokens": 100,
+      "judge_cost_usd": 0.001745,
+      "latency_ms": 5689,
+      "agent_ms": 4250,
+      "input_tokens": 4361,
+      "output_tokens": 228,
+      "cost_usd": 0.016503,
+      "session_id": "score-ddcbbe21c82e4d66bee5bb9093829f54",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/00-about-trailforge.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-10482"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-10482",
+            "status": "in_transit",
+            "tracking": "1ZTRF10482",
+            "eta": "2026-11-18",
+            "delivered_on": null,
+            "total_usd": 148,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Ridge Jacket",
+                "personalized": false
+              }
+            ]
+          }
+        }
+      ],
+      "text": "Here's the latest on order **TF-10482**:\n\n- **Status:** In Transit \ud83d\ude9a\n- **Tracking Number:** 1ZTRF10482\n- **Estimated Delivery:** November 18, 2026\n- **Item:** Trailforge Ridge Jacket\n\nYou can use the tracking number **1ZTRF10482** to get the most up-to-date carrier scans. If your tracking hasn't updated in more than 48 hours after the first scan, feel free to reach back out and we'll dig into it! *(kb/06-order-tracking-faq.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "points-redeem",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the number of points needed for $10 off is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The specific points redemption rate (i.e., how many points equal a dollar discount) is not included in the policy excerpts available to me."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply names a number of points that equals $10 off.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1125,
+      "judge_output_tokens": 122,
+      "judge_cost_usd": 0.001735,
+      "latency_ms": 4401,
+      "agent_ms": 2567,
+      "input_tokens": 2119,
+      "output_tokens": 162,
+      "cost_usd": 0.008787,
+      "session_id": "score-22d3184d882141e4827db6bbbe5bbe6b",
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/11-promotions.md",
+        "kb/15-gift-cards.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "The specific points redemption rate (i.e., how many points equal a dollar discount) is not included in the policy excerpts available to me. I can see from **kb/09-account-faq.md** that Trailforge does have a loyalty program where you earn **1 point per dollar spent**, and that points can be redeemed for discounts on future orders \u2014 but the exact redemption rate is not in the policies I have access to.\n\nFor the specific conversion details, I'd recommend:\n- Checking your **account dashboard**, which may display your points balance and redemption options.\n- Reaching out to our support team directly for the exact rate.\n\nSorry I couldn't give you a precise answer on that one!"
+    },
+    {
+      "id": "refund-tf-20911",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A specialist will review your claim and follow up within one business day."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the refund will be given, approved, issued, or processed.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "not2",
+          "claim": "The reply tells the customer a replacement will be shipped or sent.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer wants a $220 refund.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer received a Trailforge Ridge Jacket in color \"Moss\" and states the color is wrong. They paid $220 and are requesting a full refund."
+        },
+        {
+          "id": "packet2",
+          "claim": "The packet says the reason is that the color is wrong.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer received a Trailforge Ridge Jacket in color \"Moss\" and states the color is wrong."
+        },
+        {
+          "id": "packet3",
+          "claim": "The packet's recommended action leaves the refund decision to the specialist and does not approve it.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Do not pre-approve the refund amount."
+        }
+      ],
+      "judge_input_tokens": 1807,
+      "judge_output_tokens": 287,
+      "judge_cost_usd": 0.003242,
+      "latency_ms": 10420,
+      "agent_ms": 8991,
+      "input_tokens": 7991,
+      "output_tokens": 872,
+      "cost_usd": 0.037053,
+      "session_id": "score-517ebfce5f3543b197a8275397c7cd2b",
+      "sources": [
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "check_return_eligibility",
+        "lookup_order_status",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-20911",
+            "reason": "received wrong color"
+          },
+          "result": {
+            "order_id": "TF-20911",
+            "eligible": true,
+            "reason": "Inside 30 days of delivery. The item still has to be unused and in its original packaging.",
+            "delivered_on": "2026-11-07",
+            "window_closes": "2026-12-07",
+            "customer_reason": "received wrong color"
+          }
+        },
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-20911"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-20911",
+            "status": "delivered",
+            "tracking": "1ZTRF20911",
+            "eta": null,
+            "delivered_on": "2026-11-07",
+            "total_usd": 220,
+            "items": [
+              {
+                "color": "moss",
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Ridge Jacket",
+                "personalized": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-20911",
+            "summary": "Customer received a Trailforge Ridge Jacket in color \"Moss\" and states the color is wrong. They paid $220 and are requesting a full refund.",
+            "policy_snippets": "kb/10-damaged-defective.md, kb/01-return-policy.md, kb/04-escalation-guidelines.md",
+            "tool_results": "lookup_order_status: {\"found\": true, \"order_id\": \"TF-20911\", \"status\": \"delivered\", \"tracking\": \"1ZTRF20911\", \"delivered_on\": \"2026-11-07\", \"total_usd\": 220, \"items\": [{\"color\": \"moss\", \"final_sale\": false, \"gift_card\": false, \"name\": \"Trailforge Ridge Jacket\", \"personalized\": false}]}. check_return_eligibility: {\"eligible\": true, \"reason\": \"Inside 30 days of delivery. The item still has to be unused and in its original packaging.\", \"window_closes\": \"2026-12-07\", \"customer_reason\": \"received wrong color\"}.",
+            "recommended_action": "Review the wrong-color claim and verify what color was originally ordered vs. what was shipped. Determine whether a prepaid return label and full $220 refund or replacement is warranted per kb/10-damaged-defective.md and kb/01-return-policy.md. Do not pre-approve the refund amount."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-20911",
+            "escalation_id": "375c8ae85cce4e7cbd1de52540c59f28"
+          }
+        }
+      ],
+      "text": "Your case has been escalated successfully. **A specialist will review your claim and follow up within one business day.**\n\nA couple of things to keep in mind in the meantime (per our policy at **kb/10-damaged-defective.md** and **kb/01-return-policy.md**):\n\n- If it is confirmed that you received the wrong color, we will provide a **prepaid return label** at no cost to you.\n- Please keep the jacket **unused and in its original packaging** until the specialist contacts you.\n\nI'm not able to promise a specific outcome, but your case is in good hands. Is there anything else I can help you with?"
+    },
+    {
+      "id": "return-window",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says items can be returned within 30 days of the delivery date.",
+          "expect": true,
+          "holds": true,
+          "evidence": "you have **30 days from the delivery date** to return your jacket for a full refund"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the return window is 7 days.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1127,
+      "judge_output_tokens": 112,
+      "judge_cost_usd": 0.001687,
+      "latency_ms": 3695,
+      "agent_ms": 2299,
+      "input_tokens": 2111,
+      "output_tokens": 158,
+      "cost_usd": 0.008703,
+      "session_id": "score-9fc66bf983ca4540be3113c0ffef19e7",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Great question! Based on our return policy, you have **30 days from the delivery date** to return your jacket for a full refund, as long as it meets the following conditions:\n\n- It is **unused, in original packaging, and in resalable condition**\n- You have your **original receipt or order number**\n\nSince this is a standard (change-of-mind) return, please note that **return shipping costs are your responsibility**.\n\nTo get started, just contact us with your order number and reason for return, and we'll confirm eligibility and send you a return authorization with shipping instructions.\n\n*(Source: kb/01-return-policy.md, kb/07-returns-process-faq.md)*"
+    },
+    {
+      "id": "ship-expedited",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says expedited shipping takes 2 to 3 business days.",
+          "expect": true,
+          "holds": true,
+          "evidence": "**Expedited shipping** takes **2\u20133 business days**"
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says expedited shipping costs $12.95.",
+          "expect": true,
+          "holds": true,
+          "evidence": "costs **$12.95**"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives $5.95 or $24.95 as the expedited price.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1070,
+      "judge_output_tokens": 143,
+      "judge_cost_usd": 0.001785,
+      "latency_ms": 3312,
+      "agent_ms": 1589,
+      "input_tokens": 2094,
+      "output_tokens": 86,
+      "cost_usd": 0.007572,
+      "session_id": "score-bf322e2076a54b0d8d8f99ea7d381009",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/01-return-policy.md",
+        "kb/10-damaged-defective.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Based on our shipping policy, **Expedited shipping** takes **2\u20133 business days** and costs **$12.95**. (kb/02-shipping-policy.md)\n\nKeep in mind that orders are also processed within 1\u20132 business days before shipping, so you'd want to factor that into your overall timeline. Is there anything else I can help you with?"
+    },
+    {
+      "id": "ship-free-at-75",
+      "outcome": "answer",
+      "boundary": "Free shipping is for orders over $75, so exactly $75.00 does not qualify.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a $75.00 order does not get free standard shipping because free shipping is for orders over $75.",
+          "expect": true,
+          "holds": true,
+          "evidence": "a cart totaling exactly $75.00 would **not** qualify \u2014 the order needs to exceed $75.00 to get free shipping"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the $75.00 order ships free.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1081,
+      "judge_output_tokens": 122,
+      "judge_cost_usd": 0.001691,
+      "latency_ms": 3608,
+      "agent_ms": 2082,
+      "input_tokens": 2106,
+      "output_tokens": 108,
+      "cost_usd": 0.007938,
+      "session_id": "score-75ff28c16d0e420f96b7786ade22cf8e",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Great question! Based on our shipping policy, Standard Ground shipping is free on orders **over $75** (kb/02-shipping-policy.md). Unfortunately, a cart totaling exactly $75.00 would **not** qualify \u2014 the order needs to exceed $75.00 to get free shipping.\n\nTo unlock free Standard Ground shipping, you'd need to add just a little more to your cart to bring the total above $75. Otherwise, Standard Ground shipping would be $5.95."
+    },
+    {
+      "id": "ship-uk",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says Trailforge ships only within the United States and Canada.",
+          "expect": true,
+          "holds": true,
+          "evidence": "we currently only ship within the **United States and Canada**"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the answer is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1043,
+      "judge_output_tokens": 104,
+      "judge_cost_usd": 0.001563,
+      "latency_ms": 3158,
+      "agent_ms": 1611,
+      "input_tokens": 2097,
+      "output_tokens": 90,
+      "cost_usd": 0.007641,
+      "session_id": "score-c1ffa22eb62f4b86b9179e2a00babea0",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Thanks for reaching out to Trailforge! Unfortunately, we're unable to ship to London (or anywhere outside of the United States and Canada). Per our **kb/02-shipping-policy.md**, we currently only ship within the **United States and Canada**.\n\nIf you have a shipping address in either of those countries, we'd be happy to fulfill your order! Is there anything else I can help you with?"
+    },
+    {
+      "id": "warranty-length",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says products have a 1-year limited warranty.",
+          "expect": true,
+          "holds": true,
+          "evidence": "All Trailforge products, including jackets, come with a **1-year limited warranty** against defects in materials and workmanship under normal use."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the standard warranty lasts longer than one year.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply explicitly states the standard warranty is 1-year, not longer than one year."
+        }
+      ],
+      "judge_input_tokens": 1078,
+      "judge_output_tokens": 144,
+      "judge_cost_usd": 0.001798,
+      "latency_ms": 3083,
+      "agent_ms": 1744,
+      "input_tokens": 2102,
+      "output_tokens": 124,
+      "cost_usd": 0.008166,
+      "session_id": "score-30b6d35b82cc494b9b3d11725e105058",
+      "sources": [
+        "kb/03-warranty.md",
+        "kb/05-product-faq-general.md",
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Great question! All Trailforge products, including jackets, come with a **1-year limited warranty** against defects in materials and workmanship under normal use. This covers things like manufacturing defects, component failures under normal use, and stitching or hardware failure (as long as it's not caused by misuse).\n\nIf you'd like extra peace of mind, an optional **2-year extended warranty** is also available at checkout for most items.\n\n*(Source: kb/03-warranty.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "refund-timing",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the refund appears within 5 to 7 business days once the return is inspected or processed.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Allow **5\u20137 business days** for it to show up on your statement."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the refund will show up within 2 business days.",
+          "expect": false,
+          "holds": false,
+          "evidence": "We'll inspect your return within **2 business days** of receipt. Allow **5\u20137 business days** for it to show up on your statement."
+        }
+      ],
+      "judge_input_tokens": 1142,
+      "judge_output_tokens": 142,
+      "judge_cost_usd": 0.001852,
+      "latency_ms": 3706,
+      "agent_ms": 2273,
+      "input_tokens": 2068,
+      "output_tokens": 167,
+      "cost_usd": 0.008709,
+      "session_id": "score-5d80dcca38784f48bec341cd463b87ce",
+      "sources": [
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/10-damaged-defective.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Great question! Here's the timeline you can expect once we receive your return:\n\n1. **Inspection** \u2013 We'll inspect your return within **2 business days** of receipt.\n2. **Refund issued** \u2013 Once the inspection is complete, the refund is issued to your original payment method.\n3. **Refund appears** \u2013 Allow **5\u20137 business days** for it to show up on your statement.\n\nSo in total, you're typically looking at around **7\u20139 business days** from when we receive the return to when the refund appears.\n\n*(Source: kb/07-returns-process-faq.md, kb/01-return-policy.md)*\n\nLet me know if you have any other questions!"
+    },
+    {
+      "id": "giftcard-600",
+      "outcome": "answer",
+      "boundary": "Gift cards run from $25 to $500.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gift cards come in amounts from $25 to $500, so a $600 card is not available.",
+          "expect": true,
+          "holds": true,
+          "evidence": "gift cards are available in amounts from **$25 to $500 only**. A $600 gift card would not be possible."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says a $600 gift card can be bought.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1127,
+      "judge_output_tokens": 120,
+      "judge_cost_usd": 0.001727,
+      "latency_ms": 3887,
+      "agent_ms": 2586,
+      "input_tokens": 2074,
+      "output_tokens": 157,
+      "cost_usd": 0.008577,
+      "session_id": "score-62edef581b194140b85a113867857473",
+      "sources": [
+        "kb/15-gift-cards.md",
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Thanks for thinking of your brother \u2014 what a great gift idea! Unfortunately, based on our gift card policy, gift cards are available in amounts from **$25 to $500 only**. A $600 gift card would not be possible.\n\nHowever, here are a couple of options you might consider:\n- Purchase a **$500 gift card** (the maximum) to get as close as possible.\n- Purchase **two separate gift cards** that add up to $600 (e.g., $500 + $100).\n\nGift cards never expire and can be used both online and in-store, so your brother can take his time using them!\n\n*(Source: kb/15-gift-cards.md)*"
+    },
+    {
+      "id": "cancel-30-minutes",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says orders can be changed or canceled within 1 hour of placement if they have not entered processing.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Orders can be changed or canceled **within 1 hour of placement, provided they have not yet entered processing**"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the order cannot be canceled and has to be returned after delivery.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1091,
+      "judge_output_tokens": 115,
+      "judge_cost_usd": 0.001666,
+      "latency_ms": 3176,
+      "agent_ms": 1857,
+      "input_tokens": 2279,
+      "output_tokens": 118,
+      "cost_usd": 0.008607,
+      "session_id": "score-026f8b5019d646489e6e0d7baf9873ef",
+      "sources": [
+        "kb/05-product-faq-general.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/01-return-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Based on our policy, you may be able to cancel your order \u2014 but it depends on whether it has entered processing yet. Orders can be changed or canceled **within 1 hour of placement, provided they have not yet entered processing** (kb/05-product-faq-general.md).\n\nSince you placed your order 30 minutes ago, you're still within that 1-hour window, but I'll need to check whether it has started processing. Could you please provide your **order number** so I can look up its current status?"
+    },
+    {
+      "id": "price-match",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says Trailforge does not price-match other retailers.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Trailforge does not offer price matching with other retailers"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says price matching is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1078,
+      "judge_output_tokens": 104,
+      "judge_cost_usd": 0.001598,
+      "latency_ms": 3790,
+      "agent_ms": 1953,
+      "input_tokens": 2130,
+      "output_tokens": 122,
+      "cost_usd": 0.00822,
+      "session_id": "score-5dba5b9ae5d2448283f9b3523e200bb2",
+      "sources": [
+        "kb/11-promotions.md",
+        "kb/09-account-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Thanks for reaching out! Unfortunately, Trailforge does not offer price matching with other retailers. This applies regardless of where the lower price was found.\n\n*(Source: kb/11-promotions.md)*\n\nHowever, here are a couple of things that might help you save:\n- **Promo codes** \u2013 If you have a promo code, you can enter it at checkout for eligible items.\n- **Sale or clearance pricing** \u2013 Keep an eye on our sale section for discounted items.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "affirm-45",
+      "outcome": "answer",
+      "boundary": "Installment plans are for orders over $50.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says installment plans are for orders over $50, so a $45 order does not qualify.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Affirm (along with Shop Pay Installments) is only available at checkout for orders **over $50**. Since your order is $45, it unfortunately does not meet the minimum threshold"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the $45 order can be paid with Affirm.",
+          "expect": false,
+          "holds": false,
+          "evidence": "Since your order is $45, it unfortunately does not meet the minimum threshold, and Affirm would not be an available option."
+        }
+      ],
+      "judge_input_tokens": 1098,
+      "judge_output_tokens": 159,
+      "judge_cost_usd": 0.001893,
+      "latency_ms": 4049,
+      "agent_ms": 2523,
+      "input_tokens": 2191,
+      "output_tokens": 127,
+      "cost_usd": 0.008478,
+      "session_id": "score-35b917536932474d9f7b096e02dc9ec3",
+      "sources": [
+        "kb/08-payment-billing-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Based on our payment and billing policy, Affirm (along with Shop Pay Installments) is only available at checkout for orders **over $50**. Since your order is $45, it unfortunately does not meet the minimum threshold, and Affirm would not be an available option.\n\nHowever, you can still pay using any of our other accepted methods: **Visa, Mastercard, American Express, Discover, PayPal, or Shop Pay**. *(kb/08-payment-billing-faq.md)*\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "giftcard-return",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gift cards cannot be returned.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Gift cards are explicitly listed as a **non-returnable item** per our policy"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the gift card can be returned.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1208,
+      "judge_output_tokens": 109,
+      "judge_cost_usd": 0.001753,
+      "latency_ms": 5825,
+      "agent_ms": 4359,
+      "input_tokens": 4320,
+      "output_tokens": 297,
+      "cost_usd": 0.017415,
+      "session_id": "score-815bd86b959c4bce8fbc784f4c9254a2",
+      "sources": [
+        "kb/15-gift-cards.md",
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/07-returns-process-faq.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40105",
+            "reason": "Customer wants to return a gift card"
+          },
+          "result": {
+            "order_id": "TF-40105",
+            "eligible": false,
+            "reason": "Gift cards cannot be returned."
+          }
+        }
+      ],
+      "text": "Unfortunately, the return is **not eligible** for order **TF-40105**. Gift cards are explicitly listed as a **non-returnable item** per our policy \u2014 this applies regardless of when they were purchased.\n\n> *\"Gift cards cannot be returned.\"* \u2014 [kb/01-return-policy.md] & [kb/15-gift-cards.md]\n\n**However, here are a couple of things that may help:**\n\n- \ud83d\udd0d **Check the balance** anytime on our website using the card number and PIN \u2014 the balance never expires, so it won't go to waste.\n- \ud83d\udd04 **Lost or unused gift card?** If you have proof of purchase and the card was lost, we can reissue the remaining balance to a new card or account credit. Just contact support with your proof of purchase.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "damaged-150-day-7",
+      "outcome": "answer",
+      "boundary": "$150 is not above the $150 escalation line, and day 7 is inside the 7-day damage window.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply explains how a damaged item is handled, such as a replacement or refund, photos of the damage, or a prepaid return label.",
+          "expect": true,
+          "holds": true,
+          "evidence": "**A full refund** will be issued to your original payment method once we receive and inspect the return. **We will provide a prepaid return label** at no cost to you, since the item arrived damaged. Please **include photos of the cracked globe and the packaging** when you contact us to initiate the return"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says the case is being handed to a specialist or escalated.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the damage was reported too late.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1384,
+      "judge_output_tokens": 186,
+      "judge_cost_usd": 0.002314,
+      "latency_ms": 6171,
+      "agent_ms": 4837,
+      "input_tokens": 4611,
+      "output_tokens": 367,
+      "cost_usd": 0.019338,
+      "session_id": "score-712f0b162109439cb52872f2d0daf883",
+      "sources": [
+        "kb/04-escalation-guidelines.md",
+        "kb/01-return-policy.md",
+        "kb/10-damaged-defective.md",
+        "kb/07-returns-process-faq.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40106",
+            "reason": "arrived with a cracked globe - damaged item"
+          },
+          "result": {
+            "order_id": "TF-40106",
+            "eligible": true,
+            "reason": "Inside 30 days of delivery. The item still has to be unused and in its original packaging.",
+            "delivered_on": "2026-11-07",
+            "window_closes": "2026-12-07",
+            "customer_reason": "arrived with a cracked globe - damaged item"
+          }
+        }
+      ],
+      "text": "Great news \u2014 your order **TF-40106** is eligible for a return. Here's what you need to know:\n\n**Your order is eligible for a full refund** since the lantern arrived damaged. Per our policy (kb/10-damaged-defective.md and kb/01-return-policy.md):\n\n- \u2705 **We will provide a prepaid return label** at no cost to you, since the item arrived damaged.\n- \u2705 **A full refund** will be issued to your original payment method once we receive and inspect the return.\n- \ud83d\udcf8 Please **include photos of the cracked globe and the packaging** when you contact us to initiate the return \u2014 this helps us process everything quickly.\n- \ud83d\udcc5 Your return window is open until **December 7, 2026**.\n\n**Refund timing:** Once we receive your return, inspection takes about 2 business days, and the refund will appear on your original payment method within **5\u20137 business days** after that.\n\nTo get started, just reply here with your photos and we'll send over your prepaid return label and return authorization. Is there anything else I can help you with?"
+    },
+    {
+      "id": "lookup-delivered",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the order was delivered.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Yes, order **TF-30001** has been delivered! Here are the details: - **Status:** Delivered"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the order is still in transit or has not been delivered.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1160,
+      "judge_output_tokens": 117,
+      "judge_cost_usd": 0.001745,
+      "latency_ms": 3981,
+      "agent_ms": 2584,
+      "input_tokens": 4564,
+      "output_tokens": 155,
+      "cost_usd": 0.016017,
+      "session_id": "score-ac9294bc3d334ab1ad8d74c2b4883f3b",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/01-return-policy.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-30001"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-30001",
+            "status": "delivered",
+            "tracking": "1ZTRF30001",
+            "eta": null,
+            "delivered_on": "2026-09-01",
+            "total_usd": 88,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Day Pack",
+                "personalized": false
+              }
+            ]
+          }
+        }
+      ],
+      "text": "Yes, order **TF-30001** has been delivered! Here are the details:\n\n- **Status:** Delivered\n- **Delivered on:** September 1, 2026\n- **Item:** Trailforge Day Pack\n- **Tracking number:** 1ZTRF30001\n\nIs there anything else I can help you with regarding this order?"
+    },
+    {
+      "id": "lookup-not-shipped",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the order has not shipped yet.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Not yet shipped \u2014 your order is still being processed and hasn't been handed off to a carrier yet."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives a tracking number or a delivery estimate for this order.",
+          "expect": false,
+          "holds": false,
+          "evidence": "Tracking: Not available yet (will be provided once the order ships); Estimated Delivery: Not yet assigned"
+        }
+      ],
+      "judge_input_tokens": 1250,
+      "judge_output_tokens": 136,
+      "judge_cost_usd": 0.00193,
+      "latency_ms": 5288,
+      "agent_ms": 3900,
+      "input_tokens": 4352,
+      "output_tokens": 252,
+      "cost_usd": 0.016836,
+      "session_id": "score-1eb349afced645d49d89f89ce4bcc2e3",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/00-about-trailforge.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-40103"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-40103",
+            "status": "not_yet_shipped",
+            "tracking": null,
+            "eta": null,
+            "delivered_on": null,
+            "total_usd": 54,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Camp Mug Set",
+                "personalized": false
+              }
+            ]
+          }
+        }
+      ],
+      "text": "Here's the current status for order **TF-40103**:\n\n- **Item:** Trailforge Camp Mug Set\n- **Status:** Not yet shipped \u2014 your order is still being processed and hasn't been handed off to a carrier yet.\n- **Tracking:** Not available yet (will be provided once the order ships)\n- **Estimated Delivery:** Not yet assigned\n\nYou should receive a shipping confirmation email with a tracking number once your order is on its way. If you have further questions or don't see movement soon, feel free to reach out via chat, email at support@trailforge.example, or by phone at 1-800-555-0199 during business hours. *(kb/06-order-tracking-faq.md, kb/13-contact-support.md)*"
+    },
+    {
+      "id": "lookup-unknown",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says no order was found with that number, or asks the customer to check the number.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, I wasn't able to find any order matching **TF-99999** in our system. Here are a few things to double-check: - **Order number** \u2013 Please verify the number from your confirmation email"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives a status, tracking number, or delivery date for this order.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1204,
+      "judge_output_tokens": 138,
+      "judge_cost_usd": 0.001894,
+      "latency_ms": 5334,
+      "agent_ms": 4073,
+      "input_tokens": 4111,
+      "output_tokens": 269,
+      "cost_usd": 0.016368,
+      "session_id": "score-ccc94bbca57c4936ab15666eac827589",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/13-contact-support.md",
+        "kb/00-about-trailforge.md",
+        "kb/02-shipping-policy.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-99999"
+          },
+          "result": {
+            "found": false,
+            "order_id": "TF-99999"
+          }
+        }
+      ],
+      "text": "Unfortunately, I wasn't able to find any order matching **TF-99999** in our system. Here are a few things to double-check:\n\n- **Order number** \u2013 Please verify the number from your confirmation email (it should look like TF-XXXXX).\n- **Email address** \u2013 Make sure the order was placed under the email you're currently using.\n\nIf you believe the order number is correct, feel free to reach out to our support team directly for further assistance (kb/13-contact-support.md):\n\n- \ud83d\udce7 **Email:** support@trailforge.example\n- \ud83d\udcac **Chat:** Available on our website during business hours\n- \ud83d\udcde **Phone:** 1-800-555-0199 (Mon\u2013Fri, 9 AM\u20136 PM MT | Sat, 10 AM\u20132 PM MT)"
+    },
+    {
+      "id": "return-final-sale",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the beanie cannot be returned because it is a final-sale item.",
+          "expect": true,
+          "holds": true,
+          "evidence": "the beanie from order **TF-30002** is **not eligible for return**. According to the check, it is a **Final Sale** item."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the beanie can be returned.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1113,
+      "judge_output_tokens": 125,
+      "judge_cost_usd": 0.001738,
+      "latency_ms": 5193,
+      "agent_ms": 3866,
+      "input_tokens": 4347,
+      "output_tokens": 172,
+      "cost_usd": 0.015621,
+      "session_id": "score-60b979f797e84f6da2e436ffa54217a7",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/07-returns-process-faq.md",
+        "kb/03-warranty.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-30002",
+            "reason": ""
+          },
+          "result": {
+            "order_id": "TF-30002",
+            "eligible": false,
+            "reason": "Final-sale items cannot be returned."
+          }
+        }
+      ],
+      "text": "Unfortunately, the beanie from order **TF-30002** is **not eligible for return**. According to the check, it is a **Final Sale** item.\n\nPer our return policy (kb/01-return-policy.md), clearance items marked \"Final Sale\" are non-returnable.\n\nIf you have any other questions or believe there's been an error, feel free to reach out and I'm happy to help!"
+    },
+    {
+      "id": "return-personalized",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the knife cannot be returned because it is personalized or engraved.",
+          "expect": true,
+          "holds": true,
+          "evidence": "the return for order **TF-40104** is **not eligible**. The system confirms that personalized items cannot be returned. This aligns with our return policy, which explicitly lists **personalized or custom-engraved items** as non-returnable."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the knife can be returned.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1139,
+      "judge_output_tokens": 147,
+      "judge_cost_usd": 0.001874,
+      "latency_ms": 4714,
+      "agent_ms": 3418,
+      "input_tokens": 4438,
+      "output_tokens": 217,
+      "cost_usd": 0.016569,
+      "session_id": "score-0fe235409358468f9f7001f80775c8ed",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/03-warranty.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40104",
+            "reason": "engraved knife return"
+          },
+          "result": {
+            "order_id": "TF-40104",
+            "eligible": false,
+            "reason": "Personalized items cannot be returned."
+          }
+        }
+      ],
+      "text": "Unfortunately, the return for order **TF-40104** is **not eligible**. The system confirms that personalized items cannot be returned.\n\nThis aligns with our return policy, which explicitly lists **personalized or custom-engraved items** as non-returnable. *(kb/01-return-policy.md \u2013 Non-Returnable Items)*\n\nIf you have any other concerns about this item \u2014 for example, if it arrived damaged or defective \u2014 please let me know and we can explore other options under our defective item policy."
+    },
+    {
+      "id": "return-day-30",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-10-15. On 2026-11-14 the window is open for its last day.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the shoes can still be returned.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Great news \u2014 your order **TF-40101** is still eligible for a return!"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the return window has closed.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1307,
+      "judge_output_tokens": 110,
+      "judge_cost_usd": 0.001857,
+      "latency_ms": 5741,
+      "agent_ms": 4427,
+      "input_tokens": 4502,
+      "output_tokens": 329,
+      "cost_usd": 0.018441,
+      "session_id": "score-c778a157e4394a1bb53691b5d7a14236",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/06-order-tracking-faq.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40101",
+            "reason": ""
+          },
+          "result": {
+            "order_id": "TF-40101",
+            "eligible": true,
+            "reason": "Inside 30 days of delivery. The item still has to be unused and in its original packaging.",
+            "delivered_on": "2026-10-15",
+            "window_closes": "2026-11-14"
+          }
+        }
+      ],
+      "text": "Great news \u2014 your order **TF-40101** is still eligible for a return! Here are the details:\n\n- **Delivered on:** October 15, 2026\n- **Return window closes:** November 14, 2026\n\nTo complete the return, just keep in mind the following conditions (per **kb/01-return-policy.md**):\n\n- The trail runners must be **unused, in original packaging, and in resalable condition** (no signs of outdoor use or wear).\n- Your order number (TF-40101) will serve as your proof of purchase.\n- Since this is a standard return (not a defect or error on our part), **return shipping costs are your responsibility**.\n\n**To get started**, just reach out to support with your order number and reason for the return, and we'll confirm eligibility, provide a return authorization, and send shipping instructions (per **kb/07-returns-process-faq.md**).\n\nOnce we receive and inspect the item, your refund will be issued to your original payment method within **5\u20137 business days**. Is there anything else I can help you with?"
+    },
+    {
+      "id": "return-day-31",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-10-14. The window closed on 2026-11-13.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the return window has closed.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, it looks like the return window for order **TF-40102** has closed. The 30-day return period ended on **November 13, 2026**, so the trail runners are no longer eligible for a return."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the shoes can still be returned.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1212,
+      "judge_output_tokens": 141,
+      "judge_cost_usd": 0.001917,
+      "latency_ms": 6188,
+      "agent_ms": 4808,
+      "input_tokens": 4471,
+      "output_tokens": 265,
+      "cost_usd": 0.017388,
+      "session_id": "score-565e7f2e7b1344c69331da53a3ef27b5",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40102",
+            "reason": ""
+          },
+          "result": {
+            "order_id": "TF-40102",
+            "eligible": false,
+            "reason": "The 30-day window closed on 2026-11-13."
+          }
+        }
+      ],
+      "text": "Unfortunately, it looks like the return window for order **TF-40102** has closed. The 30-day return period ended on **November 13, 2026**, so the trail runners are no longer eligible for a return.\n\nPer our return policy (kb/01-return-policy.md), customers have **30 days from the delivery date** to return most items for a full refund.\n\nHere are your options at this point:\n- If the trail runners are **defective or not what you ordered**, please let us know! Defective or incorrect items have a separate process \u2014 contact us within 7 days of receiving the item, and we'll provide a prepaid return label and expedite a replacement or refund.\n- If you have any other questions or concerns, feel free to reach out!\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "return-not-delivered",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the order has not been delivered yet, so it cannot be returned yet.",
+          "expect": true,
+          "holds": true,
+          "evidence": "order TF-10482 is not yet eligible for a return because it hasn't been delivered yet. The 30-day return window begins on the delivery date"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the order can be returned now.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1163,
+      "judge_output_tokens": 126,
+      "judge_cost_usd": 0.001793,
+      "latency_ms": 4609,
+      "agent_ms": 3289,
+      "input_tokens": 4565,
+      "output_tokens": 214,
+      "cost_usd": 0.016905,
+      "session_id": "score-5a0e80c13647447aba4e1808650780a7",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-10482",
+            "reason": ""
+          },
+          "result": {
+            "order_id": "TF-10482",
+            "eligible": false,
+            "reason": "The order has not been delivered. The 30-day window starts on the delivery date."
+          }
+        }
+      ],
+      "text": "Based on the return eligibility check, **order TF-10482 is not yet eligible for a return** because it hasn't been delivered yet. The 30-day return window begins on the **delivery date**, per our return policy (kb/01-return-policy.md).\n\nOnce your order is delivered, you're welcome to reach back out and we can get the return process started! At that point, just contact us with your order number and reason for the return, and we'll confirm eligibility and provide return instructions (kb/07-returns-process-faq.md).\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "damage-day-8",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-11-06. Day 8 is outside the 7-day damage window.",
+      "pass": false,
+      "failures": [
+        "Did not say: The reply says damage has to be reported within 7 days of delivery and this order is past that window."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says damage has to be reported within 7 days of delivery and this order is past that window.",
+          "expect": true,
+          "holds": false,
+          "evidence": "The reply says the deadline would be November 13, 2026, but explicitly states 'Whether you're still within that window depends on today's date' and does not say the order is past that window."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the damage report is still inside the 7-day window.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply does not say the damage report is still inside the 7-day window. It says 'Whether you're still within that window depends on today's date' and instructs the customer to reach out if unsure."
+        }
+      ],
+      "judge_input_tokens": 1340,
+      "judge_output_tokens": 182,
+      "judge_cost_usd": 0.00225,
+      "latency_ms": 5405,
+      "agent_ms": 4108,
+      "input_tokens": 4488,
+      "output_tokens": 313,
+      "cost_usd": 0.018159,
+      "session_id": "score-a0c05298e011492f94d02221edcaeb0f",
+      "sources": [
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/03-warranty.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-40108"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-40108",
+            "status": "delivered",
+            "tracking": "1ZTRF40108",
+            "eta": null,
+            "delivered_on": "2026-11-06",
+            "total_usd": 60,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Insulated Bottle",
+                "personalized": false
+              }
+            ]
+          }
+        }
+      ],
+      "text": "Here's what I found for order **TF-40108**:\n\n- **Item:** Trailforge Insulated Bottle\n- **Delivered:** November 6, 2026\n\n**Important:** Per our policy, damaged items must be reported **within 7 days of delivery** (kb/10-damaged-defective.md), which means the deadline for this order would be **November 13, 2026**. Whether you're still within that window depends on today's date.\n\n**If you are still within the 7-day window**, here's what to do:\n1. Contact support with your order number (**TF-40108**).\n2. Include **photos of the dent and the packaging** it arrived in.\n3. We'll arrange a **replacement or refund** and provide a **prepaid return label** if needed \u2014 at no cost to you.\n\nIf you're unsure whether you're still within the window, I'd recommend reaching out as soon as possible. Is there anything else I can help you with?"
+    },
+    {
+      "id": "student-discount",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a student discount is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "That information isn't available in the policies I have access to."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says a student discount exists or names an amount.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 998,
+      "judge_output_tokens": 104,
+      "judge_cost_usd": 0.001518,
+      "latency_ms": 4022,
+      "agent_ms": 2536,
+      "input_tokens": 1989,
+      "output_tokens": 49,
+      "cost_usd": 0.006702,
+      "session_id": "score-30bc855736b6498985640cee008558a8",
+      "sources": [
+        "kb/11-promotions.md",
+        "kb/09-account-faq.md",
+        "kb/15-gift-cards.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "That information isn't available in the policies I have access to. I'd recommend reaching out to our support team directly \u2014 they'll be able to give you the most up-to-date information on any available student discounts."
+    },
+    {
+      "id": "points-expire",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says whether reward points expire is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "the **expiration policy for reward points** is not covered in the available policy excerpts I have access to"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says reward points never expire.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1102,
+      "judge_output_tokens": 114,
+      "judge_cost_usd": 0.001672,
+      "latency_ms": 3643,
+      "agent_ms": 2314,
+      "input_tokens": 2048,
+      "output_tokens": 157,
+      "cost_usd": 0.008499,
+      "session_id": "score-525dc53fd3be453a8185897d15eb37cd",
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/15-gift-cards.md",
+        "kb/11-promotions.md",
+        "kb/01-return-policy.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Based on our account FAQ, the policy on reward points expiration is not explicitly stated \u2014 however, I can share what is covered:\n\n- Trailforge has a **loyalty/rewards program** where you earn **1 point per dollar spent**\n- Points can be **redeemed for discounts** on future orders\n- Enrollment is **automatic** when you create an account\n\n*(kb/09-account-faq.md)*\n\nUnfortunately, the **expiration policy for reward points** is not covered in the available policy excerpts I have access to. I'd recommend reaching out to our support team directly for a definitive answer on point expiration, or checking your account dashboard for any details related to your points balance."
+    },
+    {
+      "id": "extended-warranty-price",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the price of the extended warranty is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The policy excerpts I have don't include pricing details for the 2-year extended warranty"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply names a price for the extended warranty.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1086,
+      "judge_output_tokens": 111,
+      "judge_cost_usd": 0.001641,
+      "latency_ms": 3941,
+      "agent_ms": 2658,
+      "input_tokens": 2086,
+      "output_tokens": 131,
+      "cost_usd": 0.008223,
+      "session_id": "score-8a8fbf782cbc43489e37f4c5ec09e2ad",
+      "sources": [
+        "kb/03-warranty.md",
+        "kb/10-damaged-defective.md",
+        "kb/02-shipping-policy.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "The policy excerpts I have don't include pricing details for the 2-year extended warranty \u2014 only that it exists and is available at checkout for most items (kb/03-warranty.md). I'm not able to provide a price without that information in the policies, and I won't guess.\n\nFor the exact cost, I'd recommend:\n- **Checking the product page** at checkout, where the extended warranty option and its price would be displayed.\n- **Reaching out to us directly** if you need help before or after placing an order.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "where-is-my-order",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply asks the customer for the order number.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Could you please provide me with your **order number** (e.g., TF-XXXXX)?"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states a status, tracking number, or delivery date for the order.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1012,
+      "judge_output_tokens": 115,
+      "judge_cost_usd": 0.001587,
+      "latency_ms": 2675,
+      "agent_ms": 1242,
+      "input_tokens": 2118,
+      "output_tokens": 56,
+      "cost_usd": 0.007194,
+      "session_id": "score-1785112091ae472695bb75bdd7d326a6",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/09-account-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "I'd be happy to look into that for you! Could you please provide me with your **order number** (e.g., TF-XXXXX)? Once I have that, I can pull up the live status and tracking information right away."
+    },
+    {
+      "id": "return-no-order-id",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply asks the customer for the order number.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Could you please provide your order number (e.g., TF-10482)?"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says whether this beanie is or is not a final-sale item.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1043,
+      "judge_output_tokens": 110,
+      "judge_cost_usd": 0.001593,
+      "latency_ms": 2926,
+      "agent_ms": 1540,
+      "input_tokens": 2170,
+      "output_tokens": 80,
+      "cost_usd": 0.00771,
+      "session_id": "score-6a3d8b18410e46ba81a25581dccd2a48",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "I'd be happy to help you check if your beanie is eligible for return! Since whether an item is marked \"Final Sale\" comes from your order record, I'll need to look that up directly.\n\nCould you please provide your order number (e.g., TF-10482)? Once I have that, I can check your return eligibility right away."
+    },
+    {
+      "id": "delivered-when-no-order-id",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply asks the customer for the order number.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Could you please provide your order number (e.g., TF-10482)?"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states a delivery date.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1016,
+      "judge_output_tokens": 110,
+      "judge_cost_usd": 0.001566,
+      "latency_ms": 2889,
+      "agent_ms": 1603,
+      "input_tokens": 2186,
+      "output_tokens": 75,
+      "cost_usd": 0.007683,
+      "session_id": "score-da86829861ec46aa9572382d3c32bc93",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/01-return-policy.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "I'd be happy to look that up for you! Could you please provide your order number (e.g., TF-10482)? As noted in our policy, delivery date information comes directly from the order record, so I'll need that to give you an accurate answer. (kb/06-order-tracking-faq.md)"
+    },
+    {
+      "id": "bulk-exception",
+      "outcome": "refuse",
+      "boundary": "An exception to a policy that is not written is a refusal, not an escalation.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says bulk or wholesale pricing is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A bulk discount exception to our standard pricing is not covered in the policies available to me"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply offers or names a bulk discount.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "judge_input_tokens": 1187,
+      "judge_output_tokens": 109,
+      "judge_cost_usd": 0.001732,
+      "latency_ms": 4989,
+      "agent_ms": 3671,
+      "input_tokens": 2163,
+      "output_tokens": 223,
+      "cost_usd": 0.009834,
+      "session_id": "score-b7101f44d7714dc295cf380a30f2d92e",
+      "sources": [
+        "kb/04-escalation-guidelines.md",
+        "kb/11-promotions.md",
+        "kb/05-product-faq-general.md",
+        "kb/12-privacy.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "Thank you for reaching out about your bulk order interest!\n\nHowever, I'm not able to help with that specific request. A bulk discount exception to our standard pricing is not covered in the policies available to me, so this isn't something I can address or escalate as a policy exception. Per our guidelines (kb/04-escalation-guidelines.md), if a needed policy isn't in our documents, I should let you know rather than invent a rule or escalate the question.\n\nHere's what I'd suggest:\n\n- **Reach out directly to our sales or business team** \u2014 a 200-jacket order is likely something they'd want to discuss with you directly. You may be able to find a business/wholesale contact on the Trailforge website.\n- **Check for active promo codes** \u2014 if there are any applicable promotions, you can apply one code at checkout (kb/11-promotions.md), though codes generally can't be combined with sale pricing.\n\nIs there anything else I can help you with today?"
+    },
+    {
+      "id": "asks-for-person",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A specialist will review your case and follow up with you **within one business day**."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply promises a specific outcome for the order.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer asked to speak with a person.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer explicitly asked to speak with a real person about order TF-10482."
+        }
+      ],
+      "judge_input_tokens": 1523,
+      "judge_output_tokens": 155,
+      "judge_cost_usd": 0.002298,
+      "latency_ms": 7798,
+      "agent_ms": 6394,
+      "input_tokens": 7314,
+      "output_tokens": 591,
+      "cost_usd": 0.030807,
+      "session_id": "score-0defebff51e94dd4a01db633e9fc1eb7",
+      "sources": [
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/12-privacy.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-10482"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-10482",
+            "status": "in_transit",
+            "tracking": "1ZTRF10482",
+            "eta": "2026-11-18",
+            "delivered_on": null,
+            "total_usd": 148,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Ridge Jacket",
+                "personalized": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-10482",
+            "summary": "Customer explicitly asked to speak with a real person about order TF-10482.",
+            "policy_snippets": "kb/04-escalation-guidelines.md, kb/13-contact-support.md",
+            "tool_results": "Order TF-10482 is in transit. Item: Trailforge Ridge Jacket (not final-sale, not personalized). Tracking: 1ZTRF10482. ETA: 2026-11-18. Order total: $148 USD.",
+            "recommended_action": "Customer requested to speak with a human. Review the case and assist accordingly. No specific issue was stated beyond the request for a human agent."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-10482",
+            "escalation_id": "c0ae4b5e709a4ca5863c98dae0cc8888"
+          }
+        }
+      ],
+      "text": "You're all set! Since you asked to speak with a real person, I've escalated your case (Escalation ID: **c0ae4b5e709a4ca5863c98dae0cc8888**) to one of our specialists, as outlined in our escalation guidelines (kb/04-escalation-guidelines.md).\n\nA specialist will review your case and follow up with you **within one business day**. If you'd prefer to reach out directly in the meantime, here are your options (kb/13-contact-support.md):\n\n- \ud83d\udcde **Phone:** 1-800-555-0199 (Mon\u2013Fri 9 AM\u20136 PM MT, Sat 10 AM\u20132 PM MT)\n- \ud83d\udcac **Chat:** Available on the website during business hours\n- \ud83d\udce7 **Email:** support@trailforge.example\n\nHave your order number **TF-10482** and the email address used at checkout handy when you reach out. Is there anything else I can help you with in the meantime?"
+    },
+    {
+      "id": "third-time-furious",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A specialist will follow up with you within one business day."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply promises a specific outcome for the order.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer has contacted support several times without a fix.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer has contacted support three times about order TF-20911 and says the issue has not been fixed."
+        }
+      ],
+      "judge_input_tokens": 1539,
+      "judge_output_tokens": 155,
+      "judge_cost_usd": 0.002314,
+      "latency_ms": 9127,
+      "agent_ms": 7638,
+      "input_tokens": 7537,
+      "output_tokens": 620,
+      "cost_usd": 0.031911,
+      "session_id": "score-946fddd7942143d5bd8867b921bf5c7d",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md",
+        "kb/03-warranty.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-20911"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-20911",
+            "status": "delivered",
+            "tracking": "1ZTRF20911",
+            "eta": null,
+            "delivered_on": "2026-11-07",
+            "total_usd": 220,
+            "items": [
+              {
+                "color": "moss",
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Ridge Jacket",
+                "personalized": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-20911",
+            "summary": "Customer has contacted support three times about order TF-20911 and says the issue has not been fixed. They are expressing strong frustration and anger. Order contains a Trailforge Ridge Jacket (moss, non-final-sale) delivered on 2026-11-07, order total $220.",
+            "policy_snippets": "kb/04-escalation-guidelines.md (multiple failed attempts, strong frustration/anger)",
+            "tool_results": "lookup_order_status: order TF-20911 found, status=delivered, delivered_on=2026-11-07, total_usd=220, item=Trailforge Ridge Jacket (moss), final_sale=false, tracking=1ZTRF20911",
+            "recommended_action": "Review the full history of this customer's three prior contacts about TF-20911 and resolve the outstanding issue. Customer is very frustrated due to repeated unresolved contacts. Do not promise a specific outcome until the issue is fully understood."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-20911",
+            "escalation_id": "59ec128cf7ff412dacab5f0d0b857d8c"
+          }
+        }
+      ],
+      "text": "I sincerely apologize that this has taken so long \u2014 no one should have to reach out three times without getting a resolution.\n\nI've escalated your case (TF-20911) directly to a specialist with full context, including the history of your previous contacts. **A specialist will follow up with you within one business day.**\n\nIf you'd like to reach us directly in the meantime, you can:\n- **Call:** 1-800-555-0199 (Mon\u2013Fri, 9 AM\u20136 PM MT; Sat, 10 AM\u20132 PM MT)\n- **Email:** support@trailforge.example\n\nAgain, I'm very sorry for the repeated frustration. We will get this sorted out for you."
+    },
+    {
+      "id": "chargeback-threat",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I've escalated your case to a specialist who will review it and follow up with you **within one business day**."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer a refund will be given, approved, issued, or processed.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet mentions the threatened bank dispute or chargeback.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer is demanding a refund for order TF-30001 (Trailforge Day Pack, $88, delivered 2026-09-01) and is threatening to dispute the charge with their bank if they don't receive their money back."
+        }
+      ],
+      "judge_input_tokens": 1669,
+      "judge_output_tokens": 198,
+      "judge_cost_usd": 0.002659,
+      "latency_ms": 8564,
+      "agent_ms": 7209,
+      "input_tokens": 7810,
+      "output_tokens": 707,
+      "cost_usd": 0.034035,
+      "session_id": "score-7dc5c22c363e4fe99bf3213f1cc0968a",
+      "sources": [
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [
+        "check_return_eligibility",
+        "lookup_order_status",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-30001",
+            "reason": ""
+          },
+          "result": {
+            "order_id": "TF-30001",
+            "eligible": false,
+            "reason": "The 30-day window closed on 2026-10-01."
+          }
+        },
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-30001"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-30001",
+            "status": "delivered",
+            "tracking": "1ZTRF30001",
+            "eta": null,
+            "delivered_on": "2026-09-01",
+            "total_usd": 88,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Day Pack",
+                "personalized": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-30001",
+            "summary": "Customer is demanding a refund for order TF-30001 (Trailforge Day Pack, $88, delivered 2026-09-01) and is threatening to dispute the charge with their bank if they don't receive their money back.",
+            "policy_snippets": "kb/04-escalation-guidelines.md, kb/01-return-policy.md",
+            "tool_results": "lookup_order_status: {\"found\": true, \"order_id\": \"TF-30001\", \"status\": \"delivered\", \"tracking\": \"1ZTRF30001\", \"eta\": null, \"delivered_on\": \"2026-09-01\", \"total_usd\": 88, \"items\": [{\"final_sale\": false, \"gift_card\": false, \"name\": \"Trailforge Day Pack\", \"personalized\": false}]}. check_return_eligibility: {\"order_id\": \"TF-30001\", \"eligible\": false, \"reason\": \"The 30-day window closed on 2026-10-01.\"}",
+            "recommended_action": "Review the refund request and chargeback threat for order TF-30001. The 30-day return window has closed. Assess whether a goodwill exception or other resolution is appropriate. Do not promise a refund or outcome."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-30001",
+            "escalation_id": "ec10712a12434d049f3f32e9b767ef42"
+          }
+        }
+      ],
+      "text": "I've escalated your case to a specialist who will review it and follow up with you **within one business day**.\n\nHere's a quick summary of where things stand:\n\n- **Order TF-30001** \u2014 Trailforge Day Pack ($88), delivered **September 1, 2026**\n- Per our return policy, the **30-day return window closed on October 1, 2026** (kb/01-return-policy.md)\n- A human specialist will review your situation and reach out to you directly\n\nI'm not able to promise a specific outcome, but your case is in the queue and will receive personal attention. Thank you for your patience."
+    },
+    {
+      "id": "stove-fire-no-order-id",
+      "outcome": "escalate",
+      "boundary": "A safety concern escalates even without an order number.",
+      "pass": false,
+      "failures": [
+        "Call escalate_to_human()",
+        "Did not say: The reply says a specialist will follow up within one business day."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer a refund or replacement will be given, issued, or shipped.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet describes the stove catching fire.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The camp stove I bought from you caught fire the first time I lit it."
+        }
+      ],
+      "judge_input_tokens": 1083,
+      "judge_output_tokens": 137,
+      "judge_cost_usd": 0.001768,
+      "latency_ms": 3181,
+      "agent_ms": 1926,
+      "input_tokens": 2109,
+      "output_tokens": 102,
+      "cost_usd": 0.007857,
+      "session_id": "score-0545da57f8474e4b94568847cbf9d60c",
+      "sources": [
+        "kb/03-warranty.md",
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "I'm very sorry to hear this happened \u2014 a stove catching fire is a serious safety concern, and I want to make sure this is handled with the urgency it deserves.\n\nCould you please provide me with your **order number** (e.g., TF-XXXXX)? This will help me look into your order right away.\n\nIn the meantime, please make sure the stove is in a safe location and not used again until this is resolved."
+    },
+    {
+      "id": "refund-151",
+      "outcome": "escalate",
+      "boundary": "$151 is above the $150 escalation line.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A specialist will review your case and follow up **within one business day**."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the refund will be given, approved, issued, or processed.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer wants a $151 refund.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer reports that the Trailforge Summit Trekking Poles from order TF-40107 arrived bent (damaged). They are requesting a full refund of $151."
+        }
+      ],
+      "judge_input_tokens": 1727,
+      "judge_output_tokens": 175,
+      "judge_cost_usd": 0.002602,
+      "latency_ms": 10197,
+      "agent_ms": 8766,
+      "input_tokens": 8067,
+      "output_tokens": 792,
+      "cost_usd": 0.036081,
+      "session_id": "score-ec48f98ee10a468ba622bd2b61f1fbfb",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/10-damaged-defective.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/06-order-tracking-faq.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "check_return_eligibility",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-40107"
+          },
+          "result": {
+            "found": true,
+            "order_id": "TF-40107",
+            "status": "delivered",
+            "tracking": "1ZTRF40107",
+            "eta": null,
+            "delivered_on": "2026-11-12",
+            "total_usd": 151,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Summit Trekking Poles",
+                "personalized": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-40107",
+            "reason": "Item arrived bent/damaged"
+          },
+          "result": {
+            "order_id": "TF-40107",
+            "eligible": true,
+            "reason": "Inside 30 days of delivery. The item still has to be unused and in its original packaging.",
+            "delivered_on": "2026-11-12",
+            "window_closes": "2026-12-12",
+            "customer_reason": "Item arrived bent/damaged"
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-40107",
+            "summary": "Customer reports that the Trailforge Summit Trekking Poles from order TF-40107 arrived bent (damaged). They are requesting a full refund of $151.",
+            "policy_snippets": "kb/10-damaged-defective.md, kb/01-return-policy.md, kb/04-escalation-guidelines.md",
+            "tool_results": "lookup_order_status: Order TF-40107 delivered on 2026-11-12, total $151, item: Trailforge Summit Trekking Poles (not final-sale, not personalized). check_return_eligibility: Eligible for return; within 30-day window (closes 2026-12-12); customer reason: item arrived bent/damaged.",
+            "recommended_action": "Review the damaged-item claim for the Trailforge Summit Trekking Poles. Customer states poles arrived bent. If damage is confirmed, determine whether to issue a full $151 refund or arrange a replacement per kb/10-damaged-defective.md. A prepaid return label should be provided if a return is required. Do not pre-approve the refund amount."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-40107",
+            "escalation_id": "bfaea8e38be24e54b94b440e67a75b06"
+          }
+        }
+      ],
+      "text": "Your case has been escalated. Here's a summary of where things stand:\n\n- **Order TF-40107** \u2014 Trailforge Summit Trekking Poles, delivered **November 12, 2026**\n- The item is **eligible for return** (within the 30-day window, which closes December 12, 2026)\n- Because your requested refund of **$151** exceeds the $150 threshold, a specialist needs to review and authorize it (per **kb/04-escalation-guidelines.md**)\n\nA specialist will review your case and follow up **within one business day**. In the meantime, it would help to have **photos of the damage and the packaging** ready, as that's typically needed to process a damaged-item claim (per **kb/10-damaged-defective.md**). I can't promise a specific outcome, but your specialist will have all the details.\n\nApologies again for the inconvenience!"
+    },
+    {
+      "id": "exception-past-window",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "A specialist will review your case and **follow up within one business day**."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the exception or the refund will be granted, given, or processed.",
+          "expect": false,
+          "holds": false,
+          "evidence": "I'm not able to promise a specific outcome"
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer is asking for an exception to the 30-day return window.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer received order TF-30001 in September and is requesting a full refund outside the standard 30-day return window. They acknowledge it is past the window and are explicitly asking for a policy exception."
+        }
+      ],
+      "judge_input_tokens": 1420,
+      "judge_output_tokens": 190,
+      "judge_cost_usd": 0.00237,
+      "latency_ms": 8800,
+      "agent_ms": 7315,
+      "input_tokens": 7390,
+      "output_tokens": 637,
+      "cost_usd": 0.031725,
+      "session_id": "score-a1f945865d144f60af92331f32fae091",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/07-returns-process-faq.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [
+        "check_return_eligibility",
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-30001",
+            "reason": "Customer is requesting an exception to the 30-day return window for a full refund."
+          },
+          "result": {
+            "order_id": "TF-30001",
+            "eligible": false,
+            "reason": "The 30-day window closed on 2026-10-01."
+          }
+        },
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-30001",
+            "summary": "Customer received order TF-30001 in September and is requesting a full refund outside the standard 30-day return window. They acknowledge it is past the window and are explicitly asking for a policy exception.",
+            "policy_snippets": "kb/01-return-policy.md, kb/04-escalation-guidelines.md",
+            "tool_results": "check_return_eligibility: eligible=false, reason=\"The 30-day window closed on 2026-10-01.\"",
+            "recommended_action": "Review the late return exception request for TF-30001. Customer is outside the 30-day window and is asking for a full refund as an exception. Assess whether an exception is warranted and decide on the refund. Do not pre-approve it."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-30001",
+            "escalation_id": "0a39bf5184b94ab4bac7d9a9f522b1cf"
+          }
+        }
+      ],
+      "text": "Your case has been escalated. Here's a summary of where things stand:\n\n- **Order TF-30001** is outside the standard 30-day return window (closed October 1, 2026), per **kb/01-return-policy.md**.\n- You've requested a **policy exception** for a full refund, which requires human review per **kb/04-escalation-guidelines.md**.\n- A specialist will review your case and **follow up within one business day**.\n\nI'm not able to promise a specific outcome, but your request is in the right hands. Is there anything else I can help you with in the meantime?"
+    },
+    {
+      "id": "angry-no-order-id",
+      "outcome": "escalate",
+      "boundary": "Strong frustration escalates even without an order number.",
+      "pass": false,
+      "failures": [
+        "Call escalate_to_human()",
+        "Did not say: The reply says a specialist will follow up within one business day."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "not1",
+          "claim": "The reply promises a specific outcome.",
+          "expect": false,
+          "holds": false,
+          "evidence": "I want to look into your order status and get this escalated to a specialist immediately."
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the package never arrived and the customer's emails went unanswered.",
+          "expect": true,
+          "holds": true,
+          "evidence": "My package never came and nobody answers my emails."
+        }
+      ],
+      "judge_input_tokens": 1086,
+      "judge_output_tokens": 148,
+      "judge_cost_usd": 0.001826,
+      "latency_ms": 3600,
+      "agent_ms": 2043,
+      "input_tokens": 2207,
+      "output_tokens": 103,
+      "cost_usd": 0.008166,
+      "session_id": "score-2fe456883fb8473187c372198525eb7e",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "text": "I completely understand your frustration, and I sincerely apologize for the experience you've had \u2014 no response to your emails on top of a missing package is absolutely not okay. I want to make sure this gets the attention it deserves right away.\n\nCould you please share your **order number** (e.g., TF-XXXXX) so I can pull up the details? I want to look into your order status and get this escalated to a specialist immediately."
+    }
+  ]
+}
