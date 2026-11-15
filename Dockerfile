@@ -9,7 +9,7 @@ FROM --platform=linux/arm64 python:3.12.12-slim
 RUN useradd -r -u 1001 appuser
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
-COPY main.py agent.py policies.py shop.py tools_client.py orders.json ./
+COPY app/ ./
 ENV PATH="/app/.venv/bin:$PATH" \
     DOCKER_CONTAINER=1 \
     PYTHONDONTWRITEBYTECODE=1 \

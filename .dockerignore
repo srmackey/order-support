@@ -6,6 +6,7 @@ build
 packaged.yaml
 sandbox
 kb
+docs
 *.md
 .grok
 .claude

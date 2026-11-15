@@ -28,8 +28,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 CHECKOUT = ROOT.parent
-if str(CHECKOUT) not in sys.path:
-    sys.path.insert(0, str(CHECKOUT))
+APP = CHECKOUT / "app"
+if str(APP) not in sys.path:
+    sys.path.insert(0, str(APP))
 
 CASES = ROOT / "cases.json"
 RUNS = ROOT / "runs"

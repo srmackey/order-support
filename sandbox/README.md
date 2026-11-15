@@ -2,7 +2,7 @@
 
 The runner is `score.py`. The frozen case set is `cases.json`. It is not a customer environment.
 
-The benchmark in `../AGENTS.md` is the contract for a score. This file says how that contract is marked. Policies are in `../kb/`.
+The benchmark in `../README.md` is the contract for a score. This file says how that contract is marked. Policies are in `../kb/`.
 
 ## The set
 
@@ -26,7 +26,7 @@ A case passes when every `must_state` is true and every `must_not` is false. `re
 
 Tool arguments are the `arguments` object. Extra arguments fail the case, except `escalate_to_human`, where `policy_snippets` and `tool_results` may be present and `tool_results` may be empty. On that case the summary and the recommended action must carry each `packet_facts` line, not a fixed sentence.
 
-Cost and latency are recorded per case on the run. They do not change the pass bit. A run row keeps the full tool calls, so `score.py --rescore <file> --label <name>` can judge stored replies again without a model call. The original file is never overwritten. The live-runtime score is `runs/2026-11-15-runtime.json`. Which run is the score, and what each one covers, is in `../AGENTS.md`.
+Cost and latency are recorded per case on the run. They do not change the pass bit. A run row keeps the full tool calls, so `score.py --rescore <file> --label <name>` can judge stored replies again without a model call. The original file is never overwritten. The live-runtime score is `runs/2026-11-15-runtime.json`. What each run covers is in `../README.md`.
 
 ## Tools
 
@@ -36,4 +36,4 @@ Cost and latency are recorded per case on the run. They do not change the pass b
 
 `escalate_to_human` takes `order_id`, `summary`, `policy_snippets`, `tool_results`, and `recommended_action`. The customer is told a person will follow up within one business day. Neither the reply nor the recommended action promises a specific outcome. Telling the specialist to process, approve, or issue the refund fails the case.
 
-Order ids in the set are not in the policies. The order table is `../orders.json`, and its clock is the `as_of` date in that file. The case file itself still holds no order records.
+Order ids in the set are not in the policies. The order table is `../app/orders.json`, and its clock is the `as_of` date in that file. The case file itself still holds no order records.

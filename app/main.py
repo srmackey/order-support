@@ -1,6 +1,6 @@
 """Local entrypoint. The same function is what a later AgentCore deploy calls.
 
-    python main.py
+    python app/main.py
     curl -X POST http://127.0.0.1:8080/invocations -H "Content-Type: application/json" -d "{\"prompt\": \"How much is standard shipping?\"}"
 """
 

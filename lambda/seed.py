@@ -1,4 +1,4 @@
-"""Copy orders.json into the trailforge-orders table. Run from the checkout."""
+"""Copy app/orders.json into the trailforge-orders table. Run from the checkout."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def item(value):
 
 
 def main() -> None:
-    data = json.loads((ROOT / "orders.json").read_text(encoding="utf-8"))
+    data = json.loads((ROOT / "app" / "orders.json").read_text(encoding="utf-8"))
     table = boto3.resource("dynamodb", region_name="us-east-1").Table(TABLE)
     table.put_item(Item={"order_id": "_meta", "as_of": data["as_of"]})
     for row in data["orders"]:

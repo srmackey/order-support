@@ -1,6 +1,8 @@
-# Agentic Customer Support System — Architecture (POC)
+# Architecture sketch
 
-**Goal**: Production-oriented proof of an LLM-in-the-loop customer support agent that can resolve common requests via retrieval + tools or escalate with a clear human-in-the-loop path.
+This is the design the project started from. What was built and measured is in the README. Where the two differ, the README is current. The benchmark, for example, was in scope from the start even though this sketch lists an evaluation harness as out of scope.
+
+**Goal**: A proof of concept for an LLM-in-the-loop customer support agent that can resolve common requests via retrieval + tools or escalate with a clear human-in-the-loop path.
 
 **Stack**: Strands Agents SDK + Amazon Bedrock AgentCore Runtime + Amazon Bedrock Managed Knowledge Base + Lambda tools + DynamoDB (sample orders) + S3 (KB documents).
 
@@ -106,7 +108,7 @@ No separate classification service is required; the agent performs intent unders
 
 ---
 
-## What Makes This Production-Oriented (for a POC)
+## Design choices
 - Agent owns the loop (not a fixed pipeline).
 - Explicit tool contracts and escalation criteria.
 - Grounded retrieval via Managed Knowledge Base.
@@ -119,16 +121,6 @@ No separate classification service is required; the agent performs intent unders
 
 ## Out of Scope for Initial Version
 - Multi-agent supervisor/specialist pattern
-- ICM filesystem orchestration
 - Full CRM or ticketing system integration
 - Authentication / multi-tenant identity (can be added later via AgentCore Identity)
 - Advanced evaluation harness
-
----
-
-## Resume / Consulting Framing
-“Designed and implemented an agentic customer-support system that uses retrieval and tool-calling to resolve order and policy requests, with explicit human-in-the-loop escalation when confidence or policy thresholds are crossed. Deployed on Amazon Bedrock AgentCore (Strands Agents) with Managed Knowledge Bases and full decision traces.”
-
----
-
-*Document reflects the architecture agreed for the dual-purpose (resume + SMB consulting) POC.*

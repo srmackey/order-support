@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-KB = ROOT / "kb"
+KB = ROOT.parent / "kb"
 TOKEN = re.compile(r"[a-z0-9]+")
 STOP = {
     "a",

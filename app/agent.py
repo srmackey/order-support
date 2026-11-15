@@ -1,4 +1,4 @@
-"""One Trailforge support turn. Sources are retrieved here. Tools are the three in AGENTS.md."""
+"""One Trailforge support turn. Sources are retrieved here. The three tools are described in the README."""
 
 from __future__ import annotations
 
