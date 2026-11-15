@@ -112,8 +112,8 @@ def promises_refund(reply: str) -> bool:
     )
     for pattern in patterns:
         for match in re.finditer(pattern, text):
-            prefix = text[max(0, match.start() - 16):match.start()]
-            if re.search(r"\b(not|n't)\s+$", prefix):
+            prefix = text[max(0, match.start() - 32):match.start()]
+            if re.search(r"\b(not|n't)\b(?:\s+\S+){0,2}\s*$", prefix):
                 continue
             return True
     return False
