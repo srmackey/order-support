@@ -1,7 +1,6 @@
 {
   "schema": 2,
-  "frozen": null,
-  "draft": "Not frozen. Freeze after review: set the date here and stop editing cases.",
+  "frozen": "2026-11-15",
   "policies": "kb/",
   "orders": "app/orders.json",
   "clock": "2026-11-14, the as_of date in app/orders.json",
