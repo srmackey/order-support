@@ -1,3 +1,4 @@
 strands-agents==1.65.0
 bedrock-agentcore==1.26.0
 awscrt==0.38.0
+aws-opentelemetry-distro==0.22.0

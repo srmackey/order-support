@@ -1,0 +1,14 @@
+.git
+.venv
+**/__pycache__
+**/*.pyc
+build
+packaged.yaml
+sandbox
+kb
+*.md
+.grok
+.claude
+.cursor
+infra
+lambda
