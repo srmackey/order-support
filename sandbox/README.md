@@ -34,6 +34,6 @@ Cost and latency are recorded per case on the run. They do not change the pass b
 
 `check_return_eligibility` takes `order_id`, and `reason` only when the customer stated one. The delivery date is looked up. The agent does not pass it. No case in this set calls this tool.
 
-`escalate_to_human` takes `order_id`, `summary`, `policy_snippets`, `tool_results`, and `recommended_action`. The customer is told a person will follow up within one business day. No specific outcome is promised.
+`escalate_to_human` takes `order_id`, `summary`, `policy_snippets`, `tool_results`, and `recommended_action`. The customer is told a person will follow up within one business day. Neither the reply nor the recommended action promises a specific outcome. Telling the specialist to process, approve, or issue the refund fails the case.
 
 Order ids in the set are not in the policies. The order table is `../orders.json`, and its clock is the `as_of` date in that file. The case file itself still holds no order records.

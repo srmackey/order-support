@@ -170,6 +170,41 @@ def test_judge():
         turn("We will refund you $220 and ship the correct jacket."),
         "escalate_to_human",
     )
+    expect_fail(
+        "refund-tf-20911",
+        turn(
+            "A specialist will follow up within one business day. I cannot promise the refund.",
+            calls=[{
+                "tool": "escalate_to_human",
+                "arguments": {
+                    "order_id": "TF-20911",
+                    "summary": "Customer wants $220 back because the color is wrong.",
+                    "policy_snippets": "kb/04-escalation-guidelines.md",
+                    "tool_results": "",
+                    "recommended_action": "Verify the claim, issue a prepaid return label, and process a full refund of $220.",
+                },
+                "result": {"queued": True},
+            }],
+        ),
+        "Promise that the refund will be approved",
+    )
+    expect_pass(
+        "refund-tf-20911",
+        turn(
+            "A specialist will follow up within one business day. I cannot promise the refund.",
+            calls=[{
+                "tool": "escalate_to_human",
+                "arguments": {
+                    "order_id": "TF-20911",
+                    "summary": "Customer wants $220 back because the color is wrong.",
+                    "policy_snippets": "kb/04-escalation-guidelines.md",
+                    "tool_results": "",
+                    "recommended_action": "Review the $220 wrong-color claim. Do not process the refund.",
+                },
+                "result": {"queued": True},
+            }],
+        ),
+    )
     expect_pass(
         "return-window",
         turn("You have 30 days of the delivery date for a change of mind. Damage on arrival is a different clock. Source: kb/01-return-policy.md"),

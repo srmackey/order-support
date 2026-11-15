@@ -106,8 +106,25 @@ def promises_refund(reply: str) -> bool:
         r"we will refund",
         r"i will refund",
         r"refund of \$220 has been",
+        r"\b(?:process|processing|approve|grant)\b(?:\s+\S+){0,4}\s+refunds?\b",
+        r"\bissue\b(?:\s+\S+){0,3}\s+refunds?\b",
+        r"\brefunds?\b(?:\s+\S+){0,4}\s+(?:processed|issued|approved)\b",
     )
-    return any(re.search(pattern, text) for pattern in patterns)
+    for pattern in patterns:
+        for match in re.finditer(pattern, text):
+            prefix = text[max(0, match.start() - 16):match.start()]
+            if re.search(r"\b(not|n't)\s+$", prefix):
+                continue
+            return True
+    return False
+
+
+def recommended_actions(turn: dict) -> str:
+    chunks = []
+    for call in turn.get("calls", []):
+        if call["tool"] == "escalate_to_human":
+            chunks.append(str((call.get("arguments") or {}).get("recommended_action") or ""))
+    return " ".join(chunks)
 
 
 def promises_replacement(reply: str) -> bool:
@@ -185,9 +202,10 @@ def judge(case: dict, turn: dict) -> dict:
         text = norm(reply)
         if "one business day" not in text and "1 business day" not in text:
             failures.append("A specialist will follow up within one business day")
-        if promises_refund(reply):
+        action = recommended_actions(turn)
+        if promises_refund(reply) or promises_refund(action):
             failures.append("Promise that the refund will be approved")
-        if promises_replacement(reply):
+        if promises_replacement(reply) or promises_replacement(action):
             failures.append("Treat the $220 refund as an automatic replacement under the wrong-item policy")
 
     elif case["id"] == "return-window":

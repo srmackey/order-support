@@ -76,7 +76,7 @@ def build_tools(calls: list[dict]):
             summary: What the customer asked for.
             policy_snippets: Policy paths already used.
             tool_results: Tool results already obtained, or an empty string.
-            recommended_action: What the person should do. No promised outcome.
+            recommended_action: What the person should do. Review the claim and leave the money undecided. Example: "Review the wrong-color claim and decide the refund. Do not approve it."
         """
 
         arguments = {
