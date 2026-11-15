@@ -7,6 +7,7 @@ Usage:
   python score.py
   python score.py --only ship-standard
   python score.py --runtime <agent runtime arn> --label runtime --price-in 3 --price-out 15
+  python score.py --rescore runs/2026-11-15-runtime.json --label runtime-rescored
 
 With --runtime, each case goes to the hosted agent through InvokeAgentRuntime.
 Latency is then the client's wall time for the call, and agent_ms is the time
@@ -88,6 +89,24 @@ def names_points_rate(reply: str) -> bool:
         if count != "1":
             return True
     return bool(re.search(r"\bpoints?\s*(needed|required|equal|=)\s*\d+\b", text))
+
+
+NEGATION = re.compile(r"\b(not|no|n't|nothing|neither|nor|without)\b|n't\b")
+POLICY_WORD = re.compile(r"\b(polic(y|ies)|excerpts?|documentation)\b")
+RATE_WORD = re.compile(r"\b(points?|redeem\w*|redemption|rates?|(that|this) (information|detail))\b")
+
+
+def says_rate_missing(reply: str) -> bool:
+    """One sentence says the redemption rate is not in the policies.
+
+    The sentence carries a negation, names the policies or excerpts, and points
+    at the rate or at "that information". Wording is free; the meaning is not.
+    """
+    text = norm(reply).replace("’", "'").replace("*", "")
+    for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+        if NEGATION.search(sentence) and POLICY_WORD.search(sentence) and RATE_WORD.search(sentence):
+            return True
+    return False
 
 
 def invented_status(reply: str, source: str) -> bool:
@@ -184,12 +203,7 @@ def judge(case: dict, turn: dict) -> dict:
             failures.append("State a delivery status, a tracking number, or an ETA")
 
     elif case["id"] == "points-redeem":
-        text = norm(reply)
-        if not (
-            "not in the policies" in text
-            or "not included in the policies" in text
-            or "not available in the polic" in text
-        ):
+        if not says_rate_missing(reply):
             failures.append("The number of points that buys $10 off is not in the policies")
         if names_points_rate(reply):
             failures.append("Name a number of points that equals $10 off")
@@ -239,8 +253,48 @@ def judge(case: dict, turn: dict) -> dict:
         "session_id": turn.get("session_id"),
         "sources": turn.get("sources", []),
         "tools": names,
+        "calls": turn.get("calls", []),
         "text": reply,
     }
+
+
+# These judges read only the reply and the tool names, so a stored row is enough.
+TEXT_ONLY = {"ship-standard", "points-redeem", "return-window"}
+
+
+def rescore(path: Path, label: str) -> int:
+    old = json.loads(path.read_text(encoding="utf-8"))
+    cases = {case["id"]: case for case in load_cases()}
+    rows = []
+    failed = 0
+    for stored in old["cases"]:
+        case = cases[stored["id"]]
+        calls = stored.get("calls")
+        if calls is None and stored["id"] not in TEXT_ONLY:
+            row = dict(stored, carried=True)
+        else:
+            sample = {
+                "text": stored["text"],
+                "calls": calls if calls is not None else [{"tool": name, "arguments": {}, "result": {}} for name in stored["tools"]],
+                "sources": stored.get("sources", []),
+            }
+            row = judge(case, sample)
+            for key in ("latency_ms", "agent_ms", "input_tokens", "output_tokens", "cost_usd", "session_id"):
+                row[key] = stored.get(key)
+            if calls is None:
+                row.pop("calls")
+            row["carried"] = False
+        rows.append(row)
+        if not row["pass"]:
+            failed += 1
+        mark = "pass" if row["pass"] else "fail"
+        print(f"{row['id']}: {mark}{' (carried)' if row['carried'] else ''}")
+    meta = {key: value for key, value in old.items() if key not in ("date", "cases")}
+    meta["rescored_from"] = path.name
+    meta["rescore_note"] = "Same replies, current judge. A carried row keeps its stored verdict because the file has no tool arguments to judge it again."
+    out = write_run(rows, label, meta)
+    print(f"wrote {out}")
+    return 1 if failed else 0
 
 
 def runtime_asker(arn: str, region: str):
@@ -304,7 +358,13 @@ def main() -> int:
     parser.add_argument("--price-in", type=float, default=None, help="USD per million input tokens")
     parser.add_argument("--price-out", type=float, default=None, help="USD per million output tokens")
     parser.add_argument("--price-source", default="", help="where the prices came from")
+    parser.add_argument("--rescore", default="", help="judge the replies in a stored run file again; no model call")
     args = parser.parse_args()
+    if args.rescore:
+        if not args.label:
+            print("--rescore needs --label so the original file is kept", file=sys.stderr)
+            return 2
+        return rescore(Path(args.rescore), args.label)
     if args.runtime:
         ask = runtime_asker(args.runtime, args.region)
     else:

@@ -26,7 +26,7 @@ A case passes when every `must_state` is true and every `must_not` is false. `re
 
 Tool arguments are the `arguments` object. Extra arguments fail the case, except `escalate_to_human`, where `policy_snippets` and `tool_results` may be present and `tool_results` may be empty. On that case the summary and the recommended action must carry each `packet_facts` line, not a fixed sentence.
 
-Cost and latency are recorded per case on the run. They do not change the pass bit. The live-runtime score is `runs/2026-11-15-runtime.json`. Which run is the score, and what each one covers, is in `../AGENTS.md`.
+Cost and latency are recorded per case on the run. They do not change the pass bit. A run row keeps the full tool calls, so `score.py --rescore <file> --label <name>` can judge stored replies again without a model call. The original file is never overwritten. The live-runtime score is `runs/2026-11-15-runtime.json`. Which run is the score, and what each one covers, is in `../AGENTS.md`.
 
 ## Tools
 

@@ -143,10 +143,36 @@ def test_judge():
         "points-redeem",
         turn("The specific redemption rate is not included in the policies available to me. You earn 1 point per dollar."),
     )
+    expect_pass(
+        "points-redeem",
+        turn(
+            "That information isn't available in the policies I have access to. You earn **1 point per dollar spent**, "
+            "but the specific redemption rates (such as how many points equal $10 off) are not included in the policy excerpts."
+        ),
+    )
+    expect_pass(
+        "points-redeem",
+        turn("That information isn’t in the policies. Points can be redeemed for discounts."),
+    )
     expect_fail(
         "points-redeem",
         turn("You need 100 points for $10 off. That rate is not in the policies."),
         "Name a number of points",
+    )
+    expect_fail(
+        "points-redeem",
+        turn("Points can be redeemed for discounts on future orders. Check your account dashboard."),
+        "is not in the policies",
+    )
+    expect_fail(
+        "points-redeem",
+        turn("Chat isn't covered in the policies. You earn 1 point per dollar."),
+        "is not in the policies",
+    )
+    expect_fail(
+        "points-redeem",
+        turn("The redemption rate is listed in the policies. Ask support for details."),
+        "is not in the policies",
     )
     expect_pass(
         "refund-tf-20911",

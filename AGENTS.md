@@ -36,7 +36,9 @@ The numbers come from the sandbox run. A claim that was not measured is not stat
 
 `sandbox/cases.json` is the frozen set, five cases, one decision each.
 
-The score against the live runtime is `sandbox/runs/2026-11-15-runtime.json`: four of five passed. `points-redeem` failed on the judge's wording check. Latency is the client's wall time per call. Cost is per case, for model tokens only, at the rates the file names.
+The score against the live runtime is `sandbox/runs/2026-11-15-runtime.json`: four of five passed. `points-redeem` failed on the judge's wording check: the reply refused correctly, and the judge only accepted fixed phrases. Latency is the client's wall time per call. Cost is per case, for model tokens only, at the rates the file names.
+
+The judge now reads the refusal by meaning, with tests that still fail a reply naming a rate or not saying the rate is missing. The same replies re-scored under that judge are `sandbox/runs/2026-11-15-runtime-rescored.json`: five of five. Two tool cases there carry their original verdicts, because that run did not store tool arguments. The 4/5 file stays as recorded. A fresh run is the next full score.
 
 The first score ran the agent in this checkout: `sandbox/runs/2026-11-14.json`, all five passed, cost blank. Two partial runs followed it. The citation cases passed against the managed knowledge base (`sandbox/runs/2026-11-14-kb.json`). The order lookup and the required escalation passed through the order tools (`sandbox/runs/2026-11-14-tools.json`).
 
