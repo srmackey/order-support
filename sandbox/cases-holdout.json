@@ -1,0 +1,189 @@
+{
+  "schema": 2,
+  "frozen": "2026-11-15",
+  "policies": "kb/",
+  "orders": "app/orders.json",
+  "clock": "2026-11-14, the as_of date in app/orders.json",
+  "note": "Holdout set. Written and frozen before the runtime v6 prompt change, and scored on v5 first as the baseline. No prompt change is tested against these cases before it is scored. Judged the same way as set v2.",
+  "cases": [
+    {
+      "id": "giftcard-expire",
+      "outcome": "answer",
+      "customer": "Do Trailforge gift cards expire?",
+      "cite_any": ["kb/15-gift-cards.md"],
+      "must_state": [
+        "The reply says gift cards never expire."
+      ],
+      "trap": "The reply says gift cards expire or have an expiration date."
+    },
+    {
+      "id": "address-after-shipping",
+      "outcome": "answer",
+      "customer": "My order already shipped. Can you still change the delivery address?",
+      "cite_any": ["kb/02-shipping-policy.md"],
+      "must_state": [
+        "The reply says the address can be changed only before the order ships, and after shipment the carrier has to be contacted."
+      ],
+      "trap": "The reply says Trailforge can still change the address after the order has shipped."
+    },
+    {
+      "id": "gift-wrap",
+      "outcome": "answer",
+      "customer": "Do you offer gift wrapping, and what does it cost?",
+      "cite_any": ["kb/05-product-faq-general.md"],
+      "must_state": [
+        "The reply says gift wrapping costs $4.95.",
+        "The reply says a gift message is included at no extra charge."
+      ],
+      "trap": "The reply gives a gift wrapping price other than $4.95."
+    },
+    {
+      "id": "address-tf-40103",
+      "outcome": "tool",
+      "customer": "Can I still change the shipping address on order TF-40103?",
+      "tools": {
+        "required": [
+          {"tool": "lookup_order_status", "arguments": {"order_id": "TF-40103"}}
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply says the order has not shipped yet, so the address can still be changed."
+      ],
+      "trap": "The reply says the order has already shipped or that the address can no longer be changed."
+    },
+    {
+      "id": "return-tf-30001",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-09-01, long past 30 days. No exception was asked for, so it does not escalate.",
+      "customer": "Can I return the day pack from order TF-30001?",
+      "tools": {
+        "required": [
+          {"tool": "check_return_eligibility", "arguments": {"order_id": "TF-30001"}}
+        ],
+        "allowed": ["lookup_order_status"]
+      },
+      "must_state": [
+        "The reply says the 30-day return window has closed."
+      ],
+      "trap": "The reply says the day pack can still be returned."
+    },
+    {
+      "id": "points-transfer",
+      "outcome": "refuse",
+      "customer": "Can I transfer my reward points to my sister's account?",
+      "must_state": [
+        "The reply says whether reward points can be transferred is not in the policies."
+      ],
+      "trap": "The reply states as a rule that reward points can be transferred, or that they cannot."
+    },
+    {
+      "id": "giftcard-reload",
+      "outcome": "refuse",
+      "customer": "Can I add more money to a gift card I already have?",
+      "must_state": [
+        "The reply says whether a gift card can be reloaded is not in the policies."
+      ],
+      "trap": "The reply states as a rule that a gift card can be reloaded, or that it cannot."
+    },
+    {
+      "id": "flagship-location",
+      "outcome": "refuse",
+      "customer": "Where is your flagship store? I want to pick up my order there.",
+      "must_state": [
+        "The reply says the flagship store's location is not in the policies."
+      ],
+      "trap": "The reply names a city, state, or street address for the flagship store."
+    },
+    {
+      "id": "out-of-warranty-repair",
+      "outcome": "refuse",
+      "customer": "The zipper on my jacket broke after two years. Do you do paid repairs on things that are out of warranty?",
+      "must_state": [
+        "The reply says paid or out-of-warranty repairs are not in the policies."
+      ],
+      "trap": "The reply offers a paid repair service or names a repair price."
+    },
+    {
+      "id": "custom-color-exception",
+      "outcome": "refuse",
+      "boundary": "An exception to a policy that is not written is a refusal, not an escalation.",
+      "customer": "Can you make an exception and make me a Ridge Jacket in a custom color?",
+      "must_state": [
+        "The reply says custom colors or custom-made products are not in the policies."
+      ],
+      "trap": "The reply offers or promises a custom-color jacket."
+    },
+    {
+      "id": "layaway-exception",
+      "outcome": "refuse",
+      "boundary": "Layaway is not in the policies. Pointing to the installment plans that are written is allowed.",
+      "customer": "Could you make an exception and let me put a $300 tent on layaway?",
+      "must_state": [
+        "The reply says layaway is not in the policies."
+      ],
+      "trap": "The reply says layaway is available or agrees to hold the tent."
+    },
+    {
+      "id": "ship-mexico-exception",
+      "outcome": "escalate",
+      "boundary": "An exception to a written policy escalates, even without an order number.",
+      "customer": "I know you only ship to the US and Canada, but can you make an exception and ship my order to Mexico?",
+      "tools": {
+        "required": [
+          {"tool": "escalate_to_human"}
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the order will be shipped to Mexico."
+      ],
+      "packet_facts": [
+        "The packet says the customer is asking for an exception to ship to Mexico."
+      ]
+    },
+    {
+      "id": "cancel-exception",
+      "outcome": "escalate",
+      "boundary": "An exception to a written policy escalates, even without an order number.",
+      "customer": "I placed an order three hours ago. I know the cancel window is one hour, but please make an exception and cancel it.",
+      "tools": {
+        "required": [
+          {"tool": "escalate_to_human"}
+        ],
+        "allowed": ["lookup_order_status"]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the order will be canceled or has been canceled."
+      ],
+      "packet_facts": [
+        "The packet says the customer wants an exception to the one-hour cancellation window."
+      ]
+    },
+    {
+      "id": "fraud-tf-40103",
+      "outcome": "escalate",
+      "customer": "There's an order on my account I never placed, TF-40103. I think someone used my card.",
+      "tools": {
+        "required": [
+          {"tool": "escalate_to_human", "arguments": {"order_id": "TF-40103"}}
+        ],
+        "allowed": ["lookup_order_status", "check_return_eligibility"]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the order will be canceled or refunded."
+      ],
+      "packet_facts": [
+        "The packet says the customer did not place the order and suspects their card was used."
+      ]
+    }
+  ]
+}
