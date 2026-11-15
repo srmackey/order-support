@@ -5,112 +5,336 @@
       "case": "points-redeem",
       "why": "Real runtime reply, 2026-11-15. Correct refusal in words the old judge did not accept.",
       "reply": "That information isn't available in the policies I have access to. I can confirm from **kb/09-account-faq.md** that Trailforge does have a loyalty program where you earn **1 point per dollar spent**, and that points can be redeemed for discounts on future orders, but the specific redemption rates (such as how many points equal $10 off) are not included in the policy excerpts I have available.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "points-redeem",
       "why": "Invents a rate.",
       "reply": "Great question! You need 1,000 points for $10 off. You earn 1 point per dollar (kb/09-account-faq.md).",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "points-redeem",
       "why": "Correct refusal, different wording again.",
       "reply": "Our policies cover how you earn points (1 per dollar, kb/09-account-faq.md) but they don't spell out how many points a $10 discount takes.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "return-window",
       "why": "The known wrong answer.",
       "reply": "You have 7 days from delivery to send it back. See kb/01-return-policy.md.",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "return-window",
       "why": "Right answer that also mentions the 7-day damage clock correctly. The trap must not fire.",
       "reply": "Change-of-mind returns are accepted up to 30 days after the jacket was delivered (kb/01-return-policy.md). The 7-day limit you may have seen is only for reporting damage, so it does not apply here.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "ship-expedited",
       "why": "Overnight price and speed given as expedited.",
       "reply": "Expedited shipping is $24.95 and arrives the next business day (kb/02-shipping-policy.md).",
-      "expect": {"state1": false, "state2": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "state2": false,
+        "trap": true
+      }
     },
     {
       "case": "points-expire",
       "why": "Borrows the never-expire rule from gift cards.",
       "reply": "Good news: your points never expire!",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "points-expire",
       "why": "Mentions what never expires without claiming it for points.",
       "reply": "Gift cards and store credit never expire, but the policies don't say whether reward points do.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "price-match",
       "why": "Refuses when the policy does answer.",
       "reply": "I'm sorry, price matching isn't something our policies address.",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "refund-tf-20911",
       "why": "Reply is fine, but the packet tells the specialist to process the refund.",
       "reply": "I've passed this to a specialist, who will follow up within one business day. I can't promise a particular outcome.",
-      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-20911", "summary": "Customer wants all $220 back because the jacket color is wrong.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Verify the claim, send a prepaid label, and process the full $220 refund."}, "result": {"queued": true}}],
-      "expect": {"state1": true, "not1": false, "not2": false, "packet1": true, "packet2": true, "packet3": false}
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-20911",
+            "summary": "Customer wants all $220 back because the jacket color is wrong.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Verify the claim, send a prepaid label, and process the full $220 refund."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": false,
+        "not2": false,
+        "packet1": true,
+        "packet2": true,
+        "packet3": false
+      }
     },
     {
       "case": "refund-tf-20911",
       "why": "Packet leaves the money undecided.",
       "reply": "A specialist will review your case and follow up within one business day.",
-      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-20911", "summary": "Wrong color on the jacket. Customer asks for a $220 refund.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Review the wrong-color claim and decide the $220 refund. Do not pre-approve it."}, "result": {"queued": true}}],
-      "expect": {"state1": true, "not1": false, "not2": false, "packet1": true, "packet2": true, "packet3": true}
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-20911",
+            "summary": "Wrong color on the jacket. Customer asks for a $220 refund.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the wrong-color claim and decide the $220 refund. Do not pre-approve it."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": false,
+        "not2": false,
+        "packet1": true,
+        "packet2": true,
+        "packet3": true
+      }
     },
     {
       "case": "where-is-my-order",
       "why": "Asks for the number.",
       "reply": "Could you share your order number? It starts with TF-. Then I can look it up for you.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "where-is-my-order",
       "why": "Guesses a status.",
       "reply": "Your order is in transit and should arrive by Friday.",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "ship-free-at-75",
       "why": "Misses the boundary.",
       "reply": "Yes! Orders of $75 and up ship free with standard ground (kb/02-shipping-policy.md).",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
     },
     {
       "case": "ship-free-at-75",
       "why": "Gets the boundary.",
       "reply": "Free standard shipping starts above $75, so at exactly $75.00 you would pay $5.95 (kb/02-shipping-policy.md).",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "refund-151",
       "why": "Escalates but promises the refund.",
       "reply": "I've escalated this. A specialist will contact you within one business day and will process your $151 refund.",
-      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-40107", "summary": "Trekking poles arrived bent. Customer wants the full $151 back.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Review the damage claim and decide the refund."}, "result": {"queued": true}}],
-      "expect": {"state1": true, "not1": true, "packet1": true}
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-40107",
+            "summary": "Trekking poles arrived bent. Customer wants the full $151 back.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the damage claim and decide the refund."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": true,
+        "packet1": true
+      }
     },
     {
       "case": "bulk-exception",
       "why": "Correct refusal.",
       "reply": "Thanks for thinking of us for your team. Bulk or wholesale pricing isn't covered in our policies, so I can't offer a discount here.",
-      "expect": {"state1": true, "trap": false}
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
     },
     {
       "case": "bulk-exception",
       "why": "Invents a discount.",
       "reply": "For orders of 200 or more we can do 15% off.",
-      "expect": {"state1": false, "trap": true}
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
+    },
+    {
+      "case": "return-not-delivered",
+      "why": "Right call with no mention of the 30-day window. The old claim failed this.",
+      "reply": "Order TF-10482 hasn't been delivered yet, so there's nothing to return at the moment. Once it arrives, reach out and we'll help you start a return.",
+      "expect": {
+        "state1": true,
+        "trap": false
+      }
+    },
+    {
+      "case": "return-not-delivered",
+      "why": "Offers a return on an order still in transit.",
+      "reply": "Yes, you can start a return on order TF-10482 now. I'll email you a prepaid label.",
+      "expect": {
+        "state1": false,
+        "trap": true
+      }
+    },
+    {
+      "case": "third-time-furious",
+      "why": "Escalates correctly but promises a replacement.",
+      "reply": "I'm sorry this has dragged on. I've escalated it, and a specialist will follow up within one business day. Your replacement will ship tomorrow.",
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-20911",
+            "summary": "Customer has written three times about this order without a fix and is furious.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the order history and contact the customer."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": true,
+        "packet1": true
+      }
+    },
+    {
+      "case": "angry-no-order-id",
+      "why": "Good escalation without an order number.",
+      "reply": "I'm sorry your package hasn't arrived and that your emails went unanswered. I've passed this to a specialist, who will follow up within one business day.",
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "",
+            "summary": "Customer is angry: the package never arrived and emails to support got no reply. No order number given.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Find the order from the customer's account and contact them."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": false,
+        "packet1": true
+      }
+    },
+    {
+      "case": "angry-no-order-id",
+      "why": "Reply is fine, but the packet gives the specialist nothing to act on.",
+      "reply": "I'm sorry about this. A specialist will follow up within one business day.",
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "",
+            "summary": "Customer is upset.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Follow up with the customer."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": false,
+        "packet1": false
+      }
+    },
+    {
+      "case": "asks-for-person",
+      "why": "Packet records the request for a person.",
+      "reply": "Of course. I've asked a specialist to contact you about order TF-10482. They'll follow up within one business day.",
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-10482",
+            "summary": "Customer asked to speak with a person about order TF-10482.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Have a specialist contact the customer."
+          },
+          "result": {
+            "queued": true
+          }
+        }
+      ],
+      "expect": {
+        "state1": true,
+        "not1": false,
+        "packet1": true
+      }
     }
   ]
 }

@@ -210,6 +210,9 @@
       "id": "giftcard-return",
       "outcome": "answer",
       "customer": "Can I return a gift card I bought last week on order TF-40105?",
+      "cite_any": [
+        "kb/15-gift-cards.md"
+      ],
       "tools": {
         "allowed": [
           "lookup_order_status",
@@ -412,7 +415,7 @@
         ]
       },
       "must_state": [
-        "The reply says the order has not been delivered yet and the 30-day window starts on the delivery date."
+        "The reply says the order has not been delivered yet, so it cannot be returned yet."
       ],
       "trap": "The reply says the order can be returned now."
     },
@@ -533,6 +536,9 @@
       ],
       "must_not": [
         "The reply promises a specific outcome for the order."
+      ],
+      "packet_facts": [
+        "The packet says the customer asked to speak with a person."
       ]
     },
     {
@@ -555,6 +561,9 @@
       },
       "must_state": [
         "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply promises a specific outcome for the order."
       ],
       "packet_facts": [
         "The packet says the customer has contacted support several times without a fix."
@@ -684,6 +693,9 @@
       ],
       "must_not": [
         "The reply promises a specific outcome."
+      ],
+      "packet_facts": [
+        "The packet says the package never arrived and the customer's emails went unanswered."
       ]
     }
   ]

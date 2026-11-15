@@ -39,7 +39,7 @@ A v2 case declares what is right, and one judge marks every case (`judge.py`):
 
 The run file records the judge model and prompt version, because changing either can move scores.
 
-`calibrate.py` checks the judge against `calibration.json`, replies a person labeled, good and bad, including the runtime refusal the phrase-matching judge failed. On 2026-11-15 it agreed on 46 of 46 claims, three runs in a row, after one claim was reworded: "will process your refund" was not being read as a promise. Run it again after changing the judge prompt, the judge model, or a claim's wording.
+`calibrate.py` checks the judge against `calibration.json`, replies a person labeled, good and bad, including the runtime refusal the phrase-matching judge failed. On 2026-11-15 it agreed on 62 of 62 claims, three runs in a row. One claim was reworded along the way: "will process your refund" was not being read as a promise. Run it again after changing the judge prompt, the judge model, or a claim's wording.
 
 The judge tests run without AWS: `test_score.py` covers the code half with a stand-in for the model.
 

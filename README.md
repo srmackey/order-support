@@ -62,7 +62,7 @@ Earlier runs scored the agent in this checkout before it was deployed (`sandbox/
 
 ### A larger set, in draft
 
-`sandbox/cases-v2.json` grows the set to 39 cases, with several per outcome and 11 on boundaries. It is not frozen or scored yet. Its judge splits the work: code checks tools, arguments, citations, and order facts, and Claude Haiku 4.5 checks claims about what the reply says, quoting its evidence. Against 46 labeled claims, the judge agreed on all 46 (`sandbox/runs/2026-11-15-calibration.json`). How the set is marked is in `sandbox/README.md`.
+`sandbox/cases-v2.json` grows the set to 39 cases, with several per outcome and 11 on boundaries. It is not frozen or scored yet. Its judge splits the work: code checks tools, arguments, citations, and order facts, and Claude Haiku 4.5 checks claims about what the reply says, quoting its evidence. Against 62 labeled claims, the judge agreed on all 62 (`sandbox/runs/2026-11-15-calibration.json`). How the set is marked is in `sandbox/README.md`.
 
 ## Run it
 

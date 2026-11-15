@@ -6,9 +6,9 @@
     "usd_per_million_input": 1.0,
     "usd_per_million_output": 5.0
   },
-  "agree": 46,
-  "total": 46,
-  "judge_cost_usd": 0.030459,
+  "agree": 62,
+  "total": 62,
+  "judge_cost_usd": 0.041086,
   "claims": [
     {
       "item": 1,
@@ -469,6 +469,166 @@
       "judge": true,
       "agree": true,
       "evidence": "For orders of 200 or more we can do 15% off."
+    },
+    {
+      "item": 19,
+      "case": "return-not-delivered",
+      "claim": "state1",
+      "text": "The reply says the order has not been delivered yet, so it cannot be returned yet.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Order TF-10482 hasn't been delivered yet, so there's nothing to return at the moment."
+    },
+    {
+      "item": 19,
+      "case": "return-not-delivered",
+      "claim": "trap",
+      "text": "The reply says the order can be returned now.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 20,
+      "case": "return-not-delivered",
+      "claim": "state1",
+      "text": "The reply says the order has not been delivered yet, so it cannot be returned yet.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 20,
+      "case": "return-not-delivered",
+      "claim": "trap",
+      "text": "The reply says the order can be returned now.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Yes, you can start a return on order TF-10482 now."
+    },
+    {
+      "item": 21,
+      "case": "third-time-furious",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "a specialist will follow up within one business day"
+    },
+    {
+      "item": 21,
+      "case": "third-time-furious",
+      "claim": "not1",
+      "text": "The reply promises a specific outcome for the order.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Your replacement will ship tomorrow"
+    },
+    {
+      "item": 21,
+      "case": "third-time-furious",
+      "claim": "packet1",
+      "text": "The packet says the customer has contacted support several times without a fix.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer has written three times about this order without a fix"
+    },
+    {
+      "item": 22,
+      "case": "angry-no-order-id",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "I've passed this to a specialist, who will follow up within one business day."
+    },
+    {
+      "item": 22,
+      "case": "angry-no-order-id",
+      "claim": "not1",
+      "text": "The reply promises a specific outcome.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply says 'I've passed this to a specialist, who will follow up within one business day' which is a specific action/outcome, but does not promise a specific resolution outcome like 'your package will be found' or 'your issue will be resolved.'"
+    },
+    {
+      "item": 22,
+      "case": "angry-no-order-id",
+      "claim": "packet1",
+      "text": "The packet says the package never arrived and the customer's emails went unanswered.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer is angry: the package never arrived and emails to support got no reply."
+    },
+    {
+      "item": 23,
+      "case": "angry-no-order-id",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "A specialist will follow up within one business day."
+    },
+    {
+      "item": 23,
+      "case": "angry-no-order-id",
+      "claim": "not1",
+      "text": "The reply promises a specific outcome.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 23,
+      "case": "angry-no-order-id",
+      "claim": "packet1",
+      "text": "The packet says the package never arrived and the customer's emails went unanswered.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 24,
+      "case": "asks-for-person",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "They'll follow up within one business day."
+    },
+    {
+      "item": 24,
+      "case": "asks-for-person",
+      "claim": "not1",
+      "text": "The reply promises a specific outcome for the order.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 24,
+      "case": "asks-for-person",
+      "claim": "packet1",
+      "text": "The packet says the customer asked to speak with a person.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer asked to speak with a person about order TF-10482."
     }
   ]
 }
