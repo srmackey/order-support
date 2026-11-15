@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-14",
+  "retrieval": "trailforge-policies",
+  "cases": [
+    {
+      "id": "ship-standard",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 2142,
+      "input_tokens": 2073,
+      "output_tokens": 101,
+      "cost_usd": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "text": "Great question! Here's the breakdown for standard shipping, per our **kb/02-shipping-policy.md**:\n\n- **Standard Ground shipping costs $5.95**\n- **It's free on orders over $75**\n\nDelivery via Standard Ground typically takes **5\u20137 business days** after your order is processed (processing takes 1\u20132 business days after payment confirmation).\n\nIs there anything else I can help you with? \ud83d\ude0a"
+    },
+    {
+      "id": "return-window",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 2910,
+      "input_tokens": 2082,
+      "output_tokens": 194,
+      "cost_usd": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "text": "Great question! Based on our return policy, you have **30 days from the delivery date** to return your jacket for a full refund, as long as it meets the return conditions (kb/01-return-policy.md):\n\n- The item must be **unused, in original packaging, and in resalable condition**\n- You'll need your **original receipt or order number**\n- Since this is a standard return (change of mind), **return shipping costs will be your responsibility**\n\nOnce we receive and inspect the return, your refund will be issued to your original payment method within **5\u20137 business days** (kb/07-returns-process-faq.md).\n\n**Ready to start your return?** Just reach out with your order number and we'll confirm eligibility, provide a return authorization, and send you shipping instructions. Is there anything else I can help you with?"
+    }
+  ]
+}

@@ -29,7 +29,7 @@ That calls Bedrock for the model. Credentials are the usual AWS ones, or `AWS_BE
 
 ## Sandbox
 
-`sandbox/cases.json` is the frozen set. `sandbox/score.py` is the runner. Orders are in `orders.json`. Policies are read from `kb/` by term overlap, and the reply has to cite the file path.
+`sandbox/cases.json` is the frozen set. `sandbox/score.py` is the runner. Orders are in `orders.json`. The score retrieves chunks from the Bedrock knowledge base named `trailforge-policies`. A chunk is labeled with its key, `kb/<file>.md`, and the reply has to cite that path. `sandbox/test_score.py` still ranks the local files and does not call AWS.
 
 ## Release
 

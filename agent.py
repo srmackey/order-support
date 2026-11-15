@@ -121,7 +121,7 @@ def result_usage(result) -> dict:
 
 
 def ask(customer: str) -> dict:
-    sources = policies.retrieve(customer)
+    sources = policies.retrieve_index(customer)
     calls: list[dict] = []
     agent = Agent(system_prompt=SYSTEM, tools=build_tools(calls))
     started = time.perf_counter()

@@ -54,6 +54,26 @@ def test_shop():
         raise SystemExit(f"final sale: {final}")
 
 
+def test_source_path():
+    hit = {"location": {"s3Location": {"uri": "s3://example/kb/02-shipping-policy.md"}}}
+    if policies.source_path(hit) != "kb/02-shipping-policy.md":
+        raise SystemExit(f"source path: {policies.source_path(hit)}")
+    https = {
+        "location": {"s3Location": {"uri": "https://example.s3.amazonaws.com/kb/02-shipping-policy.md"}},
+        "documentId": "s3://example/kb/02-shipping-policy.md",
+    }
+    if policies.source_path(https) != "kb/02-shipping-policy.md":
+        raise SystemExit(f"https path: {policies.source_path(https)}")
+    titled = {"metadata": {"_source_uri": "s3://example/kb/09-account-faq.md"}}
+    if policies.source_path(titled) != "kb/09-account-faq.md":
+        raise SystemExit(f"source uri: {policies.source_path(titled)}")
+    labeled = {"metadata": {"x-amz-bedrock-kb-source-uri": "s3://example/kb/01-return-policy.md"}}
+    if policies.source_path(labeled) != "kb/01-return-policy.md":
+        raise SystemExit(f"metadata path: {policies.source_path(labeled)}")
+    if policies.source_path({"location": {}}) is not None:
+        raise SystemExit("empty location should not invent a path")
+
+
 def test_retrieve():
     ship = policies.retrieve("How much is standard shipping, and when is it free?")
     if not ship or ship[0]["path"] != "kb/02-shipping-policy.md":
@@ -147,6 +167,7 @@ def test_judge():
 
 if __name__ == "__main__":
     test_shop()
+    test_source_path()
     test_retrieve()
     test_judge()
     print("ok")
