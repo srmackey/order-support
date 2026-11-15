@@ -30,17 +30,25 @@ On a frozen sandbox set, each case is right or wrong:
 
 Cost and latency are recorded per case.
 
-The numbers come from the sandbox run. No run has been scored. A claim that was not measured is not stated.
+The numbers come from the sandbox run. A claim that was not measured is not stated.
+
+## This set
+
+`sandbox/cases.json` is the frozen set, five cases, one decision each.
+
+The score against the live runtime is `sandbox/runs/2026-11-15-runtime.json`: four of five passed. `points-redeem` failed on the judge's wording check. Latency is the client's wall time per call. Cost is per case, for model tokens only, at the rates the file names.
+
+The first score ran the agent in this checkout: `sandbox/runs/2026-11-14.json`, all five passed, cost blank. Two partial runs followed it. The citation cases passed against the managed knowledge base (`sandbox/runs/2026-11-14-kb.json`). The order lookup and the required escalation passed through the order tools (`sandbox/runs/2026-11-14-tools.json`).
 
 ## Shape
 
-- Checkout: this folder. A git repo starts when code lands. A remote is a later, intentional step.
-- Sandbox: `sandbox/`. No runner is chosen. The benchmark is the contract for a score. The runner can change, and more than one may be used.
+- Checkout: this folder. The git remote is `https://github.com/tech-forge-labs/order-support`.
+- Sandbox: `sandbox/`. The runner is `sandbox/score.py`. The benchmark is the contract for a score. The runner can change, and more than one may be used.
 - Release: not cut. The project is release-capable when install and config can put it on another machine.
 
 ## Architecture note
 
-`20262224-agentic-customer-support-architecture.md` is the starting sketch. Where it disagrees with this file, this file wins. The sketch marks an evaluation harness out of scope. The benchmark above is in scope, and it comes before a cloud runtime.
+`20262224-agentic-customer-support-architecture.md` is the starting sketch. Where it disagrees with this file, this file wins. The sketch marks an evaluation harness out of scope. The benchmark above is in scope. It was scored before the cloud runtime. The runtime hosts the same agent.
 
 ## Insitu
 

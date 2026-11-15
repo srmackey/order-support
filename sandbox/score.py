@@ -6,6 +6,12 @@ absent. Cost is not priced here. The run records tokens and latency.
 Usage:
   python score.py
   python score.py --only ship-standard
+  python score.py --runtime <agent runtime arn> --label runtime --price-in 3 --price-out 15
+
+With --runtime, each case goes to the hosted agent through InvokeAgentRuntime.
+Latency is then the client's wall time for the call, and agent_ms is the time
+the agent reported inside the runtime. --price-in and --price-out are USD per
+million model tokens. Cost covers model tokens only.
 """
 
 from __future__ import annotations
@@ -14,6 +20,8 @@ import argparse
 import json
 import re
 import sys
+import time
+import uuid
 from datetime import date
 from pathlib import Path
 
@@ -224,27 +232,83 @@ def judge(case: dict, turn: dict) -> dict:
         "pass": not failures,
         "failures": failures,
         "latency_ms": turn.get("latency_ms"),
+        "agent_ms": turn.get("agent_ms"),
         "input_tokens": turn.get("input_tokens"),
         "output_tokens": turn.get("output_tokens"),
         "cost_usd": None,
+        "session_id": turn.get("session_id"),
         "sources": turn.get("sources", []),
         "tools": names,
         "text": reply,
     }
 
 
-def write_run(rows: list[dict]) -> Path:
+def runtime_asker(arn: str, region: str):
+    import boto3
+
+    client = boto3.client("bedrock-agentcore", region_name=region)
+
+    def ask(customer: str) -> dict:
+        session_id = f"score-{uuid.uuid4().hex}"
+        started = time.perf_counter()
+        response = client.invoke_agent_runtime(
+            agentRuntimeArn=arn,
+            qualifier="DEFAULT",
+            runtimeSessionId=session_id,
+            contentType="application/json",
+            accept="application/json",
+            payload=json.dumps({"prompt": customer}).encode("utf-8"),
+        )
+        body = json.loads(response["response"].read())
+        latency_ms = int((time.perf_counter() - started) * 1000)
+        return {
+            "text": body.get("result", ""),
+            "calls": body.get("tools", []),
+            "sources": body.get("sources", []),
+            "latency_ms": latency_ms,
+            "agent_ms": body.get("agent_ms"),
+            "input_tokens": body.get("input_tokens"),
+            "output_tokens": body.get("output_tokens"),
+            "session_id": session_id,
+        }
+
+    return ask
+
+
+def price(row: dict, price_in: float | None, price_out: float | None) -> None:
+    if price_in is None or price_out is None:
+        return
+    if row["input_tokens"] is None or row["output_tokens"] is None:
+        return
+    row["cost_usd"] = round((row["input_tokens"] * price_in + row["output_tokens"] * price_out) / 1_000_000, 6)
+
+
+def write_run(rows: list[dict], label: str = "", meta: dict | None = None) -> Path:
     RUNS.mkdir(exist_ok=True)
-    path = RUNS / f"{date.today().isoformat()}.json"
-    path.write_text(json.dumps({"date": date.today().isoformat(), "cases": rows}, indent=2) + "\n", encoding="utf-8")
+    stem = date.today().isoformat() + (f"-{label}" if label else "")
+    path = RUNS / f"{stem}.json"
+    if path.exists():
+        print(f"{path} exists. Pass a different --label.", file=sys.stderr)
+        raise SystemExit(2)
+    record = {"date": date.today().isoformat(), **(meta or {}), "cases": rows}
+    path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     return path
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", default="")
+    parser.add_argument("--runtime", default="", help="agent runtime ARN; default runs the agent in this process")
+    parser.add_argument("--region", default="us-east-1")
+    parser.add_argument("--label", default="", help="suffix for the run file name")
+    parser.add_argument("--price-in", type=float, default=None, help="USD per million input tokens")
+    parser.add_argument("--price-out", type=float, default=None, help="USD per million output tokens")
+    parser.add_argument("--price-source", default="", help="where the prices came from")
     args = parser.parse_args()
-    from agent import ask
+    if args.runtime:
+        ask = runtime_asker(args.runtime, args.region)
+    else:
+        from agent import ask
 
     cases = load_cases()
     if args.only:
@@ -257,6 +321,7 @@ def main() -> int:
     for case in cases:
         turn = ask(case["customer"])
         row = judge(case, turn)
+        price(row, args.price_in, args.price_out)
         rows.append(row)
         mark = "pass" if row["pass"] else "fail"
         if not row["pass"]:
@@ -264,7 +329,17 @@ def main() -> int:
         print(f"{row['id']}: {mark}")
         if row["failures"]:
             print("  " + "; ".join(row["failures"]))
-    path = write_run(rows)
+    # The run file is public. Name the runtime, not its ARN, which carries the account id.
+    target = f"AgentCore runtime {args.runtime.rsplit('/', 1)[-1]}, DEFAULT endpoint, {args.region}" if args.runtime else "local process"
+    meta = {"target": target}
+    if args.price_in is not None and args.price_out is not None:
+        meta["cost_basis"] = {
+            "covers": "model tokens only",
+            "usd_per_million_input": args.price_in,
+            "usd_per_million_output": args.price_out,
+            "source": args.price_source,
+        }
+    path = write_run(rows, args.label, meta)
     print(f"wrote {path}")
     return 1 if failed else 0
 

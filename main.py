@@ -17,7 +17,14 @@ def invoke(payload):
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("prompt must be a non-empty string")
     turn = ask(prompt)
-    return {"result": turn["text"], "tools": turn["calls"], "sources": turn["sources"]}
+    return {
+        "result": turn["text"],
+        "tools": turn["calls"],
+        "sources": turn["sources"],
+        "agent_ms": turn["latency_ms"],
+        "input_tokens": turn["input_tokens"],
+        "output_tokens": turn["output_tokens"],
+    }
 
 
 if __name__ == "__main__":

@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-15",
+  "target": "AgentCore runtime trailforge_support-JK1Y16D77l, version 4, DEFAULT endpoint, us-east-1",
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, AmazonBedrockFoundationModels, Claude Sonnet 4.6 global, us-east-1, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "ship-standard",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 12621,
+      "agent_ms": 1886,
+      "input_tokens": 2102,
+      "output_tokens": 108,
+      "cost_usd": 0.007926,
+      "session_id": "score-55874dbf8de14839983fa0b3f4c1e37e",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md"
+      ],
+      "tools": [],
+      "text": "Great question! Here's what you need to know about our standard shipping rates:\n\n- **Standard Ground shipping** costs **$5.95**\n- It's **free on orders over $75**\n\nDelivery via Standard Ground typically takes **5\u20137 business days** after your order is processed (processing takes 1\u20132 business days after payment confirmation).\n\n*(Source: kb/02-shipping-policy.md)*\n\nLet me know if you have any other questions! \ud83d\ude0a"
+    },
+    {
+      "id": "order-tf-10482",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 14276,
+      "agent_ms": 3922,
+      "input_tokens": 4361,
+      "output_tokens": 190,
+      "cost_usd": 0.015933,
+      "session_id": "score-bd87f27f55ec472faa5ff3beebed37ad",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/00-about-trailforge.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "text": "Here's the latest on order **TF-10482**:\n\n- **Status:** In Transit\n- **Tracking Number:** 1ZTRF10482\n- **Estimated Delivery:** November 18, 2026\n\nYou can use the tracking number to follow the shipment's progress directly with the carrier. If tracking hasn't updated in more than 48 hours after the first scan, feel free to reach back out and we can look into it further! (kb/06-order-tracking-faq.md)"
+    },
+    {
+      "id": "points-redeem",
+      "pass": false,
+      "failures": [
+        "The number of points that buys $10 off is not in the policies"
+      ],
+      "latency_ms": 4972,
+      "agent_ms": 3713,
+      "input_tokens": 2119,
+      "output_tokens": 156,
+      "cost_usd": 0.008697,
+      "session_id": "score-12ba8ba8d91f46f5ab1cef4ba8a3208d",
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/11-promotions.md",
+        "kb/15-gift-cards.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "text": "That information isn't available in the policies I have access to. I can confirm from **kb/09-account-faq.md** that Trailforge does have a loyalty program where you earn **1 point per dollar spent**, and that points can be redeemed for discounts on future orders \u2014 but the specific redemption rates (such as how many points equal $10 off) are not included in the policy excerpts I have available.\n\nFor the exact redemption details, I'd recommend:\n- Checking your **account dashboard**, which may display your points balance and redemption options\n- Visiting the loyalty/rewards section of the Trailforge website\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "refund-tf-20911",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 10478,
+      "agent_ms": 9214,
+      "input_tokens": 8038,
+      "output_tokens": 887,
+      "cost_usd": 0.037419,
+      "session_id": "score-6dd13ffdcde84292bc9ab0f51d4adf82",
+      "sources": [
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "check_return_eligibility",
+        "escalate_to_human"
+      ],
+      "text": "Your case has been escalated! Here's what happens next:\n\n- A **specialist will review your case and follow up within one business day**.\n- They'll verify the color discrepancy and determine the appropriate resolution.\n- Please have any photos of the item and packaging ready, as that may help speed things along (per **kb/10-damaged-defective.md**).\n\nI cannot promise a specific outcome, but the team will be in touch shortly. Is there anything else I can help you with in the meantime?"
+    },
+    {
+      "id": "return-window",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 4071,
+      "agent_ms": 2741,
+      "input_tokens": 2111,
+      "output_tokens": 224,
+      "cost_usd": 0.009693,
+      "session_id": "score-a977af27e221408f86b7eaa08fba5785",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/10-damaged-defective.md"
+      ],
+      "tools": [],
+      "text": "Great question! Based on our return policy, you have **30 days from the delivery date** to return most items for a full refund. Since your jacket was delivered last week, you should still have plenty of time within that window.\n\nHere are a few things to keep in mind for your return (per **kb/01-return-policy.md**):\n\n- The jacket must be **unused, in original packaging, and in resalable condition**\n- You'll need your **order number or original receipt**\n- Since this is a standard return (change of mind), **return shipping costs are your responsibility**\n\n**To get started**, just reach out to us with your order number and reason for the return \u2014 we'll confirm eligibility, send a return authorization, and provide shipping instructions. *(kb/07-returns-process-faq.md)*\n\nOnce we receive and inspect the jacket, your refund will be issued to your original payment method within **5\u20137 business days**. Would you like help initiating the return?"
+    }
+  ]
+}
