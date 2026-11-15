@@ -60,6 +60,10 @@ The live runtime was scored on 2026-11-15, all five cases in one run (`sandbox/r
 
 Earlier runs scored the agent in this checkout before it was deployed (`sandbox/runs/2026-11-14*.json`).
 
+### A larger set, in draft
+
+`sandbox/cases-v2.json` grows the set to 39 cases, with several per outcome and 11 on boundaries. It is not frozen or scored yet. Its judge splits the work: code checks tools, arguments, citations, and order facts, and Claude Haiku 4.5 checks claims about what the reply says, quoting its evidence. Against 46 labeled claims, the judge agreed on all 46 (`sandbox/runs/2026-11-15-calibration.json`). How the set is marked is in `sandbox/README.md`.
+
 ## Run it
 
 Python 3.11 or newer.
@@ -87,7 +91,7 @@ Score against the deployed runtime instead, with cost per case:
 .venv\Scripts\python sandbox\score.py --runtime <agent runtime arn> --label runtime --price-in 3 --price-out 15
 ```
 
-`--label` names the run file so an earlier run is never overwritten. `--rescore <run file> --label <name>` judges stored replies again without calling the model.
+`--cases cases-v2.json` scores the larger set. `python sandbox/calibrate.py` checks its judge first. `--label` names the run file so an earlier run is never overwritten. `--rescore <run file> --label <name>` judges stored replies again without calling the model.
 
 `python app/main.py` serves the agent at `http://127.0.0.1:8080/invocations`, the same entrypoint the runtime hosts. `TRAILFORGE_TOOLS=local` runs the tools against `app/orders.json` instead of the Lambda and does not store escalation packets.
 

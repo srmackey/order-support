@@ -1,10 +1,12 @@
-"""Score one turn of the Trailforge agent against sandbox/cases.json.
+"""Score the Trailforge agent against a frozen case set.
 
-A case passes when every required fact is present and every banned move is
-absent. Cost is not priced here. The run records tokens and latency.
+cases.json is set v1, five cases, judged by the hand-written judge below.
+cases-v2.json is schema 2: each case declares what is right, and judge.py
+checks it, with the LLM judge in llm_judge.py for claims about meaning.
 
 Usage:
   python score.py
+  python score.py --cases cases-v2.json --label v2-local
   python score.py --only ship-standard
   python score.py --runtime <agent runtime arn> --label runtime --price-in 3 --price-out 15
   python score.py --rescore runs/2026-11-15-runtime.json --label runtime-rescored
@@ -39,8 +41,34 @@ TOOLS = ("lookup_order_status", "check_return_eligibility", "escalate_to_human")
 STATUS_PHRASES = ("in transit", "delivered", "not yet shipped", "out for delivery", "shipped")
 
 
+def load_set(path: Path = CASES) -> dict:
+    if not path.is_absolute() and not path.exists():
+        path = ROOT / path
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def load_cases() -> list[dict]:
-    return json.loads(CASES.read_text(encoding="utf-8"))["cases"]
+    return load_set()["cases"]
+
+
+def judge_for(case_set: dict):
+    """The judge a set declares. Schema 2 grades claims with the LLM judge."""
+    if case_set.get("schema") == 2:
+        import judge as schema2
+        from llm_judge import BedrockJudge
+
+        grader = BedrockJudge()
+        return lambda case, turn: schema2.judge(case, turn, grader)
+    return judge
+
+
+def set_meta(path: Path, case_set: dict) -> dict:
+    meta = {"set": path.name, "set_frozen": case_set.get("frozen")}
+    if case_set.get("schema") == 2:
+        import llm_judge
+
+        meta["judge"] = llm_judge.describe()
+    return meta
 
 
 def norm(text: str) -> str:
@@ -263,15 +291,17 @@ def judge(case: dict, turn: dict) -> dict:
 TEXT_ONLY = {"ship-standard", "points-redeem", "return-window"}
 
 
-def rescore(path: Path, label: str) -> int:
+def rescore(path: Path, label: str, cases_path: Path = CASES) -> int:
     old = json.loads(path.read_text(encoding="utf-8"))
-    cases = {case["id"]: case for case in load_cases()}
+    case_set = load_set(cases_path)
+    grade = judge_for(case_set)
+    cases = {case["id"]: case for case in case_set["cases"]}
     rows = []
     failed = 0
     for stored in old["cases"]:
         case = cases[stored["id"]]
         calls = stored.get("calls")
-        if calls is None and stored["id"] not in TEXT_ONLY:
+        if calls is None and (case_set.get("schema") == 2 or stored["id"] not in TEXT_ONLY):
             row = dict(stored, carried=True)
         else:
             sample = {
@@ -279,7 +309,7 @@ def rescore(path: Path, label: str) -> int:
                 "calls": calls if calls is not None else [{"tool": name, "arguments": {}, "result": {}} for name in stored["tools"]],
                 "sources": stored.get("sources", []),
             }
-            row = judge(case, sample)
+            row = grade(case, sample)
             for key in ("latency_ms", "agent_ms", "input_tokens", "output_tokens", "cost_usd", "session_id"):
                 row[key] = stored.get(key)
             if calls is None:
@@ -291,6 +321,7 @@ def rescore(path: Path, label: str) -> int:
         mark = "pass" if row["pass"] else "fail"
         print(f"{row['id']}: {mark}{' (carried)' if row['carried'] else ''}")
     meta = {key: value for key, value in old.items() if key not in ("date", "cases")}
+    meta.update(set_meta(Path(cases_path), case_set))
     meta["rescored_from"] = path.name
     meta["rescore_note"] = "Same replies, current judge. A carried row keeps its stored verdict because the file has no tool arguments to judge it again."
     out = write_run(rows, label, meta)
@@ -353,6 +384,7 @@ def write_run(rows: list[dict], label: str = "", meta: dict | None = None) -> Pa
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", default="")
+    parser.add_argument("--cases", default="cases.json", help="case set file in sandbox/")
     parser.add_argument("--runtime", default="", help="agent runtime ARN; default runs the agent in this process")
     parser.add_argument("--region", default="us-east-1")
     parser.add_argument("--label", default="", help="suffix for the run file name")
@@ -365,13 +397,16 @@ def main() -> int:
         if not args.label:
             print("--rescore needs --label so the original file is kept", file=sys.stderr)
             return 2
-        return rescore(Path(args.rescore), args.label)
+        return rescore(Path(args.rescore), args.label, Path(args.cases))
     if args.runtime:
         ask = runtime_asker(args.runtime, args.region)
     else:
         from agent import ask
 
-    cases = load_cases()
+    cases_path = Path(args.cases)
+    case_set = load_set(cases_path)
+    grade = judge_for(case_set)
+    cases = case_set["cases"]
     if args.only:
         cases = [case for case in cases if case["id"] == args.only]
         if not cases:
@@ -381,7 +416,7 @@ def main() -> int:
     failed = 0
     for case in cases:
         turn = ask(case["customer"])
-        row = judge(case, turn)
+        row = grade(case, turn)
         price(row, args.price_in, args.price_out)
         rows.append(row)
         mark = "pass" if row["pass"] else "fail"
@@ -392,7 +427,7 @@ def main() -> int:
             print("  " + "; ".join(row["failures"]))
     # The run file is public. Name the runtime, not its ARN, which carries the account id.
     target = f"AgentCore runtime {args.runtime.rsplit('/', 1)[-1]}, DEFAULT endpoint, {args.region}" if args.runtime else "local process"
-    meta = {"target": target}
+    meta = {"target": target, **set_meta(cases_path, case_set)}
     if args.price_in is not None and args.price_out is not None:
         meta["cost_basis"] = {
             "covers": "model tokens only",
@@ -401,6 +436,7 @@ def main() -> int:
             "source": args.price_source,
         }
     path = write_run(rows, args.label, meta)
+    print(f"{len(rows) - failed} of {len(rows)} passed")
     print(f"wrote {path}")
     return 1 if failed else 0
 

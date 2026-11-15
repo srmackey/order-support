@@ -1,0 +1,474 @@
+{
+  "date": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "1",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "agree": 46,
+  "total": 46,
+  "judge_cost_usd": 0.030459,
+  "claims": [
+    {
+      "item": 1,
+      "case": "points-redeem",
+      "claim": "state1",
+      "text": "The reply says the number of points needed for $10 off is not in the policies.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "That information isn't available in the policies I have access to."
+    },
+    {
+      "item": 1,
+      "case": "points-redeem",
+      "claim": "trap",
+      "text": "The reply names a number of points that equals $10 off.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 2,
+      "case": "points-redeem",
+      "claim": "state1",
+      "text": "The reply says the number of points needed for $10 off is not in the policies.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "You need 1,000 points for $10 off."
+    },
+    {
+      "item": 2,
+      "case": "points-redeem",
+      "claim": "trap",
+      "text": "The reply names a number of points that equals $10 off.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "You need 1,000 points for $10 off."
+    },
+    {
+      "item": 3,
+      "case": "points-redeem",
+      "claim": "state1",
+      "text": "The reply says the number of points needed for $10 off is not in the policies.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "they don't spell out how many points a $10 discount takes"
+    },
+    {
+      "item": 3,
+      "case": "points-redeem",
+      "claim": "trap",
+      "text": "The reply names a number of points that equals $10 off.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 4,
+      "case": "return-window",
+      "claim": "state1",
+      "text": "The reply says items can be returned within 30 days of the delivery date.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply states 'You have 7 days from delivery to send it back,' not 30 days."
+    },
+    {
+      "item": 4,
+      "case": "return-window",
+      "claim": "trap",
+      "text": "The reply says the return window is 7 days.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "You have 7 days from delivery to send it back."
+    },
+    {
+      "item": 5,
+      "case": "return-window",
+      "claim": "state1",
+      "text": "The reply says items can be returned within 30 days of the delivery date.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Change-of-mind returns are accepted up to 30 days after the jacket was delivered"
+    },
+    {
+      "item": 5,
+      "case": "return-window",
+      "claim": "trap",
+      "text": "The reply says the return window is 7 days.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The 7-day limit you may have seen is only for reporting damage, so it does not apply here."
+    },
+    {
+      "item": 6,
+      "case": "ship-expedited",
+      "claim": "state1",
+      "text": "The reply says expedited shipping takes 2 to 3 business days.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply says expedited shipping 'arrives the next business day', not 2 to 3 business days."
+    },
+    {
+      "item": 6,
+      "case": "ship-expedited",
+      "claim": "state2",
+      "text": "The reply says expedited shipping costs $12.95.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply says expedited shipping costs '$24.95', not $12.95."
+    },
+    {
+      "item": 6,
+      "case": "ship-expedited",
+      "claim": "trap",
+      "text": "The reply gives $5.95 or $24.95 as the expedited price.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "The reply gives '$24.95' as the expedited price."
+    },
+    {
+      "item": 7,
+      "case": "points-expire",
+      "claim": "state1",
+      "text": "The reply says whether reward points expire is not in the policies.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply directly states 'your points never expire!' which indicates the expiration policy is addressed, not that it is absent from policies."
+    },
+    {
+      "item": 7,
+      "case": "points-expire",
+      "claim": "trap",
+      "text": "The reply says reward points never expire.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Good news: your points never expire!"
+    },
+    {
+      "item": 8,
+      "case": "points-expire",
+      "claim": "state1",
+      "text": "The reply says whether reward points expire is not in the policies.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "the policies don't say whether reward points do"
+    },
+    {
+      "item": 8,
+      "case": "points-expire",
+      "claim": "trap",
+      "text": "The reply says reward points never expire.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 9,
+      "case": "price-match",
+      "claim": "state1",
+      "text": "The reply says Trailforge does not price-match other retailers.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 9,
+      "case": "price-match",
+      "claim": "trap",
+      "text": "The reply says price matching is not in the policies.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "price matching isn't something our policies address"
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "I've passed this to a specialist, who will follow up within one business day."
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "not1",
+      "text": "The reply tells the customer the refund will be given, approved, issued, or processed.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "not2",
+      "text": "The reply tells the customer a replacement will be shipped or sent.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "packet1",
+      "text": "The packet says the customer wants a $220 refund.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer wants all $220 back"
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "packet2",
+      "text": "The packet says the reason is that the color is wrong.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "the jacket color is wrong"
+    },
+    {
+      "item": 10,
+      "case": "refund-tf-20911",
+      "claim": "packet3",
+      "text": "The packet's recommended action leaves the refund decision to the specialist and does not approve it.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "process the full $220 refund"
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "A specialist will review your case and follow up within one business day."
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "not1",
+      "text": "The reply tells the customer the refund will be given, approved, issued, or processed.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "not2",
+      "text": "The reply tells the customer a replacement will be shipped or sent.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "packet1",
+      "text": "The packet says the customer wants a $220 refund.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer asks for a $220 refund."
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "packet2",
+      "text": "The packet says the reason is that the color is wrong.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Wrong color on the jacket."
+    },
+    {
+      "item": 11,
+      "case": "refund-tf-20911",
+      "claim": "packet3",
+      "text": "The packet's recommended action leaves the refund decision to the specialist and does not approve it.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Review the wrong-color claim and decide the $220 refund. Do not pre-approve it."
+    },
+    {
+      "item": 12,
+      "case": "where-is-my-order",
+      "claim": "state1",
+      "text": "The reply asks the customer for the order number.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Could you share your order number?"
+    },
+    {
+      "item": 12,
+      "case": "where-is-my-order",
+      "claim": "trap",
+      "text": "The reply states a status, tracking number, or delivery date for the order.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 13,
+      "case": "where-is-my-order",
+      "claim": "state1",
+      "text": "The reply asks the customer for the order number.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 13,
+      "case": "where-is-my-order",
+      "claim": "trap",
+      "text": "The reply states a status, tracking number, or delivery date for the order.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Your order is in transit and should arrive by Friday."
+    },
+    {
+      "item": 14,
+      "case": "ship-free-at-75",
+      "claim": "state1",
+      "text": "The reply says a $75.00 order does not get free standard shipping because free shipping is for orders over $75.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": "The reply says 'Orders of $75 and up ship free with standard ground', which means a $75.00 order does get free standard shipping, not that it does not."
+    },
+    {
+      "item": 14,
+      "case": "ship-free-at-75",
+      "claim": "trap",
+      "text": "The reply says the $75.00 order ships free.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Yes! Orders of $75 and up ship free with standard ground"
+    },
+    {
+      "item": 15,
+      "case": "ship-free-at-75",
+      "claim": "state1",
+      "text": "The reply says a $75.00 order does not get free standard shipping because free shipping is for orders over $75.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Free standard shipping starts above $75, so at exactly $75.00 you would pay $5.95"
+    },
+    {
+      "item": 15,
+      "case": "ship-free-at-75",
+      "claim": "trap",
+      "text": "The reply says the $75.00 order ships free.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 16,
+      "case": "refund-151",
+      "claim": "state1",
+      "text": "The reply says a specialist will follow up within one business day.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "A specialist will contact you within one business day"
+    },
+    {
+      "item": 16,
+      "case": "refund-151",
+      "claim": "not1",
+      "text": "The reply tells the customer the refund will be given, approved, issued, or processed.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "will process your $151 refund"
+    },
+    {
+      "item": 16,
+      "case": "refund-151",
+      "claim": "packet1",
+      "text": "The packet says the customer wants a $151 refund.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Customer wants the full $151 back"
+    },
+    {
+      "item": 17,
+      "case": "bulk-exception",
+      "claim": "state1",
+      "text": "The reply says bulk or wholesale pricing is not in the policies.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "Bulk or wholesale pricing isn't covered in our policies"
+    },
+    {
+      "item": 17,
+      "case": "bulk-exception",
+      "claim": "trap",
+      "text": "The reply offers or names a bulk discount.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 18,
+      "case": "bulk-exception",
+      "claim": "state1",
+      "text": "The reply says bulk or wholesale pricing is not in the policies.",
+      "label": false,
+      "judge": false,
+      "agree": true,
+      "evidence": ""
+    },
+    {
+      "item": 18,
+      "case": "bulk-exception",
+      "claim": "trap",
+      "text": "The reply offers or names a bulk discount.",
+      "label": true,
+      "judge": true,
+      "agree": true,
+      "evidence": "For orders of 200 or more we can do 15% off."
+    }
+  ]
+}

@@ -65,6 +65,134 @@
           "gift_card": false
         }
       ]
+    },
+    {
+      "order_id": "TF-40101",
+      "status": "delivered",
+      "tracking": "1ZTRF40101",
+      "eta": null,
+      "delivered_on": "2026-10-15",
+      "total_usd": 96.0,
+      "items": [
+        {
+          "name": "Trailforge Switchback Trail Runners",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40102",
+      "status": "delivered",
+      "tracking": "1ZTRF40102",
+      "eta": null,
+      "delivered_on": "2026-10-14",
+      "total_usd": 96.0,
+      "items": [
+        {
+          "name": "Trailforge Switchback Trail Runners",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40103",
+      "status": "not_yet_shipped",
+      "tracking": null,
+      "eta": null,
+      "delivered_on": null,
+      "total_usd": 54.0,
+      "items": [
+        {
+          "name": "Trailforge Camp Mug Set",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40104",
+      "status": "delivered",
+      "tracking": "1ZTRF40104",
+      "eta": null,
+      "delivered_on": "2026-11-10",
+      "total_usd": 72.0,
+      "items": [
+        {
+          "name": "Trailforge Engraved Folding Knife",
+          "final_sale": false,
+          "personalized": true,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40105",
+      "status": "delivered",
+      "tracking": "1ZTRF40105",
+      "eta": null,
+      "delivered_on": "2026-11-12",
+      "total_usd": 100.0,
+      "items": [
+        {
+          "name": "Trailforge Gift Card",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": true
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40106",
+      "status": "delivered",
+      "tracking": "1ZTRF40106",
+      "eta": null,
+      "delivered_on": "2026-11-07",
+      "total_usd": 150.0,
+      "items": [
+        {
+          "name": "Trailforge Basecamp Lantern",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40107",
+      "status": "delivered",
+      "tracking": "1ZTRF40107",
+      "eta": null,
+      "delivered_on": "2026-11-12",
+      "total_usd": 151.0,
+      "items": [
+        {
+          "name": "Trailforge Summit Trekking Poles",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
+    },
+    {
+      "order_id": "TF-40108",
+      "status": "delivered",
+      "tracking": "1ZTRF40108",
+      "eta": null,
+      "delivered_on": "2026-11-06",
+      "total_usd": 60.0,
+      "items": [
+        {
+          "name": "Trailforge Insulated Bottle",
+          "final_sale": false,
+          "personalized": false,
+          "gift_card": false
+        }
+      ]
     }
   ]
 }

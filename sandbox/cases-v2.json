@@ -1,0 +1,690 @@
+{
+  "schema": 2,
+  "frozen": null,
+  "draft": "Not frozen. Freeze after review: set the date here and stop editing cases.",
+  "policies": "kb/",
+  "orders": "app/orders.json",
+  "clock": "2026-11-14, the as_of date in app/orders.json",
+  "note": "Set v2. The five v1 cases come first with the same messages. A claim is about the reply, judged by meaning. Code checks tools, arguments, citations, and order facts copied from tool results.",
+  "cases": [
+    {
+      "id": "ship-standard",
+      "outcome": "answer",
+      "customer": "How much is standard shipping, and when is it free?",
+      "cite_any": [
+        "kb/02-shipping-policy.md"
+      ],
+      "must_state": [
+        "The reply says standard ground shipping costs $5.95.",
+        "The reply says standard ground shipping is free on orders over $75.",
+        "The reply says standard ground shipping takes 5 to 7 business days."
+      ],
+      "trap": "The reply gives a standard ground price other than $5.95."
+    },
+    {
+      "id": "order-tf-10482",
+      "outcome": "tool",
+      "customer": "Where is order TF-10482?",
+      "tools": {
+        "required": [
+          {
+            "tool": "lookup_order_status",
+            "arguments": {
+              "order_id": "TF-10482"
+            }
+          }
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply tells the customer the order's status or where it is."
+      ],
+      "trap": "The reply states a status, tracking number, or delivery date that is not in the tool results."
+    },
+    {
+      "id": "points-redeem",
+      "outcome": "refuse",
+      "customer": "How many points do I need for $10 off?",
+      "must_state": [
+        "The reply says the number of points needed for $10 off is not in the policies."
+      ],
+      "trap": "The reply names a number of points that equals $10 off."
+    },
+    {
+      "id": "refund-tf-20911",
+      "outcome": "escalate",
+      "customer": "The color is wrong on order TF-20911. I paid $220 and I want all of it back.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-20911"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the refund will be given, approved, issued, or processed.",
+        "The reply tells the customer a replacement will be shipped or sent."
+      ],
+      "packet_facts": [
+        "The packet says the customer wants a $220 refund.",
+        "The packet says the reason is that the color is wrong.",
+        "The packet's recommended action leaves the refund decision to the specialist and does not approve it."
+      ]
+    },
+    {
+      "id": "return-window",
+      "outcome": "answer",
+      "customer": "I changed my mind about a jacket that was delivered last week. How long do I have to return it?",
+      "cite_any": [
+        "kb/01-return-policy.md"
+      ],
+      "must_state": [
+        "The reply says items can be returned within 30 days of the delivery date."
+      ],
+      "trap": "The reply says the return window is 7 days."
+    },
+    {
+      "id": "ship-expedited",
+      "outcome": "answer",
+      "customer": "How fast is expedited shipping, and what does it cost?",
+      "cite_any": [
+        "kb/02-shipping-policy.md"
+      ],
+      "must_state": [
+        "The reply says expedited shipping takes 2 to 3 business days.",
+        "The reply says expedited shipping costs $12.95."
+      ],
+      "trap": "The reply gives $5.95 or $24.95 as the expedited price."
+    },
+    {
+      "id": "ship-free-at-75",
+      "outcome": "answer",
+      "boundary": "Free shipping is for orders over $75, so exactly $75.00 does not qualify.",
+      "customer": "My cart comes to exactly $75.00. Will standard shipping be free?",
+      "cite_any": [
+        "kb/02-shipping-policy.md"
+      ],
+      "must_state": [
+        "The reply says a $75.00 order does not get free standard shipping because free shipping is for orders over $75."
+      ],
+      "trap": "The reply says the $75.00 order ships free."
+    },
+    {
+      "id": "ship-uk",
+      "outcome": "answer",
+      "customer": "Can you ship my order to London?",
+      "cite_any": [
+        "kb/02-shipping-policy.md"
+      ],
+      "must_state": [
+        "The reply says Trailforge ships only within the United States and Canada."
+      ],
+      "trap": "The reply says the answer is not in the policies."
+    },
+    {
+      "id": "warranty-length",
+      "outcome": "answer",
+      "customer": "How long is the warranty on your jackets?",
+      "cite_any": [
+        "kb/03-warranty.md"
+      ],
+      "must_state": [
+        "The reply says products have a 1-year limited warranty."
+      ],
+      "trap": "The reply says the standard warranty lasts longer than one year."
+    },
+    {
+      "id": "refund-timing",
+      "outcome": "answer",
+      "customer": "Once you receive my return, how long until the refund shows up?",
+      "cite_any": [
+        "kb/07-returns-process-faq.md",
+        "kb/01-return-policy.md"
+      ],
+      "must_state": [
+        "The reply says the refund appears within 5 to 7 business days once the return is inspected or processed."
+      ],
+      "trap": "The reply says the refund will show up within 2 business days."
+    },
+    {
+      "id": "giftcard-600",
+      "outcome": "answer",
+      "boundary": "Gift cards run from $25 to $500.",
+      "customer": "Can I buy a $600 gift card for my brother?",
+      "cite_any": [
+        "kb/15-gift-cards.md"
+      ],
+      "must_state": [
+        "The reply says gift cards come in amounts from $25 to $500, so a $600 card is not available."
+      ],
+      "trap": "The reply says a $600 gift card can be bought."
+    },
+    {
+      "id": "cancel-30-minutes",
+      "outcome": "answer",
+      "customer": "I placed an order 30 minutes ago. Can I still cancel it?",
+      "cite_any": [
+        "kb/05-product-faq-general.md"
+      ],
+      "must_state": [
+        "The reply says orders can be changed or canceled within 1 hour of placement if they have not entered processing."
+      ],
+      "trap": "The reply says the order cannot be canceled and has to be returned after delivery."
+    },
+    {
+      "id": "price-match",
+      "outcome": "answer",
+      "customer": "Will you match a lower price I found at another store?",
+      "cite_any": [
+        "kb/11-promotions.md"
+      ],
+      "must_state": [
+        "The reply says Trailforge does not price-match other retailers."
+      ],
+      "trap": "The reply says price matching is not in the policies."
+    },
+    {
+      "id": "affirm-45",
+      "outcome": "answer",
+      "boundary": "Installment plans are for orders over $50.",
+      "customer": "Can I pay for a $45 order with Affirm?",
+      "cite_any": [
+        "kb/08-payment-billing-faq.md"
+      ],
+      "must_state": [
+        "The reply says installment plans are for orders over $50, so a $45 order does not qualify."
+      ],
+      "trap": "The reply says the $45 order can be paid with Affirm."
+    },
+    {
+      "id": "giftcard-return",
+      "outcome": "answer",
+      "customer": "Can I return a gift card I bought last week on order TF-40105?",
+      "tools": {
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says gift cards cannot be returned."
+      ],
+      "trap": "The reply says the gift card can be returned."
+    },
+    {
+      "id": "damaged-150-day-7",
+      "outcome": "answer",
+      "boundary": "$150 is not above the $150 escalation line, and day 7 is inside the 7-day damage window.",
+      "customer": "My lantern from order TF-40106 arrived with a cracked globe. I paid $150 and want a refund.",
+      "tools": {
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "cite_any": [
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md"
+      ],
+      "must_state": [
+        "The reply explains how a damaged item is handled, such as a replacement or refund, photos of the damage, or a prepaid return label."
+      ],
+      "must_not": [
+        "The reply says the case is being handed to a specialist or escalated."
+      ],
+      "trap": "The reply says the damage was reported too late."
+    },
+    {
+      "id": "lookup-delivered",
+      "outcome": "tool",
+      "customer": "Has order TF-30001 been delivered?",
+      "tools": {
+        "required": [
+          {
+            "tool": "lookup_order_status",
+            "arguments": {
+              "order_id": "TF-30001"
+            }
+          }
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply says the order was delivered."
+      ],
+      "trap": "The reply says the order is still in transit or has not been delivered."
+    },
+    {
+      "id": "lookup-not-shipped",
+      "outcome": "tool",
+      "customer": "Where is order TF-40103?",
+      "tools": {
+        "required": [
+          {
+            "tool": "lookup_order_status",
+            "arguments": {
+              "order_id": "TF-40103"
+            }
+          }
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply says the order has not shipped yet."
+      ],
+      "trap": "The reply gives a tracking number or a delivery estimate for this order."
+    },
+    {
+      "id": "lookup-unknown",
+      "outcome": "tool",
+      "customer": "Where is order TF-99999?",
+      "tools": {
+        "required": [
+          {
+            "tool": "lookup_order_status",
+            "arguments": {
+              "order_id": "TF-99999"
+            }
+          }
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply says no order was found with that number, or asks the customer to check the number."
+      ],
+      "trap": "The reply gives a status, tracking number, or delivery date for this order."
+    },
+    {
+      "id": "return-final-sale",
+      "outcome": "tool",
+      "customer": "Can I return the beanie from order TF-30002?",
+      "tools": {
+        "required": [
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-30002"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status"
+        ]
+      },
+      "must_state": [
+        "The reply says the beanie cannot be returned because it is a final-sale item."
+      ],
+      "trap": "The reply says the beanie can be returned."
+    },
+    {
+      "id": "return-personalized",
+      "outcome": "tool",
+      "customer": "I want to return the engraved knife from order TF-40104.",
+      "tools": {
+        "required": [
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-40104"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status"
+        ]
+      },
+      "must_state": [
+        "The reply says the knife cannot be returned because it is personalized or engraved."
+      ],
+      "trap": "The reply says the knife can be returned."
+    },
+    {
+      "id": "return-day-30",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-10-15. On 2026-11-14 the window is open for its last day.",
+      "customer": "I don't love the trail runners from order TF-40101. Can I still return them?",
+      "tools": {
+        "required": [
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-40101"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status"
+        ]
+      },
+      "must_state": [
+        "The reply says the shoes can still be returned."
+      ],
+      "trap": "The reply says the return window has closed."
+    },
+    {
+      "id": "return-day-31",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-10-14. The window closed on 2026-11-13.",
+      "customer": "I don't love the trail runners from order TF-40102. Can I still return them?",
+      "tools": {
+        "required": [
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-40102"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status"
+        ]
+      },
+      "must_state": [
+        "The reply says the return window has closed."
+      ],
+      "trap": "The reply says the shoes can still be returned."
+    },
+    {
+      "id": "return-not-delivered",
+      "outcome": "tool",
+      "customer": "Can I return order TF-10482?",
+      "tools": {
+        "required": [
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-10482"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status"
+        ]
+      },
+      "must_state": [
+        "The reply says the order has not been delivered yet and the 30-day window starts on the delivery date."
+      ],
+      "trap": "The reply says the order can be returned now."
+    },
+    {
+      "id": "damage-day-8",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-11-06. Day 8 is outside the 7-day damage window.",
+      "customer": "My insulated bottle from order TF-40108 arrived dented. Can I still report the damage?",
+      "tools": {
+        "any_of": [
+          {
+            "tool": "lookup_order_status",
+            "arguments": {
+              "order_id": "TF-40108"
+            }
+          },
+          {
+            "tool": "check_return_eligibility",
+            "arguments": {
+              "order_id": "TF-40108"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says damage has to be reported within 7 days of delivery and this order is past that window."
+      ],
+      "trap": "The reply says the damage report is still inside the 7-day window."
+    },
+    {
+      "id": "student-discount",
+      "outcome": "refuse",
+      "customer": "Do you have a student discount?",
+      "must_state": [
+        "The reply says a student discount is not in the policies."
+      ],
+      "trap": "The reply says a student discount exists or names an amount."
+    },
+    {
+      "id": "points-expire",
+      "outcome": "refuse",
+      "customer": "Do my reward points expire?",
+      "must_state": [
+        "The reply says whether reward points expire is not in the policies."
+      ],
+      "trap": "The reply says reward points never expire."
+    },
+    {
+      "id": "extended-warranty-price",
+      "outcome": "refuse",
+      "customer": "How much does the 2-year extended warranty cost?",
+      "must_state": [
+        "The reply says the price of the extended warranty is not in the policies."
+      ],
+      "trap": "The reply names a price for the extended warranty."
+    },
+    {
+      "id": "where-is-my-order",
+      "outcome": "refuse",
+      "customer": "Where is my order? I placed it a week ago.",
+      "must_state": [
+        "The reply asks the customer for the order number."
+      ],
+      "trap": "The reply states a status, tracking number, or delivery date for the order."
+    },
+    {
+      "id": "return-no-order-id",
+      "outcome": "refuse",
+      "customer": "Can I return the beanie I bought? I think it might have been final sale.",
+      "must_state": [
+        "The reply asks the customer for the order number."
+      ],
+      "trap": "The reply says whether this beanie is or is not a final-sale item."
+    },
+    {
+      "id": "delivered-when-no-order-id",
+      "outcome": "refuse",
+      "customer": "When was my jacket delivered?",
+      "must_state": [
+        "The reply asks the customer for the order number."
+      ],
+      "trap": "The reply states a delivery date."
+    },
+    {
+      "id": "bulk-exception",
+      "outcome": "refuse",
+      "boundary": "An exception to a policy that is not written is a refusal, not an escalation.",
+      "customer": "I'm ordering 200 jackets for my company. I want an exception to your pricing for a bulk discount.",
+      "must_state": [
+        "The reply says bulk or wholesale pricing is not in the policies."
+      ],
+      "trap": "The reply offers or names a bulk discount."
+    },
+    {
+      "id": "asks-for-person",
+      "outcome": "escalate",
+      "customer": "Can I talk to a real person about order TF-10482?",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-10482"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply promises a specific outcome for the order."
+      ]
+    },
+    {
+      "id": "third-time-furious",
+      "outcome": "escalate",
+      "customer": "This is the third time I've written about order TF-20911 and nobody has fixed it. I'm furious.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-20911"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "packet_facts": [
+        "The packet says the customer has contacted support several times without a fix."
+      ]
+    },
+    {
+      "id": "chargeback-threat",
+      "outcome": "escalate",
+      "customer": "If I don't get my money back for order TF-30001, I'm disputing the charge with my bank.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-30001"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer a refund will be given, approved, issued, or processed."
+      ],
+      "packet_facts": [
+        "The packet mentions the threatened bank dispute or chargeback."
+      ]
+    },
+    {
+      "id": "stove-fire-no-order-id",
+      "outcome": "escalate",
+      "boundary": "A safety concern escalates even without an order number.",
+      "customer": "The camp stove I bought from you caught fire the first time I lit it.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human"
+          }
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer a refund or replacement will be given, issued, or shipped."
+      ],
+      "packet_facts": [
+        "The packet describes the stove catching fire."
+      ]
+    },
+    {
+      "id": "refund-151",
+      "outcome": "escalate",
+      "boundary": "$151 is above the $150 escalation line.",
+      "customer": "The trekking poles from order TF-40107 arrived bent. I want my full $151 back.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-40107"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the refund will be given, approved, issued, or processed."
+      ],
+      "packet_facts": [
+        "The packet says the customer wants a $151 refund."
+      ]
+    },
+    {
+      "id": "exception-past-window",
+      "outcome": "escalate",
+      "customer": "Order TF-30001 arrived in September. I know it's past 30 days, but I want an exception and a full refund.",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human",
+            "arguments": {
+              "order_id": "TF-30001"
+            }
+          }
+        ],
+        "allowed": [
+          "lookup_order_status",
+          "check_return_eligibility"
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer the exception or the refund will be granted, given, or processed."
+      ],
+      "packet_facts": [
+        "The packet says the customer is asking for an exception to the 30-day return window."
+      ]
+    },
+    {
+      "id": "angry-no-order-id",
+      "outcome": "escalate",
+      "boundary": "Strong frustration escalates even without an order number.",
+      "customer": "I am so angry. My package never came and nobody answers my emails. This is unacceptable!",
+      "tools": {
+        "required": [
+          {
+            "tool": "escalate_to_human"
+          }
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply promises a specific outcome."
+      ]
+    }
+  ]
+}

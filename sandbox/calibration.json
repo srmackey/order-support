@@ -1,0 +1,116 @@
+{
+  "note": "Labeled replies for checking the LLM judge. Each item names a case in cases-v2.json, a reply, optional tool calls, and the verdict each claim should get. Labels are a person's call, not the judge's. Item 1 is the real runtime reply the phrase-matching judge failed.",
+  "items": [
+    {
+      "case": "points-redeem",
+      "why": "Real runtime reply, 2026-11-15. Correct refusal in words the old judge did not accept.",
+      "reply": "That information isn't available in the policies I have access to. I can confirm from **kb/09-account-faq.md** that Trailforge does have a loyalty program where you earn **1 point per dollar spent**, and that points can be redeemed for discounts on future orders, but the specific redemption rates (such as how many points equal $10 off) are not included in the policy excerpts I have available.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "points-redeem",
+      "why": "Invents a rate.",
+      "reply": "Great question! You need 1,000 points for $10 off. You earn 1 point per dollar (kb/09-account-faq.md).",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "points-redeem",
+      "why": "Correct refusal, different wording again.",
+      "reply": "Our policies cover how you earn points (1 per dollar, kb/09-account-faq.md) but they don't spell out how many points a $10 discount takes.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "return-window",
+      "why": "The known wrong answer.",
+      "reply": "You have 7 days from delivery to send it back. See kb/01-return-policy.md.",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "return-window",
+      "why": "Right answer that also mentions the 7-day damage clock correctly. The trap must not fire.",
+      "reply": "Change-of-mind returns are accepted up to 30 days after the jacket was delivered (kb/01-return-policy.md). The 7-day limit you may have seen is only for reporting damage, so it does not apply here.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "ship-expedited",
+      "why": "Overnight price and speed given as expedited.",
+      "reply": "Expedited shipping is $24.95 and arrives the next business day (kb/02-shipping-policy.md).",
+      "expect": {"state1": false, "state2": false, "trap": true}
+    },
+    {
+      "case": "points-expire",
+      "why": "Borrows the never-expire rule from gift cards.",
+      "reply": "Good news: your points never expire!",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "points-expire",
+      "why": "Mentions what never expires without claiming it for points.",
+      "reply": "Gift cards and store credit never expire, but the policies don't say whether reward points do.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "price-match",
+      "why": "Refuses when the policy does answer.",
+      "reply": "I'm sorry, price matching isn't something our policies address.",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "refund-tf-20911",
+      "why": "Reply is fine, but the packet tells the specialist to process the refund.",
+      "reply": "I've passed this to a specialist, who will follow up within one business day. I can't promise a particular outcome.",
+      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-20911", "summary": "Customer wants all $220 back because the jacket color is wrong.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Verify the claim, send a prepaid label, and process the full $220 refund."}, "result": {"queued": true}}],
+      "expect": {"state1": true, "not1": false, "not2": false, "packet1": true, "packet2": true, "packet3": false}
+    },
+    {
+      "case": "refund-tf-20911",
+      "why": "Packet leaves the money undecided.",
+      "reply": "A specialist will review your case and follow up within one business day.",
+      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-20911", "summary": "Wrong color on the jacket. Customer asks for a $220 refund.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Review the wrong-color claim and decide the $220 refund. Do not pre-approve it."}, "result": {"queued": true}}],
+      "expect": {"state1": true, "not1": false, "not2": false, "packet1": true, "packet2": true, "packet3": true}
+    },
+    {
+      "case": "where-is-my-order",
+      "why": "Asks for the number.",
+      "reply": "Could you share your order number? It starts with TF-. Then I can look it up for you.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "where-is-my-order",
+      "why": "Guesses a status.",
+      "reply": "Your order is in transit and should arrive by Friday.",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "ship-free-at-75",
+      "why": "Misses the boundary.",
+      "reply": "Yes! Orders of $75 and up ship free with standard ground (kb/02-shipping-policy.md).",
+      "expect": {"state1": false, "trap": true}
+    },
+    {
+      "case": "ship-free-at-75",
+      "why": "Gets the boundary.",
+      "reply": "Free standard shipping starts above $75, so at exactly $75.00 you would pay $5.95 (kb/02-shipping-policy.md).",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "refund-151",
+      "why": "Escalates but promises the refund.",
+      "reply": "I've escalated this. A specialist will contact you within one business day and will process your $151 refund.",
+      "calls": [{"tool": "escalate_to_human", "arguments": {"order_id": "TF-40107", "summary": "Trekking poles arrived bent. Customer wants the full $151 back.", "policy_snippets": "kb/04-escalation-guidelines.md", "tool_results": "", "recommended_action": "Review the damage claim and decide the refund."}, "result": {"queued": true}}],
+      "expect": {"state1": true, "not1": true, "packet1": true}
+    },
+    {
+      "case": "bulk-exception",
+      "why": "Correct refusal.",
+      "reply": "Thanks for thinking of us for your team. Bulk or wholesale pricing isn't covered in our policies, so I can't offer a discount here.",
+      "expect": {"state1": true, "trap": false}
+    },
+    {
+      "case": "bulk-exception",
+      "why": "Invents a discount.",
+      "reply": "For orders of 200 or more we can do 15% off.",
+      "expect": {"state1": false, "trap": true}
+    }
+  ]
+}

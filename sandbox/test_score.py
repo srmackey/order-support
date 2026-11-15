@@ -277,7 +277,72 @@ def test_judge():
     )
 
 
+def test_schema2():
+    """The code half of the schema-2 judge, with a stand-in for the model."""
+    import json
+
+    import judge as schema2
+
+    v2 = {case["id"]: case for case in json.loads((ROOT / "cases-v2.json").read_text(encoding="utf-8"))["cases"]}
+    all_true = schema2.FixedGrader({"state1": True, "state2": True, "state3": True, "packet1": True, "packet2": True, "packet3": True})
+
+    def call(tool, **arguments):
+        return {"tool": tool, "arguments": arguments, "result": {}}
+
+    def grade(case_id, text, calls=None, grader=all_true):
+        return schema2.judge(v2[case_id], {"text": text, "calls": calls or []}, grader)
+
+    row = grade("ship-standard", "Standard ground is $5.95. Source: kb/02-shipping-policy.md")
+    if not row["pass"]:
+        raise SystemExit(f"v2 ship-standard should pass: {row['failures']}")
+    row = grade("ship-standard", "Standard ground is $5.95.")
+    if row["pass"] or not any("Cite" in item for item in row["failures"]):
+        raise SystemExit(f"v2 missing citation should fail: {row['failures']}")
+    row = grade("ship-standard", "kb/02-shipping-policy.md", calls=[call("lookup_order_status", order_id="x")])
+    if row["pass"] or "Called lookup_order_status" not in row["failures"]:
+        raise SystemExit(f"v2 extra tool should fail: {row['failures']}")
+
+    row = grade("return-day-31", "Closed.", calls=[call("check_return_eligibility", order_id="tf-40102 ")])
+    if not row["pass"]:
+        raise SystemExit(f"v2 order id should match after normalizing: {row['failures']}")
+    row = grade("return-day-31", "Closed.", calls=[call("check_return_eligibility", order_id="TF-40101")])
+    if row["pass"] or not any("Call check_return_eligibility" in item for item in row["failures"]):
+        raise SystemExit(f"v2 wrong order id should fail: {row['failures']}")
+
+    row = grade("damage-day-8", "Past the window.", calls=[call("check_return_eligibility", order_id="TF-40108")])
+    if not row["pass"]:
+        raise SystemExit(f"v2 any_of should accept the return check: {row['failures']}")
+    row = grade("damage-day-8", "Past the window.")
+    if row["pass"] or not any("Call one of" in item for item in row["failures"]):
+        raise SystemExit(f"v2 any_of with no call should fail: {row['failures']}")
+
+    row = grade("points-redeem", "Not in the policies.", calls=[call("escalate_to_human", order_id="")])
+    if row["pass"] or "Called escalate_to_human" not in row["failures"]:
+        raise SystemExit(f"v2 refusal must not escalate: {row['failures']}")
+    row = grade("angry-no-order-id", "A specialist will follow up.", calls=[call("escalate_to_human", order_id="")])
+    if not row["pass"]:
+        raise SystemExit(f"v2 escalation without an order id should pass: {row['failures']}")
+
+    lookup = {"tool": "lookup_order_status", "arguments": {"order_id": "TF-40103"}, "result": {"status": "not_yet_shipped", "tracking": None}}
+    row = grade("lookup-not-shipped", "It has not yet shipped.", calls=[lookup])
+    if not row["pass"]:
+        raise SystemExit(f"v2 status from the tool should pass: {row['failures']}")
+    row = grade("lookup-not-shipped", "It is in transit, tracking 1ZTRF40103.", calls=[lookup])
+    if row["pass"] or not any("did not return" in item for item in row["failures"]):
+        raise SystemExit(f"v2 invented tracking should fail: {row['failures']}")
+
+    trap_fires = schema2.FixedGrader({"state1": True, "trap": True})
+    row = grade("return-window", "kb/01-return-policy.md", grader=trap_fires)
+    if row["pass"] or not any(item.startswith("Trap:") for item in row["failures"]):
+        raise SystemExit(f"v2 trap should fail the case: {row['failures']}")
+    said = schema2.FixedGrader({"state1": True, "not1": True, "packet1": True})
+    row = grade("refund-151", "x", calls=[call("escalate_to_human", order_id="TF-40107")], grader=said)
+    if row["pass"] or not any(item.startswith("Said:") for item in row["failures"]):
+        raise SystemExit(f"v2 must_not should fail when it holds: {row['failures']}")
+
+
 if __name__ == "__main__":
+    test_schema2()
     test_escalation_record()
     test_shop()
     test_source_path()
