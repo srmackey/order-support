@@ -8,7 +8,7 @@ import time
 from strands import Agent, tool
 
 import policies
-import shop
+import tools_client
 
 SYSTEM = """You are Trailforge support. Trailforge sells outdoor apparel, footwear, packs, and hardware in the United States and Canada.
 
@@ -42,8 +42,9 @@ def build_tools(calls: list[dict]):
             order_id: The order id from the customer, such as TF-10482.
         """
 
-        result = shop.lookup_order(order_id)
-        calls.append({"tool": "lookup_order_status", "arguments": {"order_id": order_id}, "result": result})
+        arguments = {"order_id": order_id}
+        result = tools_client.invoke("lookup_order_status", arguments)
+        calls.append({"tool": "lookup_order_status", "arguments": arguments, "result": result})
         return json.dumps(result)
 
     @tool
@@ -55,14 +56,9 @@ def build_tools(calls: list[dict]):
             reason: The customer's stated reason, or an empty string.
         """
 
-        result = shop.check_return(order_id, reason)
-        calls.append(
-            {
-                "tool": "check_return_eligibility",
-                "arguments": {"order_id": order_id, "reason": reason},
-                "result": result,
-            }
-        )
+        arguments = {"order_id": order_id, "reason": reason}
+        result = tools_client.invoke("check_return_eligibility", arguments)
+        calls.append({"tool": "check_return_eligibility", "arguments": arguments, "result": result})
         return json.dumps(result)
 
     @tool
@@ -90,8 +86,9 @@ def build_tools(calls: list[dict]):
             "tool_results": tool_results,
             "recommended_action": recommended_action,
         }
-        calls.append({"tool": "escalate_to_human", "arguments": arguments, "result": {"queued": True}})
-        return json.dumps({"queued": True, "order_id": order_id})
+        result = tools_client.invoke("escalate_to_human", arguments)
+        calls.append({"tool": "escalate_to_human", "arguments": arguments, "result": result})
+        return json.dumps(result)
 
     return [lookup_order_status, check_return_eligibility, escalate_to_human]
 

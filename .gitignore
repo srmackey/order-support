@@ -11,3 +11,5 @@ PROTOCOL.md
 .venv/
 sandbox/.venv/
 __pycache__/
+build/
+packaged.yaml

@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Trailforge order tools. One function reads orders and stores escalation packets.
+
+Resources:
+  OrdersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: trailforge-orders
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: order_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: order_id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Project
+          Value: order-support
+
+  EscalationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: trailforge-escalations
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: escalation_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: escalation_id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Project
+          Value: order-support
+
+  ToolRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: trailforge-tools-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: trailforge-tables
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:GetItem
+                Resource: !GetAtt OrdersTable.Arn
+              - Effect: Allow
+                Action: dynamodb:PutItem
+                Resource: !GetAtt EscalationsTable.Arn
+
+  ToolFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: trailforge-tools
+      Description: Order status, return eligibility, and stored escalation packets for Trailforge.
+      Runtime: python3.12
+      Architectures:
+        - arm64
+      Handler: handler.handler
+      Role: !GetAtt ToolRole.Arn
+      Timeout: 10
+      MemorySize: 256
+      Environment:
+        Variables:
+          ORDERS_TABLE: !Ref OrdersTable
+          ESCALATIONS_TABLE: !Ref EscalationsTable
+      Code: ../build/function
+      Tags:
+        - Key: Project
+          Value: order-support

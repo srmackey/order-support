@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-14",
+  "tools": "trailforge-tools",
+  "cases": [
+    {
+      "id": "order-tf-10482",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 3468,
+      "input_tokens": 4303,
+      "output_tokens": 205,
+      "cost_usd": null,
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/00-about-trailforge.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/13-contact-support.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "text": "Here's the latest on order **TF-10482**:\n\n- **Status:** In Transit \ud83d\ude9a\n- **Tracking Number:** 1ZTRF10482\n- **Estimated Delivery:** November 18, 2026\n\nYou can use the tracking number to follow the shipment's progress directly with the carrier. If tracking isn't updating for more than 48 hours after the first scan, feel free to reach back out and we can look into it further! (kb/06-order-tracking-faq.md)\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "refund-tf-20911",
+      "pass": true,
+      "failures": [],
+      "latency_ms": 9220,
+      "input_tokens": 7713,
+      "output_tokens": 756,
+      "cost_usd": null,
+      "sources": [
+        "kb/10-damaged-defective.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "lookup_order_status",
+        "check_return_eligibility",
+        "escalate_to_human"
+      ],
+      "text": "I've escalated your case to a specialist. Here's a summary of where things stand:\n\n- **Order TF-20911** (Trailforge Ridge Jacket) was delivered on **November 7, 2026**.\n- Your return eligibility check came back \u2705 \u2014 you're within the 30-day return window (closes December 7, 2026).\n- Because the item may be a **wrong-color fulfillment error** and your refund request is **$220**, a human specialist needs to handle this.\n\nPer our policy (kb/10-damaged-defective.md), if we did ship the wrong item, we would provide a prepaid return label and handle the refund or replacement at no cost to you.\n\n**A specialist will review your case and follow up within one business day.** In the meantime, please keep the item unused and in its original packaging. I can't promise a specific outcome, but your case is in the queue and being treated as a priority."
+    }
+  ]
+}

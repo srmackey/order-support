@@ -33,6 +33,22 @@ def expect_fail(case_id, sample, needle):
         raise SystemExit(f"{case_id} should fail on {needle}: {row['failures']}")
 
 
+def test_escalation_record():
+    record = shop.escalation_record(
+        {
+            "order_id": "TF-20911",
+            "summary": "Refund of $220 because the color is wrong",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the refund request",
+        },
+        "abc",
+        "2026-11-14T00:00:00+00:00",
+    )
+    if record["escalation_id"] != "abc" or "220" not in record["summary"] or "color" not in record["summary"]:
+        raise SystemExit(f"escalation record: {record}")
+
+
 def test_shop():
     found = shop.lookup_order("TF-10482")
     if found["status"] != "in_transit" or found["tracking"] != "1ZTRF10482":
@@ -166,6 +182,7 @@ def test_judge():
 
 
 if __name__ == "__main__":
+    test_escalation_record()
     test_shop()
     test_source_path()
     test_retrieve()

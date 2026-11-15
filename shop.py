@@ -17,9 +17,7 @@ def load() -> tuple[date, dict[str, dict]]:
     return date.fromisoformat(data["as_of"]), rows
 
 
-def lookup_order(order_id: str) -> dict:
-    _, rows = load()
-    order = rows.get(order_id.strip())
+def lookup_row(order_id: str, order: dict | None) -> dict:
     if order is None:
         return {"found": False, "order_id": order_id}
     return {
@@ -34,9 +32,13 @@ def lookup_order(order_id: str) -> dict:
     }
 
 
-def check_return(order_id: str, reason: str = "") -> dict:
-    as_of, rows = load()
-    order = rows.get(order_id.strip())
+def lookup_order(order_id: str) -> dict:
+    _, rows = load()
+    key = order_id.strip()
+    return lookup_row(key, rows.get(key))
+
+
+def check_return_row(order_id: str, order: dict | None, as_of: date, reason: str = "") -> dict:
     if order is None:
         return {"order_id": order_id, "eligible": False, "reason": "No order with that id."}
     items = order.get("items") or []
@@ -73,3 +75,21 @@ def check_return(order_id: str, reason: str = "") -> dict:
     if reason.strip():
         result["customer_reason"] = reason.strip()
     return result
+
+
+def check_return(order_id: str, reason: str = "") -> dict:
+    as_of, rows = load()
+    key = order_id.strip()
+    return check_return_row(key, rows.get(key), as_of, reason)
+
+
+def escalation_record(arguments: dict, escalation_id: str, created_at: str) -> dict:
+    return {
+        "escalation_id": escalation_id,
+        "order_id": arguments.get("order_id") or "",
+        "summary": arguments.get("summary") or "",
+        "policy_snippets": arguments.get("policy_snippets") or "",
+        "tool_results": arguments.get("tool_results") or "",
+        "recommended_action": arguments.get("recommended_action") or "",
+        "created_at": created_at,
+    }
