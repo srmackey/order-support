@@ -72,6 +72,12 @@ The live runtime was scored on 2026-11-15 (`sandbox/runs/2026-11-15-v2-runtime.j
 - `ship-standard`: the reply gave the price and the free-shipping threshold but left out the 5 to 7 day delivery time.
 - Agent model cost for the run was **$0.58**, and the judge cost **$0.07**. Wall-clock latency per case was 2.7 to 10.4 seconds. Time inside the agent was 1.2 to 9.0 seconds.
 
+Runtime version 5 changed the agent, not the cases. Tool results now carry the current date, the escalation guidelines are in every prompt instead of depending on retrieval (the safety rule had not been retrieved for the stove case), and the prompt checks escalation rules first and lets an escalation go ahead without an order number. Scored the same day (`sandbox/runs/2026-11-15-v2-runtime-v5.json`):
+
+- **37 of 39 passed.** Answers 13 of 13, tool calls 10 of 10, escalations 8 of 8, refusals 6 of 8. Boundary cases 10 of 11.
+- The four earlier misses all passed. Two refusals that passed before now failed: `points-expire` said points never expire, and `bulk-exception` escalated a request the policies do not cover. On the earlier prompt both passed four of four local runs; on version 5 they passed two of four and three of four. The new prompt caused them.
+- Agent model cost was **$0.66** and the judge **$0.08**. Wall-clock latency per case was 2.3 to 12.4 seconds.
+
 ## Run it
 
 Python 3.11 or newer.

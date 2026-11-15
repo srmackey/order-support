@@ -68,6 +68,9 @@ def test_shop():
     final = shop.check_return("TF-30002")
     if final["eligible"] or "Final-sale" not in final["reason"]:
         raise SystemExit(f"final sale: {final}")
+    for result in (found, missing, early, open_return, closed, final):
+        if result.get("today") != "2026-11-14":
+            raise SystemExit(f"result has no clock date: {result}")
 
 
 def test_source_path():

@@ -40,8 +40,8 @@ def handler(event, _context):
     tool = event.get("tool")
     arguments = event.get("arguments") or {}
     if tool == "lookup_order_status":
-        _, order = order_row(arguments.get("order_id") or "")
-        return shop.lookup_row(arguments.get("order_id") or "", order)
+        as_of, order = order_row(arguments.get("order_id") or "")
+        return shop.lookup_row(arguments.get("order_id") or "", order, as_of)
     if tool == "check_return_eligibility":
         as_of, order = order_row(arguments.get("order_id") or "")
         return shop.check_return_row(arguments.get("order_id") or "", order, as_of, arguments.get("reason") or "")

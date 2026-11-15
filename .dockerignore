@@ -5,7 +5,7 @@
 build
 packaged.yaml
 sandbox
-kb
+kb/*
 docs
 *.md
 .grok
@@ -13,3 +13,4 @@ docs
 .cursor
 infra
 lambda
+!kb/04-escalation-guidelines.md

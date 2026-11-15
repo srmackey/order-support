@@ -2,6 +2,7 @@
 
 `retrieve` ranks the local files by term overlap. The judge tests use it.
 `retrieve_index` asks the Bedrock knowledge base named trailforge-policies.
+`with_rulebook` adds the escalation guidelines when retrieval missed them.
 A chunk is labeled with its S3 key, such as kb/02-shipping-policy.md.
 """
 
@@ -64,6 +65,25 @@ def retrieve(question: str, limit: int = 4) -> list[dict]:
             scored.append((score, doc["path"], doc["text"]))
     scored.sort(key=lambda row: (-row[0], row[1]))
     return [{"path": path, "text": text} for _, path, text in scored[:limit]]
+
+
+RULEBOOK = "kb/04-escalation-guidelines.md"
+
+
+def rulebook() -> dict:
+    """The escalation guidelines decide the next step, so they are in every prompt, not left to retrieval."""
+    name = RULEBOOK.split("/", 1)[1]
+    for folder in (ROOT / "kb", KB):
+        path = folder / name
+        if path.exists():
+            return {"path": RULEBOOK, "text": path.read_text(encoding="utf-8")}
+    raise FileNotFoundError(RULEBOOK)
+
+
+def with_rulebook(docs: list[dict]) -> list[dict]:
+    if any(doc["path"] == RULEBOOK for doc in docs):
+        return docs
+    return [*docs, rulebook()]
 
 
 def format_sources(docs: list[dict]) -> str:

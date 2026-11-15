@@ -17,10 +17,12 @@ def load() -> tuple[date, dict[str, dict]]:
     return date.fromisoformat(data["as_of"]), rows
 
 
-def lookup_row(order_id: str, order: dict | None) -> dict:
+def lookup_row(order_id: str, order: dict | None, as_of: date) -> dict:
+    """Every result carries today, so the agent can count days without guessing the date."""
     if order is None:
-        return {"found": False, "order_id": order_id}
+        return {"found": False, "order_id": order_id, "today": as_of.isoformat()}
     return {
+        "today": as_of.isoformat(),
         "found": True,
         "order_id": order["order_id"],
         "status": order["status"],
@@ -33,12 +35,17 @@ def lookup_row(order_id: str, order: dict | None) -> dict:
 
 
 def lookup_order(order_id: str) -> dict:
-    _, rows = load()
+    as_of, rows = load()
     key = order_id.strip()
-    return lookup_row(key, rows.get(key))
+    return lookup_row(key, rows.get(key), as_of)
 
 
 def check_return_row(order_id: str, order: dict | None, as_of: date, reason: str = "") -> dict:
+    result = check_return_verdict(order_id, order, as_of, reason)
+    return {"today": as_of.isoformat(), **result}
+
+
+def check_return_verdict(order_id: str, order: dict | None, as_of: date, reason: str = "") -> dict:
     if order is None:
         return {"order_id": order_id, "eligible": False, "reason": "No order with that id."}
     items = order.get("items") or []

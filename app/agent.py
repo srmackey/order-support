@@ -14,11 +14,13 @@ SYSTEM = """You are Trailforge support. Trailforge sells outdoor apparel, footwe
 
 The message includes policy excerpts. They are the only policies you may use. When you use one, cite its path exactly, for example kb/02-shipping-policy.md.
 
-Choose one next step:
-- The excerpts answer the question. Answer from them and cite the path. Do not call a tool.
-- The question needs a live order fact (status, tracking, ETA, delivery date, final-sale, or personalized). Call lookup_order_status or check_return_eligibility. Report only what the tool returned. Do not guess.
-- The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. Do not escalate that question.
-- An escalation rule in the excerpts applies, including a refund or compensation above $150. Call escalate_to_human. Tell the customer a specialist will follow up within one business day. Do not promise a refund, a replacement, or any other outcome.
+Choose one next step. Check them in this order and take the first that fits:
+1. An escalation rule in the excerpts applies. Call escalate_to_human. Tell the customer a specialist will follow up within one business day. Do not promise a refund, a replacement, or any other outcome. The amount rule is a refund or compensation above $150, which means more than $150; $150 or less does not escalate on amount alone. A missing order number never delays an escalation: pass an empty order id. The exception rule applies only when the customer asks for an exception. When a window has closed and the customer has not asked for one, tell them it closed; do not escalate.
+2. The question needs a live order fact (status, tracking, ETA, delivery date, final-sale, or personalized). Call lookup_order_status or check_return_eligibility. Report only what the tool returned. Do not guess. If the customer gave no order number, ask for it.
+3. The excerpts answer the question. Answer from them and cite the path. Do not call a tool.
+4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. Do not escalate that question.
+
+Tool results include today's date as "today". Use it for any window counted in days, such as the 7 days to report damage.
 
 check_return_eligibility takes the order id, and a reason only when the customer stated one. Do not pass a delivery date. The order record has the date.
 lookup_order_status takes the order id only.
@@ -36,7 +38,7 @@ def build_prompt(customer: str, sources: list[dict]) -> str:
 def build_tools(calls: list[dict]):
     @tool
     def lookup_order_status(order_id: str) -> str:
-        """Look up live status, tracking, and ETA for one order.
+        """Look up live status, tracking, ETA, and delivery date for one order. The result includes today's date.
 
         Args:
             order_id: The order id from the customer, such as TF-10482.
@@ -63,20 +65,20 @@ def build_tools(calls: list[dict]):
 
     @tool
     def escalate_to_human(
-        order_id: str,
         summary: str,
         policy_snippets: str,
         tool_results: str,
         recommended_action: str,
+        order_id: str = "",
     ) -> str:
         """Hand the case to a person. Do not promise an outcome.
 
         Args:
-            order_id: The order id, or an empty string when the customer gave none.
             summary: What the customer asked for.
             policy_snippets: Policy paths already used.
             tool_results: Tool results already obtained, or an empty string.
             recommended_action: What the person should do. Review the claim and leave the money undecided. Example: "Review the wrong-color claim and decide the refund. Do not approve it."
+            order_id: The order id. Optional. Leave it empty when the customer gave none; do not wait for it.
         """
 
         arguments = {
@@ -118,7 +120,7 @@ def result_usage(result) -> dict:
 
 
 def ask(customer: str) -> dict:
-    sources = policies.retrieve_index(customer)
+    sources = policies.with_rulebook(policies.retrieve_index(customer))
     calls: list[dict] = []
     agent = Agent(system_prompt=SYSTEM, tools=build_tools(calls))
     started = time.perf_counter()

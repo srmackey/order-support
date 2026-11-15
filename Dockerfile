@@ -10,6 +10,7 @@ RUN useradd -r -u 1001 appuser
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY app/ ./
+COPY kb/04-escalation-guidelines.md ./kb/
 ENV PATH="/app/.venv/bin:$PATH" \
     DOCKER_CONTAINER=1 \
     PYTHONDONTWRITEBYTECODE=1 \
