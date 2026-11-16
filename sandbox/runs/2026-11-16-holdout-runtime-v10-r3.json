@@ -1,0 +1,923 @@
+{
+  "date": "2026-11-16",
+  "target": "AgentCore runtime trailforge_support-JK1Y16D77l, DEFAULT endpoint, us-east-1",
+  "set": "cases-holdout.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "giftcard-expire",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gift cards never expire.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Trailforge gift cards **never expire**. You can take your time using them \u2014 there's no deadline to worry about."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says gift cards expire or have an expiration date.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1052,
+      "judge_output_tokens": 118,
+      "judge_cost_usd": 0.001642,
+      "latency_ms": 3711,
+      "agent_ms": 2014,
+      "input_tokens": 2837,
+      "output_tokens": 137,
+      "cost_usd": 0.010566,
+      "session_id": "score-1ad86e7c0c8a4536adbe2527f753e322",
+      "sources": [
+        "kb/15-gift-cards.md",
+        "kb/00-about-trailforge.md",
+        "kb/01-return-policy.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nGift cards never expire \u2014 kb/15-gift-cards.md"
+      ],
+      "text": "Great news! Trailforge gift cards **never expire**. You can take your time using them \u2014 there's no deadline to worry about. They can be used both online and in-store in any amount from $25 to $500. (kb/15-gift-cards.md)\n\nIf you need to check your gift card balance, you can do so on the Trailforge website using your card number and PIN. Is there anything else I can help you with?"
+    },
+    {
+      "id": "address-after-shipping",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the address can be changed only before the order ships, and after shipment the carrier has to be contacted.",
+          "expect": true,
+          "holds": true,
+          "evidence": "address changes are only possible before the order ships. After shipment, you'll need to contact the carrier directly to request a delivery address update."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says Trailforge can still change the address after the order has shipped.",
+          "expect": false,
+          "holds": false,
+          "evidence": "once an order has shipped, we're no longer able to make address changes on our end"
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1143,
+      "judge_output_tokens": 139,
+      "judge_cost_usd": 0.001838,
+      "latency_ms": 4484,
+      "agent_ms": 3165,
+      "input_tokens": 3018,
+      "output_tokens": 223,
+      "cost_usd": 0.012399,
+      "session_id": "score-8958e661e0724489baab1d44dee3f43a",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/09-account-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nPolicy: \"Address changes are possible only before the order has shipped. After shipment, the carrier must be contacted directly.\" \u2014 kb/02-shipping-policy.md"
+      ],
+      "text": "Unfortunately, once an order has shipped, we're no longer able to make address changes on our end. Per our shipping policy (kb/02-shipping-policy.md), **address changes are only possible before the order ships**. After shipment, you'll need to **contact the carrier directly** to request a delivery address update.\n\nHere are a few tips to help:\n- Check your shipping confirmation email for the carrier name and tracking number.\n- Visit the carrier's website (e.g., UPS, FedEx, USPS) and use their address correction or delivery management tools \u2014 many carriers allow you to redirect a package while it's in transit.\n\nIf you run into any trouble with the carrier, feel free to reach back out and we'll do our best to assist!"
+    },
+    {
+      "id": "gift-wrap",
+      "outcome": "answer",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gift wrapping costs $4.95.",
+          "expect": true,
+          "holds": true,
+          "evidence": "**Gift wrapping**: $4.95, added at checkout"
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says a gift message is included at no extra charge.",
+          "expect": true,
+          "holds": true,
+          "evidence": "**Gift message**: Available at no extra charge"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives a gift wrapping price other than $4.95.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1075,
+      "judge_output_tokens": 143,
+      "judge_cost_usd": 0.00179,
+      "latency_ms": 3510,
+      "agent_ms": 2235,
+      "input_tokens": 2958,
+      "output_tokens": 158,
+      "cost_usd": 0.011244,
+      "session_id": "score-b569db0b54dd487fa0fc51e9c7004cba",
+      "sources": [
+        "kb/05-product-faq-general.md",
+        "kb/02-shipping-policy.md",
+        "kb/15-gift-cards.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/05-product-faq-general.md: \"Gift wrapping is available for $4.95 at checkout. A gift message can be included at no extra charge.\""
+      ],
+      "text": "Yes! Trailforge does offer gift wrapping. Here are the details (per kb/05-product-faq-general.md):\n\n- **Gift wrapping**: $4.95, added at checkout\n- **Gift message**: Available at no extra charge\n\nJust select the gift wrapping option when you're checking out and you'll have the option to include a personal message as well. Let me know if there's anything else I can help with!"
+    },
+    {
+      "id": "address-tf-40103",
+      "outcome": "tool",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the order has not shipped yet, so the address can still be changed.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Your order **TF-40103** has not yet shipped, so a shipping address change is still possible."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the order has already shipped or that the address can no longer be changed.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 2,
+        "missing": ""
+      },
+      "judge_input_tokens": 1224,
+      "judge_output_tokens": 114,
+      "judge_cost_usd": 0.001794,
+      "latency_ms": 5230,
+      "agent_ms": 4082,
+      "input_tokens": 6316,
+      "output_tokens": 248,
+      "cost_usd": 0.022668,
+      "session_id": "score-87bd956604054b739036860e95cae9d6",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-40103"
+          },
+          "result": {
+            "today": "2026-11-14",
+            "found": true,
+            "order_id": "TF-40103",
+            "status": "not_yet_shipped",
+            "tracking": null,
+            "eta": null,
+            "delivered_on": null,
+            "total_usd": 54,
+            "items": [
+              {
+                "final_sale": false,
+                "gift_card": false,
+                "name": "Trailforge Camp Mug Set",
+                "personalized": false
+              }
+            ]
+          }
+        }
+      ],
+      "decision": [
+        "step: 2 | missing: none\nNeed to check if the order has shipped yet, as address changes are only possible before shipment per kb/02-shipping-policy.md."
+      ],
+      "text": "Good news! Your order **TF-40103** has not yet shipped, so a shipping address change is still possible.\n\nAccording to our shipping policy (kb/02-shipping-policy.md), address changes are only allowed **before the order has shipped** \u2014 and since yours is still in that window, you're all set.\n\nPlease contact us with the new address you'd like to use and we'll get that updated for you right away. Keep in mind that orders are processed within 1\u20132 business days, so it's best to reach out as soon as possible!"
+    },
+    {
+      "id": "return-tf-30001",
+      "outcome": "tool",
+      "boundary": "Delivered 2026-09-01, long past 30 days. No exception was asked for, so it does not escalate.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the 30-day return window has closed.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The 30-day return period ended on **October 1, 2026**, so the item is no longer eligible for a return"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the day pack can still be returned.",
+          "expect": false,
+          "holds": false,
+          "evidence": "Unfortunately, the return window for order **TF-30001** has closed."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 2,
+        "missing": ""
+      },
+      "judge_input_tokens": 1151,
+      "judge_output_tokens": 137,
+      "judge_cost_usd": 0.001836,
+      "latency_ms": 5462,
+      "agent_ms": 3988,
+      "input_tokens": 6195,
+      "output_tokens": 238,
+      "cost_usd": 0.022155,
+      "session_id": "score-50c2ceec8ea4457680b74ce558abbc80",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/07-returns-process-faq.md",
+        "kb/03-warranty.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "check_return_eligibility"
+      ],
+      "calls": [
+        {
+          "tool": "check_return_eligibility",
+          "arguments": {
+            "order_id": "TF-30001",
+            "reason": ""
+          },
+          "result": {
+            "today": "2026-11-14",
+            "order_id": "TF-30001",
+            "eligible": false,
+            "reason": "The 30-day window closed on 2026-10-01."
+          }
+        }
+      ],
+      "decision": [
+        "step: 2 | missing: none\nNeed live order fact (delivery date, final-sale, personalized status) to determine return eligibility."
+      ],
+      "text": "Unfortunately, the return window for order **TF-30001** has closed. The 30-day return period ended on **October 1, 2026**, so the item is no longer eligible for a return under our standard policy (kb/01-return-policy.md).\n\nIf you believe the item is defective or was incorrectly shipped, please note that our policy requires reporting such issues within 7 days of delivery \u2014 but if you have a different concern, feel free to share more details and I'll do my best to help!"
+    },
+    {
+      "id": "points-transfer",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says whether reward points can be transferred is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "the policies I have access to don't include any information about transferring reward points between accounts"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states as a rule that reward points can be transferred, or that they cannot.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Can I transfer my reward points to my sister's account?",
+        "missing": "whether reward points can be transferred to another account",
+        "step": 4,
+        "cited": [],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "abe8890e676f48c689a3d9a9e94eff48"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether reward points can be transferred to another account"
+      },
+      "judge_input_tokens": 1131,
+      "judge_output_tokens": 110,
+      "judge_cost_usd": 0.001681,
+      "latency_ms": 3765,
+      "agent_ms": 2345,
+      "input_tokens": 2889,
+      "output_tokens": 151,
+      "cost_usd": 0.010932,
+      "session_id": "score-73e29b94f2ac4b6c80fe765708a15bfa",
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/15-gift-cards.md",
+        "kb/11-promotions.md",
+        "kb/12-privacy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether reward points can be transferred to another account\nThe loyalty program policy only states points can be redeemed for discounts; it does not address transferring points between accounts."
+      ],
+      "text": "That's a great question! Unfortunately, the policies I have access to don't include any information about transferring reward points between accounts \u2014 so I'm not able to confirm whether that's something Trailforge supports.\n\nI'd recommend reaching out to Trailforge support directly (via chat, email, or phone) so they can check on this for you. They'll have the most up-to-date information on what's possible with the rewards program."
+    },
+    {
+      "id": "giftcard-reload",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says whether a gift card can be reloaded is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "whether existing gift cards can be reloaded or topped up isn't covered in our current policies"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states as a rule that a gift card can be reloaded, or that it cannot.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Can I add more money to a gift card I already have?",
+        "missing": "whether existing gift cards can be reloaded/topped up",
+        "step": 4,
+        "cited": [
+          "kb/15-gift-cards.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "e3aaad365bd644f38ba00607eca75668"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether existing gift cards can be reloaded/topped up"
+      },
+      "judge_input_tokens": 1217,
+      "judge_output_tokens": 111,
+      "judge_cost_usd": 0.001772,
+      "latency_ms": 4359,
+      "agent_ms": 3061,
+      "input_tokens": 2948,
+      "output_tokens": 224,
+      "cost_usd": 0.012204,
+      "session_id": "score-3a5a286286ea40229ba2c463fa69f374",
+      "sources": [
+        "kb/15-gift-cards.md",
+        "kb/11-promotions.md",
+        "kb/09-account-faq.md",
+        "kb/01-return-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether existing gift cards can be reloaded/topped up\nThe gift card policy covers purchasing, using, balance checking, and reissuing lost cards, but does not mention adding funds to an existing gift card."
+      ],
+      "text": "That's a great question! Unfortunately, whether existing gift cards can be reloaded or topped up isn't covered in our current policies, so I'm not able to give you a definitive answer on that.\n\nWhat I can confirm from **kb/15-gift-cards.md** is that:\n- New gift cards are available in amounts from **$25 to $500**\n- Gift cards **never expire**\n- Balances can be checked on the website using your card number and PIN\n\nIf adding funds to an existing card isn't possible, purchasing a new gift card could be a good alternative. For the most accurate answer on reloading, I'd recommend reaching out to our support team directly \u2014 they'd be best equipped to advise you!"
+    },
+    {
+      "id": "flagship-location",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the flagship store's location is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "the specific address or location of our flagship store is not included in the policy documents I have access to"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply names a city, state, or street address for the flagship store.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Where is your flagship store? I want to pick up my order there.",
+        "missing": "flagship store location",
+        "step": 4,
+        "cited": [
+          "kb/02-shipping-policy.md",
+          "kb/06-order-tracking-faq.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "a642ea2222514f6c889cd889442e30ef"
+      },
+      "note": {
+        "step": 4,
+        "missing": "flagship store location"
+      },
+      "judge_input_tokens": 1265,
+      "judge_output_tokens": 112,
+      "judge_cost_usd": 0.001825,
+      "latency_ms": 5893,
+      "agent_ms": 4455,
+      "input_tokens": 3005,
+      "output_tokens": 281,
+      "cost_usd": 0.01323,
+      "session_id": "score-481e9cfe3dcf4c04b516e15eef2ae994",
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/12-privacy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: flagship store location\nThe policy mentions in-store pickup is available only at our flagship location (kb/02-shipping-policy.md / kb/06-order-tracking-faq.md), but does not provide the store's address or location details."
+      ],
+      "text": "Great news \u2014 in-store pickup is available at our flagship location! However, the specific address or location of our flagship store is not included in the policy documents I have access to, so I'm unable to provide that detail.\n\nHere's what I'd suggest:\n- **Check our website** for store location information, as it's typically listed under a \"Store Locator\" or \"About Us\" section.\n- **Reach out to us again** through another channel (chat, email, or phone) where a team member with that information can assist you directly.\n\nAlso, just a reminder: if you'd like to pick up your order, make sure to select **\"Store Pickup\"** at checkout while it's still eligible \u2014 address changes after shipment aren't possible on our end (kb/02-shipping-policy.md). If your order is already placed and you need to switch to pickup, let me know your order number and I can look into the status for you!"
+    },
+    {
+      "id": "out-of-warranty-repair",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says paid or out-of-warranty repairs are not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Whether Trailforge offers a paid repair service is not covered in our current policies, so I'm unable to give you a yes or no on that."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply offers a paid repair service or names a repair price.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "The zipper on my jacket broke after two years. Do you do paid repairs on things that are out of warranty?",
+        "missing": "whether paid repairs are offered for out-of-warranty items",
+        "step": 4,
+        "cited": [
+          "kb/03-warranty.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "6de215708d524866b4a7cdc087e7f864"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether paid repairs are offered for out-of-warranty items"
+      },
+      "judge_input_tokens": 1258,
+      "judge_output_tokens": 123,
+      "judge_cost_usd": 0.001873,
+      "latency_ms": 5011,
+      "agent_ms": 3812,
+      "input_tokens": 2937,
+      "output_tokens": 252,
+      "cost_usd": 0.012591,
+      "session_id": "score-3cca0e162a844b3c8a6091a1eec1d998",
+      "sources": [
+        "kb/03-warranty.md",
+        "kb/10-damaged-defective.md",
+        "kb/14-product-care.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether paid repairs are offered for out-of-warranty items\nThe warranty policy covers repairs only within the warranty period or via authorized service centers, but does not mention paid out-of-warranty repair services."
+      ],
+      "text": "Sorry to hear about your jacket zipper! To address your question directly:\n\n**Warranty coverage:** Unfortunately, based on our warranty policy (kb/03-warranty.md), the standard warranty covers defects in materials and workmanship for **1 year** from purchase (with an optional 2-year extended warranty). At two years, your jacket would be outside the standard warranty window, so a free warranty repair wouldn't apply unless you purchased the extended warranty.\n\n**Paid out-of-warranty repairs:** Whether Trailforge offers a paid repair service is not covered in our current policies, so I'm unable to give you a yes or no on that. I'd recommend reaching out to us directly (or checking our website) to ask about paid repair options or authorized service centers in your area that may be able to help with a zipper replacement.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "custom-color-exception",
+      "outcome": "refuse",
+      "boundary": "An exception to a policy that is not written is a refusal, not an escalation.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says custom colors or custom-made products are not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "information about custom color manufacturing or made-to-order products isn't covered in the policies I have access to"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply offers or promises a custom-color jacket.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Can you make an exception and make me a Ridge Jacket in a custom color?",
+        "missing": "whether custom color manufacturing or made-to-order products are offered",
+        "step": 4,
+        "cited": [],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "ae7d29a9e67041febda2aaf36bb08035"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether custom color manufacturing or made-to-order products are offered"
+      },
+      "judge_input_tokens": 1143,
+      "judge_output_tokens": 114,
+      "judge_cost_usd": 0.001713,
+      "latency_ms": 3921,
+      "agent_ms": 2499,
+      "input_tokens": 2826,
+      "output_tokens": 168,
+      "cost_usd": 0.010998,
+      "session_id": "score-c6be2be57707443b9d4fad74123d1816",
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/03-warranty.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether custom color manufacturing or made-to-order products are offered\nThe excerpts cover personalized/custom-engraved items as non-returnable, but contain no policy on custom color manufacturing or made-to-order products."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, information about custom color manufacturing or made-to-order products isn't covered in the policies I have access to. I'm not able to confirm whether that's something Trailforge offers, and I wouldn't want to give you incorrect information.\n\nI'd recommend reaching out to Trailforge directly through their main contact channels to ask about any custom or special-order options that may be available. Is there anything else I can help you with?"
+    },
+    {
+      "id": "layaway-exception",
+      "outcome": "refuse",
+      "boundary": "Layaway is not in the policies. Pointing to the installment plans that are written is allowed.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says layaway is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "layaway isn't covered in our current policies"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says layaway is available or agrees to hold the tent.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Could you make an exception and let me put a $300 tent on layaway?",
+        "missing": "whether layaway is offered",
+        "step": 4,
+        "cited": [],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "b4ded13191a946c7aea9295acb758d6a"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether layaway is offered"
+      },
+      "judge_input_tokens": 1143,
+      "judge_output_tokens": 101,
+      "judge_cost_usd": 0.001648,
+      "latency_ms": 4550,
+      "agent_ms": 2904,
+      "input_tokens": 2793,
+      "output_tokens": 190,
+      "cost_usd": 0.011229,
+      "session_id": "score-2fb79d7caf8943afad0dceb91342c039",
+      "sources": [
+        "kb/04-escalation-guidelines.md",
+        "kb/01-return-policy.md",
+        "kb/03-warranty.md",
+        "kb/11-promotions.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether layaway is offered\nThe customer is asking about layaway, which no policy excerpt covers. The escalation exception rule applies only when the customer asks for an exception to a policy written in the excerpts; since no excerpt mentions layaway, this is not a covered policy and does not trigger escalation."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, layaway isn't covered in our current policies, so I'm not able to speak to whether it's offered or make any exceptions regarding it. This falls outside what's documented in our policies.\n\nFor the most accurate answer, I'd suggest reaching out through our main contact channels (phone, email, or chat) to ask our team directly \u2014 they'd be best placed to let you know if layaway is an option for your purchase.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "ship-mexico-exception",
+      "outcome": "escalate",
+      "boundary": "An exception to a written policy escalates, even without an order number.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I've escalated your case to a specialist who will review your request and follow up with you within one business day."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the order will be shipped to Mexico.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer is asking for an exception to ship to Mexico.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer is aware of the US/Canada-only shipping policy and is explicitly requesting an exception to ship their order to Mexico."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 1,
+        "missing": ""
+      },
+      "judge_input_tokens": 1237,
+      "judge_output_tokens": 169,
+      "judge_cost_usd": 0.002082,
+      "latency_ms": 6048,
+      "agent_ms": 4671,
+      "input_tokens": 5978,
+      "output_tokens": 371,
+      "cost_usd": 0.023499,
+      "session_id": "score-bc7aa43585f342328a5059e02c69ba2e",
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "",
+            "summary": "Customer is aware of the US/Canada-only shipping policy and is explicitly requesting an exception to ship their order to Mexico.",
+            "policy_snippets": "kb/02-shipping-policy.md, kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the customer's request for an exception to the US/Canada-only shipping restriction to ship to Mexico. Do not approve the exception without proper authorization."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "",
+            "escalation_id": "bbafa917fbd84069b8b1d72fc5ebf9b4"
+          }
+        }
+      ],
+      "decision": [
+        "step: 1 | missing: none\nThe customer is explicitly asking for an exception to a written policy: \"We currently ship only within the United States and Canada.\" (kb/02-shipping-policy.md). Escalation rule applies."
+      ],
+      "text": "I completely understand the ask! Per our shipping policy (kb/02-shipping-policy.md), Trailforge currently ships only within the United States and Canada, and since you're requesting an exception to that written policy, I want to make sure it gets the proper attention it deserves.\n\nI've escalated your case to a specialist who will review your request and follow up with you within one business day. I'm not able to promise a specific outcome, but they'll be best positioned to look into this for you.\n\nIs there anything else I can help you with in the meantime?"
+    },
+    {
+      "id": "cancel-exception",
+      "outcome": "escalate",
+      "boundary": "An exception to a written policy escalates, even without an order number.",
+      "pass": false,
+      "failures": [
+        "Call escalate_to_human()"
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "a human agent will follow up with you **within one business day**"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the order will be canceled or has been canceled.",
+          "expect": false,
+          "holds": false,
+          "evidence": "I can't promise a specific outcome, but they'll look into what's possible"
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer wants an exception to the one-hour cancellation window.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Because you're asking for an exception to our cancellation policy"
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 1,
+        "missing": ""
+      },
+      "judge_input_tokens": 1133,
+      "judge_output_tokens": 165,
+      "judge_cost_usd": 0.001958,
+      "latency_ms": 4371,
+      "agent_ms": 3063,
+      "input_tokens": 2886,
+      "output_tokens": 211,
+      "cost_usd": 0.011823,
+      "session_id": "score-bdeae520c3e04470a7512f727f73f6d6",
+      "sources": [
+        "kb/05-product-faq-general.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/01-return-policy.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 1 | missing: none\nThe customer is explicitly asking for an exception to a written policy (the 1-hour cancellation window in kb/05-product-faq-general.md). This triggers the escalation rule in kb/04-escalation-guidelines.md."
+      ],
+      "text": "I understand \u2014 missing that one-hour window is frustrating, and I'm sorry for the inconvenience.\n\nBecause you're asking for an exception to our cancellation policy, I need to pass this to a specialist who can review it. Per our guidelines (kb/04-escalation-guidelines.md), a human agent will follow up with you **within one business day**. I can't promise a specific outcome, but they'll look into what's possible.\n\nDo you have your order number handy? If so, I'll include it so the specialist can pull up your order right away. If not, I can escalate without it now."
+    },
+    {
+      "id": "fraud-tf-40103",
+      "outcome": "escalate",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "a specialist will review your case and follow up with you **within one business day**"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer the order will be canceled or refunded.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer did not place the order and suspects their card was used.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer reports an order on their account (TF-40103) that they did not place and suspects their payment card was used without authorization"
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 1,
+        "missing": ""
+      },
+      "judge_input_tokens": 1289,
+      "judge_output_tokens": 167,
+      "judge_cost_usd": 0.002124,
+      "latency_ms": 8178,
+      "agent_ms": 6969,
+      "input_tokens": 6315,
+      "output_tokens": 474,
+      "cost_usd": 0.026055,
+      "session_id": "score-df23173afd9f4c81b566d4f2f1e1122e",
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/12-privacy.md",
+        "kb/15-gift-cards.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "TF-40103",
+            "summary": "Customer reports an order on their account (TF-40103) that they did not place and suspects their payment card was used without authorization. Potential fraud/unauthorized account access.",
+            "policy_snippets": "kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review order TF-40103 for suspected unauthorized placement. Investigate whether the customer's account or payment method was compromised. Take appropriate fraud response steps \u2014 do not promise a refund or specific outcome at this stage."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "TF-40103",
+            "escalation_id": "ed0a4ab507c84877856d8e44904a1251"
+          }
+        }
+      ],
+      "decision": [
+        "step: 1 | missing: none\nEscalation rule: \"Suspected fraud or chargeback risk\""
+      ],
+      "text": "I've flagged this as a priority security concern and a specialist will review your case and follow up with you **within one business day**.\n\nIn the meantime, here are a few steps I'd recommend taking right away:\n\n1. **Change your Trailforge account password** immediately using Account Settings (or the \"Forgot Password\" link if needed).\n2. **Contact your card issuer** to report potential unauthorized use \u2014 they can freeze or reissue your card and dispute any fraudulent charges.\n3. **Review your account** for any other unfamiliar orders or changes.\n\nI'm sorry this has happened, and we'll work to get it resolved as quickly as possible."
+    }
+  ]
+}
