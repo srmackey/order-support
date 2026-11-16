@@ -1,0 +1,99 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "a post-purchase price adjustment policy isn't covered in the policies I have access to, so I'm not able to confirm whether that's something Trailforge offers"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?",
+        "missing": "whether post-purchase price adjustments are offered",
+        "step": 4,
+        "cited": [
+          "kb/01-return-policy.md",
+          "kb/11-promotions.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "54d81a2204dc46c58a685b6cec6d6070"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether post-purchase price adjustments are offered"
+      },
+      "judge_input_tokens": 1280,
+      "judge_output_tokens": 204,
+      "judge_cost_usd": 0.0023,
+      "latency_ms": 4652,
+      "agent_ms": null,
+      "input_tokens": 3032,
+      "output_tokens": 338,
+      "cost_usd": 0.014166,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\n\"We do not offer price matching with other retailers.\" \u2014 but more relevantly, there is no price adjustment policy in the excerpts; the promotions policy only covers promo codes and explicitly states no price matching. A post-purchase price adjustment (same retailer) is not mentioned. However, the only relevant policy is kb/11-promotions.md which says \"We do not offer price matching with other retailers.\" A price adjustment request from the same store is not covered. Actually, let me reconsider: the excerpts do not mention post-purchase price adjustments at all. That's step 4.\nstep: 4 | missing: whether post-purchase price adjustments are offered\nNo policy in the excerpts covers post-purchase price adjustments."
+      ],
+      "text": "That's a great question! Unfortunately, a post-purchase price adjustment policy isn't covered in the policies I have access to, so I'm not able to confirm whether that's something Trailforge offers.\n\nWhat I can tell you is that if you'd prefer, you could potentially return the jacket (within the 30-day return window, unused and in original packaging per **kb/01-return-policy.md**) and repurchase it at the sale price \u2014 though keep in mind you'd be responsible for return shipping costs for a standard return.\n\nFor the price adjustment question specifically, I'd recommend reaching out to us directly, as that falls outside the policies I can speak to. Is there anything else I can help you with?"
+    }
+  ]
+}

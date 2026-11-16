@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": false,
+      "failures": [
+        "Trap: The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+        "Gap record missing: The gap record says the customer asked for a price adjustment after a Trailforge sale."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Per our [kb/11-promotions.md] policy, we do not offer price matching with other retailers, and there is no post-purchase price adjustment program in our policies."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": true,
+          "evidence": "Unfortunately, Trailforge does not offer price matching or price adjustment on past purchases."
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": false,
+          "evidence": "no gap record was written"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": false,
+      "gap_ok": false,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1171,
+      "judge_output_tokens": 175,
+      "judge_cost_usd": 0.002046,
+      "latency_ms": 3733,
+      "agent_ms": null,
+      "input_tokens": 3032,
+      "output_tokens": 240,
+      "cost_usd": 0.012696,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/11-promotions.md: \"We do not offer price matching with other retailers.\" \u2014 and no post-purchase price adjustment policy exists in the excerpts; the promotions policy covers price matching and it is a no."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, Trailforge does not offer price matching or price adjustment on past purchases. Per our [kb/11-promotions.md] policy, we do not offer price matching with other retailers, and there is no post-purchase price adjustment program in our policies.\n\nIf you haven't worn the jacket and it's still within **30 days of delivery**, you do have the option to return it under our standard return policy (kb/01-return-policy.md) \u2014 provided it's unused, in original packaging, and in resalable condition \u2014 and then repurchase it at the sale price. Keep in mind that you would be responsible for return shipping costs for a standard return.\n\nWould you like help starting a return, or is there anything else I can assist you with?"
+    }
+  ]
+}

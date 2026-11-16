@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "ship-same-day",
+      "outcome": "answer",
+      "boundary": "Shipping methods are a closed list. Same-day is not on it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says same-day delivery is not offered.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, we don't offer same-day delivery."
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says the fastest option is Overnight, delivered the next business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The fastest option available is **Overnight**, which delivers the next business day when you order by 1 PM local time."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether same-day delivery is offered is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says same-day delivery is available.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1133,
+      "judge_output_tokens": 184,
+      "judge_cost_usd": 0.002053,
+      "latency_ms": 2702,
+      "agent_ms": null,
+      "input_tokens": 3008,
+      "output_tokens": 202,
+      "cost_usd": 0.012054,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nThe shipping methods list in kb/02-shipping-policy.md is a closed list marked \"We offer only these shipping methods,\" and same-day delivery is not on it."
+      ],
+      "text": "Unfortunately, we don't offer same-day delivery. Per our shipping policy (kb/02-shipping-policy.md), the only shipping methods we offer are:\n\n- **Standard Ground**: 5\u20137 business days \u2014 $5.95 (free on orders over $75)\n- **Expedited**: 2\u20133 business days \u2014 $12.95\n- **Overnight**: Next business day (order by 1 PM local time) \u2014 $24.95\n\nThe fastest option available is **Overnight**, which delivers the next business day when you order by 1 PM local time. If you have any other questions, feel free to ask!"
+    }
+  ]
+}
