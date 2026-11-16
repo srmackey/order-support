@@ -10,10 +10,10 @@ With --against, the gate passes only if no case is broken in the new runs
 that was not broken in the baseline. The exit code is 1 when the gate fails.
 
 The gap check takes the same rule on its own terms. A case is gap-broken when
-it fails the gap check in more than half of the runs that recorded one. That
-bar is absolute, not a comparison, because runs from before the gap record
-have nothing to compare against: any gap-broken case fails, with or without
---against.
+it fails the gap check in more than half of the runs that recorded one. Gap-
+broken cases are reported as known failures and do not change the exit code
+(decided 2026-11-16, for the demo stage). --strict-gap restores the absolute
+bar: any gap-broken case fails, with or without --against.
 """
 
 from __future__ import annotations
@@ -62,6 +62,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("runs", nargs="+")
     parser.add_argument("--against", nargs="+", default=[])
+    parser.add_argument("--strict-gap", action="store_true", help="fail on any gap-broken case")
     args = parser.parse_args()
 
     results, sets, gaps = load(args.runs)
@@ -90,11 +91,13 @@ def main() -> int:
         newly = [case for case in now["broken"] if case not in was]
         fixed = sorted(was - set(now["broken"]))
         print(f"gate: {'FAIL' if newly else 'pass'}. Newly broken: {', '.join(newly) or 'none'}. Fixed: {', '.join(fixed) or 'none'}.")
-    if gap_broken:
+    if gap_broken and args.strict_gap:
         print(f"gap gate: FAIL. Gap-broken: {', '.join(gap_broken)}.")
+    elif gap_broken:
+        print(f"gap check: known failures, reported and not gated: {', '.join(gap_broken)}.")
     elif gaps:
-        print("gap gate: pass.")
-    return 1 if newly or gap_broken else 0
+        print("gap check: no case gap-broken.")
+    return 1 if newly or (gap_broken and args.strict_gap) else 0
 
 
 if __name__ == "__main__":

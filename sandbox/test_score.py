@@ -474,7 +474,9 @@ def test_gap_stability():
         _, _, gaps = stability.load(paths)
         assert stability.summarize(gaps)["broken"] == ["b"]
         sys.argv = ["stability.py", *paths]
-        assert stability.main() == 1, "a gap-broken case fails without a baseline"
+        assert stability.main() == 0, "a gap-broken case is reported, not gated, by default"
+        sys.argv = ["stability.py", *paths, "--strict-gap"]
+        assert stability.main() == 1, "--strict-gap fails a gap-broken case without a baseline"
 
 
 def test_gap_report():

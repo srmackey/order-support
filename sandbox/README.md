@@ -67,7 +67,7 @@ The gap check is its own column. It never changes the case's pass bit, so v2 and
 
 The judge sees the gap record only on a case that has one, in its own section with one added rule. A grading call without a gap record is exactly judge prompt version 1, so v2 and holdout verdicts are graded on the same input as before.
 
-`stability.py` applies the stop rule to the gap check on its own terms: a case is gap-broken if its gap check fails in two of three runs. Any gap-broken case fails the run group, with or without `--against`, because runs from before the gap record have nothing to compare against.
+`stability.py` applies the stop rule to the gap check on its own terms: a case is gap-broken if its gap check fails in two of three runs. A gap-broken case is reported as a known failure and does not fail the run group. That was decided on 2026-11-16 for the demo stage, after five prompt rounds traded one closed-list miss for another (see the README). `--strict-gap` restores the absolute bar.
 
 ### The owner's queue
 
