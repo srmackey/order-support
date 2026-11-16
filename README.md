@@ -9,7 +9,19 @@ One agent reads a customer message for Trailforge, a fictional outdoor retailer,
 
 The orders and policies are synthetic. This is a demo with a measured benchmark, not a production support desk.
 
+## What the endpoint serves
+
+The DEFAULT endpoint runs the container image `order-support:v9`. That image was scored on 2026-11-15: three runs of the 39-case set with no case broken, and 14 of 14 on the holdout in all three runs. Those runs are the measured claim.
+
+Version 10 added a policy-gap flag. On 2026-11-16 it scored 39 of 39 three times on the 39-case set. The 15-case set was 15, 14, and 14, and no case failed twice. The holdout was 14, 13, and 13: `cancel-exception` told the customer a specialist would follow up and never queued the escalation. That failed the gate, so version 10 was taken off the endpoint the same day.
+
+AgentCore does not move the default endpoint back to an older version number. The rollback is runtime version 11 running the version 9 image. The knowledge base was re-indexed to the policy text that image was scored against. Two later edits, the word "only" on the shipping and payment lists, stay in `kb/` and are not in the index. The tools Lambda can store a gap record. The served image does not call it.
+
+A sync from the `kb/` files in this repo would put those two edits back into the index.
+
 ## How it works
+
+The code in this checkout:
 
 ```
 Customer message
@@ -23,7 +35,7 @@ Customer message
   -> Reply to the customer, plus the tool calls and sources used
 ```
 
-When the policies do not answer a question, the customer is told so and the runtime leaves a gap record for the policy owner: the question, what was missing, and the policy cited nearby. The model does not call a tool for it; code reads the agent's note and writes the record. `sandbox/gaps.py` is the owner's queue.
+In this checkout, when the policies do not answer a question, the customer is told so and the runtime leaves a gap record for the policy owner: the question, what was missing, and the policy cited nearby. The model does not call a tool for it; code reads the agent's note and writes the record. `sandbox/gaps.py` is the owner's queue. The endpoint does not run this code. See above.
 
 An escalation packet carries the conversation summary, the policy files used, the tool results already obtained, and a recommended next action. The customer is told a specialist will follow up within one business day. Neither the reply nor the packet may promise an outcome such as a refund.
 
@@ -106,7 +118,7 @@ Version 9, three runs of each set on 2026-11-15 (`sandbox/runs/2026-11-15-*-runt
 - No reply named a decision step or showed the note. The model said when a specialist would follow up in all 33 escalations, so the runtime never had to add the sentence.
 - Agent model cost for the six runs was **$2.69** and the judge **$0.30**. Wall-clock latency per case was 2.9 to 18.2 seconds.
 
-This is the baseline the next change is gated against.
+This is the score the endpoint serves. Version 10's runs are in `sandbox/runs/2026-11-16-*-runtime-v10-r*.json`. They did not replace this baseline.
 
 ## Run it
 
@@ -143,7 +155,7 @@ Score against the deployed runtime instead, with cost per case:
 
 - **Tools.** `python lambda/build.py` assembles the Lambda package in `build/function`. `infra/tools.yaml` is the stack: the Lambda and three DynamoDB tables (orders, escalations, policy gaps). `python lambda/seed.py` loads `app/orders.json` into the orders table.
 - **Runtime.** `infra/runtime.yaml` creates the execution role and the image repository. The image is ARM64, built from the `Dockerfile`. To push it, map the ECR registry to the Amazon ECR credential helper under `credHelpers` in `~/.docker/config.json`. On Windows, a `docker login` token is longer than Docker's credential store accepts.
-- **Knowledge base.** A Bedrock managed knowledge base named `trailforge-policies`, synced from the `kb/` files in S3.
+- **Knowledge base.** A Bedrock managed knowledge base named `trailforge-policies`, synced from the `kb/` files in S3. The endpoint's index is the text from before the "only" edits in `kb/02-shipping-policy.md` and `kb/08-payment-billing-faq.md`. Syncing this repo's copies would change that.
 
 Every call to the runtime and the tools needs IAM credentials. There is no unauthenticated endpoint.
 
