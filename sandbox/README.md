@@ -47,6 +47,14 @@ The judge tests run without AWS: `test_score.py` covers the code half with a sta
 
 `cases-holdout.json` holds 14 cases: 3 answers, 2 tool calls, 6 refusals, and 3 escalations. It was written and frozen on 2026-11-15, before the runtime version 6 prompt change, and scored on version 5 first as the baseline (`runs/2026-11-15-holdout-runtime-v5.json`). It leans toward refusals and exception requests, where version 5 regressed. Prompt changes are checked against v2 cases, never against this set, so its score is on cases the agent was not tuned against. The same agent that wrote the cases made the prompt changes, so they are not fully independent of them. It is judged the same way as set v2.
 
+## Set v3
+
+`cases-v3.json` holds 15 cases for the policy gap record: a note the agent leaves for the policy owner when the policies do not answer a question. It was frozen on 2026-11-15, before the gap record was built. It has 8 answers, 5 refusals, 1 escalation, and 1 tool call. Six cases expect a gap record. The rest test the boundary: a closed list such as accepted payment methods is answered with a no, not a gap, and a closed list does not overrule a different written rule. The cases assume the policy edit that ships with the gap record, which adds "only" to the payment and shipping method lists.
+
+Every v3 case states `gap`, whether a correct turn writes a gap record. `gap_facts` are claims about that record. Every reply is checked in code for internal text, a step number or a decision tag. `facts_from_tool` checks tracking numbers and dates in code, and a status phrase is judged by the case's trap claim.
+
+The frozen v2 and holdout files predate the gap record. Their expectation comes from `gap-expect.json`: a refusal expects a gap, except the three v2 refusals that ask for an order number.
+
 Each run row also carries `decision`: the agent's note on which move it chose and why, which the runtime keeps out of the reply. It is recorded, not scored.
 
 ## When a miss gets fixed

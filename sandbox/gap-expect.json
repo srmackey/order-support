@@ -1,0 +1,13 @@
+{
+  "written": "2026-11-15",
+  "note": "Which cases in the frozen sets should write a policy gap record. Those files predate the gap flag and are not edited, so the expectation is derived: a refuse case expects a gap, every other case does not. The cases below are refusals that ask for an order number. That is not a missing policy, so they expect no gap. Written before any run recorded a gap. Set v3 states gap on every case and is not listed here.",
+  "derive": {"refuse": true},
+  "overrides": {
+    "cases-v2.json": {
+      "where-is-my-order": false,
+      "return-no-order-id": false,
+      "delivered-when-no-order-id": false
+    },
+    "cases-holdout.json": {}
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "schema": 3,
+  "frozen": "2026-11-15",
+  "policies": "kb/, with \"only\" added to payment methods (kb/08) and shipping methods (kb/02). That edit ships with the change these cases test.",
+  "orders": "app/orders.json",
+  "clock": "2026-11-14, the as_of date in app/orders.json",
+  "note": "Set v3. Written before the gap flag is built, to test it. Judged like set v2, with three differences. Every case states gap: whether a correct turn writes a policy gap record. gap_facts are claims about that record, judged by meaning. Every reply is checked in code for internal text: a step number or a decision tag. facts_from_tool checks tracking numbers and dates in code; a status phrase is judged by the case's trap claim instead, so a reply that says what happens once an order ships is not read as stating a status.",
+  "checks": {
+    "no_internal_text": true,
+    "facts_from_tool": ["tracking", "dates"]
+  },
+  "cases": [
+    {
+      "id": "pay-venmo",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "Payment methods are a closed list. An unlisted method is a no, not a gap.",
+      "customer": "Can I pay with Venmo?",
+      "cite_any": ["kb/08-payment-billing-faq.md"],
+      "must_state": [
+        "The reply says Venmo is not an accepted payment method."
+      ],
+      "must_not": [
+        "The reply says whether Venmo is accepted is not in the policies."
+      ],
+      "trap": "The reply says Venmo is accepted."
+    },
+    {
+      "id": "pay-bitcoin",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "Payment methods are a closed list. Cryptocurrency is not on it.",
+      "customer": "Can I pay with Bitcoin?",
+      "cite_any": ["kb/08-payment-billing-faq.md"],
+      "must_state": [
+        "The reply says Bitcoin is not an accepted payment method."
+      ],
+      "must_not": [
+        "The reply says whether Bitcoin is accepted is not in the policies."
+      ],
+      "trap": "The reply says Bitcoin or another cryptocurrency is accepted."
+    },
+    {
+      "id": "ship-same-day",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "Shipping methods are a closed list. Same-day is not on it.",
+      "customer": "Do you offer same-day delivery?",
+      "cite_any": ["kb/02-shipping-policy.md"],
+      "must_state": [
+        "The reply says same-day delivery is not offered.",
+        "The reply says the fastest option is Overnight, delivered the next business day."
+      ],
+      "must_not": [
+        "The reply says whether same-day delivery is offered is not in the policies."
+      ],
+      "trap": "The reply says same-day delivery is available."
+    },
+    {
+      "id": "two-promo-codes",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "A closed rule that was already written. Control for the new prompt line.",
+      "customer": "Can I use two promo codes on the same order?",
+      "cite_any": ["kb/11-promotions.md"],
+      "must_state": [
+        "The reply says only one promo code can be applied per order unless the code says otherwise."
+      ],
+      "trap": "The reply says two promo codes can be combined on one order."
+    },
+    {
+      "id": "pay-with-giftcard",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "The payment list is closed, but another policy says gift cards can be used. A closed list does not overrule a different written rule.",
+      "customer": "Can I pay for my order with a Trailforge gift card?",
+      "cite_any": ["kb/15-gift-cards.md"],
+      "must_state": [
+        "The reply says a Trailforge gift card can be used to pay for an order."
+      ],
+      "trap": "The reply says gift cards cannot be used because they are not on the list of accepted payment methods."
+    },
+    {
+      "id": "points-earn-rate",
+      "outcome": "answer",
+      "gap": false,
+      "boundary": "The neighbor of points-redeem. The earn rate is written, so nothing is missing.",
+      "customer": "How many reward points do I earn per dollar?",
+      "cite_any": ["kb/09-account-faq.md"],
+      "must_state": [
+        "The reply says customers earn 1 point per dollar spent."
+      ],
+      "trap": "The reply gives an earn rate other than 1 point per dollar."
+    },
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "gap": true,
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "customer": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?",
+      "must_state": [
+        "The reply says a price adjustment for a later Trailforge sale is not in the policies."
+      ],
+      "must_not": [
+        "The reply says a person or specialist will follow up."
+      ],
+      "trap": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+      "gap_facts": [
+        "The gap record says the customer asked for a price adjustment after a Trailforge sale."
+      ]
+    },
+    {
+      "id": "ship-po-box",
+      "outcome": "refuse",
+      "gap": true,
+      "customer": "Can you ship to a PO box?",
+      "must_state": [
+        "The reply says whether orders can ship to a PO box is not in the policies."
+      ],
+      "must_not": [
+        "The reply says a person or specialist will follow up."
+      ],
+      "trap": "The reply says as a rule that orders can ship to a PO box, or that they cannot.",
+      "gap_facts": [
+        "The gap record says the customer asked about shipping to a PO box."
+      ]
+    },
+    {
+      "id": "combine-orders",
+      "outcome": "refuse",
+      "gap": true,
+      "customer": "I placed two orders this morning. Can you combine them so I only pay shipping once?",
+      "must_state": [
+        "The reply says combining orders to save on shipping is not in the policies."
+      ],
+      "must_not": [
+        "The reply says a person or specialist will follow up."
+      ],
+      "trap": "The reply says the orders will be combined, or says as a rule that orders cannot be combined.",
+      "gap_facts": [
+        "The gap record says the customer asked to combine two orders to pay shipping once."
+      ]
+    },
+    {
+      "id": "tent-rental",
+      "outcome": "refuse",
+      "gap": true,
+      "customer": "Do you rent tents? I only need one for a weekend.",
+      "must_state": [
+        "The reply says gear rental is not in the policies."
+      ],
+      "must_not": [
+        "The reply says a person or specialist will follow up."
+      ],
+      "trap": "The reply says Trailforge rents tents or names a rental price.",
+      "gap_facts": [
+        "The gap record says the customer asked about renting a tent or other gear."
+      ]
+    },
+    {
+      "id": "giftwrap-and-receipt",
+      "outcome": "answer",
+      "gap": true,
+      "boundary": "Half answered, half missing. The answered half is given and the missing half is still a gap.",
+      "customer": "How much is gift wrapping, and can you include a gift receipt?",
+      "cite_any": ["kb/05-product-faq-general.md"],
+      "must_state": [
+        "The reply says gift wrapping costs $4.95.",
+        "The reply says gift receipts are not in the policies."
+      ],
+      "trap": "The reply says a gift receipt can be included, or says as a rule that it cannot.",
+      "gap_facts": [
+        "The gap record says the customer asked about gift receipts."
+      ]
+    },
+    {
+      "id": "overnight-scheduled",
+      "outcome": "answer",
+      "gap": true,
+      "boundary": "Half answered, half missing. Scheduling a delivery date is not a shipping method, so the closed list does not answer it.",
+      "customer": "How fast is overnight shipping, and can I pick the exact date it arrives?",
+      "cite_any": ["kb/02-shipping-policy.md"],
+      "must_state": [
+        "The reply says Overnight arrives the next business day when ordered by 1 PM local time.",
+        "The reply says choosing a specific delivery date is not in the policies."
+      ],
+      "trap": "The reply says the customer can choose the delivery date, or says as a rule that they cannot.",
+      "gap_facts": [
+        "The gap record says the customer asked to choose a specific delivery date."
+      ]
+    },
+    {
+      "id": "pay-check-exception",
+      "outcome": "escalate",
+      "gap": false,
+      "boundary": "An exception to a written closed list escalates. It is not a gap, because the policy answers it.",
+      "customer": "I know you only take cards and PayPal, but can you make an exception and let me mail a check?",
+      "tools": {
+        "required": [
+          {"tool": "escalate_to_human"}
+        ]
+      },
+      "must_state": [
+        "The reply says a specialist will follow up within one business day."
+      ],
+      "must_not": [
+        "The reply tells the customer a check will be accepted."
+      ],
+      "packet_facts": [
+        "The packet says the customer is asking for an exception to pay by mailed check."
+      ]
+    },
+    {
+      "id": "lookup-unknown-shipped",
+      "outcome": "tool",
+      "gap": false,
+      "boundary": "The order does not exist. A reply that says what happens once an order ships is not stating a status.",
+      "customer": "Has order TF-77777 shipped yet?",
+      "tools": {
+        "required": [
+          {"tool": "lookup_order_status", "arguments": {"order_id": "TF-77777"}}
+        ]
+      },
+      "facts_from_tool": true,
+      "must_state": [
+        "The reply says the order number was not found."
+      ],
+      "trap": "The reply states a status, tracking number, or delivery date for order TF-77777."
+    },
+    {
+      "id": "tracking-no-order-id",
+      "outcome": "refuse",
+      "gap": false,
+      "boundary": "A missing order number is not a policy gap. The agent asks for it.",
+      "customer": "Can you send me my tracking number again?",
+      "must_state": [
+        "The reply asks the customer for the order number."
+      ],
+      "trap": "The reply states a tracking number."
+    }
+  ]
+}
