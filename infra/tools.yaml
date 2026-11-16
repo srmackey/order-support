@@ -36,6 +36,23 @@ Resources:
         - Key: Project
           Value: order-support
 
+  GapsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: trailforge-gaps
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: gap_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: gap_id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Project
+          Value: order-support
+
   ToolRole:
     Type: AWS::IAM::Role
     Properties:
@@ -60,6 +77,9 @@ Resources:
               - Effect: Allow
                 Action: dynamodb:PutItem
                 Resource: !GetAtt EscalationsTable.Arn
+              - Effect: Allow
+                Action: dynamodb:PutItem
+                Resource: !GetAtt GapsTable.Arn
 
   ToolFunction:
     Type: AWS::Lambda::Function
@@ -77,6 +97,7 @@ Resources:
         Variables:
           ORDERS_TABLE: !Ref OrdersTable
           ESCALATIONS_TABLE: !Ref EscalationsTable
+          GAPS_TABLE: !Ref GapsTable
       Code: ../build/function
       Tags:
         - Key: Project

@@ -8,6 +8,12 @@ A case that fails less often than that is noise: it is listed, not fixed.
 
 With --against, the gate passes only if no case is broken in the new runs
 that was not broken in the baseline. The exit code is 1 when the gate fails.
+
+The gap check takes the same rule on its own terms. A case is gap-broken when
+it fails the gap check in more than half of the runs that recorded one. That
+bar is absolute, not a comparison, because runs from before the gap record
+have nothing to compare against: any gap-broken case fails, with or without
+--against.
 """
 
 from __future__ import annotations
@@ -21,8 +27,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 
-def load(paths: list[str]) -> tuple[dict[str, list[bool]], set[str]]:
+def load(paths: list[str]) -> tuple[dict[str, list[bool]], set[str], dict[str, list[bool]]]:
     results: dict[str, list[bool]] = defaultdict(list)
+    gaps: dict[str, list[bool]] = defaultdict(list)
     sets = set()
     for name in paths:
         path = Path(name) if Path(name).exists() else ROOT / name
@@ -30,7 +37,9 @@ def load(paths: list[str]) -> tuple[dict[str, list[bool]], set[str]]:
         sets.add(run.get("set", "?"))
         for row in run["cases"]:
             results[row["id"]].append(bool(row["pass"]))
-    return results, sets
+            if row.get("gap_ok") is not None:
+                gaps[row["id"]].append(bool(row["gap_ok"]))
+    return results, sets, gaps
 
 
 def broken(passes: list[bool]) -> bool:
@@ -55,7 +64,7 @@ def main() -> int:
     parser.add_argument("--against", nargs="+", default=[])
     args = parser.parse_args()
 
-    results, sets = load(args.runs)
+    results, sets, gaps = load(args.runs)
     if len(sets) != 1:
         print(f"runs mix case sets: {sorted(sets)}")
         return 2
@@ -66,14 +75,26 @@ def main() -> int:
     if now["uneven"]:
         print(f"cases missing from some runs: {', '.join(now['uneven'])}")
 
-    if not args.against:
-        return 0
-    before, _ = load(args.against)
-    was = set(summarize(before)["broken"])
-    newly = [case for case in now["broken"] if case not in was]
-    fixed = sorted(was - set(now["broken"]))
-    print(f"gate: {'FAIL' if newly else 'pass'}. Newly broken: {', '.join(newly) or 'none'}. Fixed: {', '.join(fixed) or 'none'}.")
-    return 1 if newly else 0
+    gap_broken = []
+    if gaps:
+        gap = summarize(gaps)
+        gap_broken = gap["broken"]
+        print(f"gap check: {gap['pass_rate']:.1%} of case runs right")
+        print(f"gap-broken (gap check fails in more than half of runs): {', '.join(gap_broken) or 'none'}")
+        print(f"gap noise (failed once or less often): {', '.join(gap['noise']) or 'none'}")
+
+    newly = []
+    if args.against:
+        before, _, _ = load(args.against)
+        was = set(summarize(before)["broken"])
+        newly = [case for case in now["broken"] if case not in was]
+        fixed = sorted(was - set(now["broken"]))
+        print(f"gate: {'FAIL' if newly else 'pass'}. Newly broken: {', '.join(newly) or 'none'}. Fixed: {', '.join(fixed) or 'none'}.")
+    if gap_broken:
+        print(f"gap gate: FAIL. Gap-broken: {', '.join(gap_broken)}.")
+    elif gaps:
+        print("gap gate: pass.")
+    return 1 if newly or gap_broken else 0
 
 
 if __name__ == "__main__":

@@ -19,8 +19,11 @@ Customer message
             lookup_order_status        reads the DynamoDB orders table
             check_return_eligibility   applies the 30-day rule to the order record
             escalate_to_human          stores a packet in the escalations table
+            record_policy_gap          stores a gap record (called by the runtime, not the model)
   -> Reply to the customer, plus the tool calls and sources used
 ```
+
+When the policies do not answer a question, the customer is told so and the runtime leaves a gap record for the policy owner: the question, what was missing, and the policy cited nearby. The model does not call a tool for it; code reads the agent's note and writes the record. `sandbox/gaps.py` is the owner's queue.
 
 An escalation packet carries the conversation summary, the policy files used, the tool results already obtained, and a recommended next action. The customer is told a specialist will follow up within one business day. Neither the reply nor the packet may promise an outcome such as a refund.
 
@@ -138,7 +141,7 @@ Score against the deployed runtime instead, with cost per case:
 
 ## Deploy
 
-- **Tools.** `python lambda/build.py` assembles the Lambda package in `build/function`. `infra/tools.yaml` is the stack: the Lambda and two DynamoDB tables. `python lambda/seed.py` loads `app/orders.json` into the orders table.
+- **Tools.** `python lambda/build.py` assembles the Lambda package in `build/function`. `infra/tools.yaml` is the stack: the Lambda and three DynamoDB tables (orders, escalations, policy gaps). `python lambda/seed.py` loads `app/orders.json` into the orders table.
 - **Runtime.** `infra/runtime.yaml` creates the execution role and the image repository. The image is ARM64, built from the `Dockerfile`. To push it, map the ECR registry to the Amazon ECR credential helper under `credHelpers` in `~/.docker/config.json`. On Windows, a `docker login` token is longer than Docker's credential store accepts.
 - **Knowledge base.** A Bedrock managed knowledge base named `trailforge-policies`, synced from the `kb/` files in S3.
 

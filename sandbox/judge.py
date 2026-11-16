@@ -15,6 +15,16 @@ The LLM judge checks what is meaning, as claims about the reply:
 - must_not       each claim must not hold
 - trap           the known wrong answer for this case; it must not hold
 - packet_facts   claims about the escalation packet; each must hold
+- gap_facts      claims about the policy gap record; each must hold (schema 3)
+
+Schema 3 adds a file-level `checks` block. `no_internal_text` fails a reply
+that shows a step number, a decision tag, or the note's missing field.
+`facts_from_tool` there narrows the code check to the kinds it names
+(tracking, dates, status); a status phrase left out is judged by the trap claim.
+
+Every set gets a gap check, kept out of the case pass so pass rates stay
+comparable with runs that predate the gap record: did the turn write a gap
+record when the case expects one, and none when it does not.
 """
 
 from __future__ import annotations
@@ -43,20 +53,46 @@ def _describe(spec: dict) -> str:
     return f"{spec['tool']}({args})"
 
 
-def invented_tokens(reply: str, tool_text: str) -> list[str]:
+FACT_KINDS = ("tracking", "dates", "status")
+INTERNAL_TEXT = re.compile(r"\bstep\s*:?\s*[1-4]\b|</?decision>|\bmissing\s*:", re.I)
+
+
+def invented_tokens(reply: str, tool_text: str, kinds=FACT_KINDS) -> list[str]:
     text = _norm(reply)
     known = _norm(tool_text)
     found = []
-    for token in re.findall(r"\b1z[a-z0-9]+\b", text):
-        if token not in known:
-            found.append(token)
-    for day in re.findall(r"\b20\d\d-\d\d-\d\d\b", text):
-        if day not in known:
-            found.append(day)
-    for phrase in STATUS_PHRASES:
-        if phrase in text and phrase not in known:
-            found.append(phrase)
+    if "tracking" in kinds:
+        for token in re.findall(r"\b1z[a-z0-9]+\b", text):
+            if token not in known:
+                found.append(token)
+    if "dates" in kinds:
+        for day in re.findall(r"\b20\d\d-\d\d-\d\d\b", text):
+            if day not in known:
+                found.append(day)
+    if "status" in kinds:
+        for phrase in STATUS_PHRASES:
+            if phrase in text and phrase not in known:
+                found.append(phrase)
     return found
+
+
+def internal_text(reply: str) -> list[str]:
+    return sorted({match.group(0) for match in INTERNAL_TEXT.finditer(reply)})
+
+
+def gap_text(gap: dict | None) -> str:
+    """The record as the owner would read it, for the judge. Ids and timestamps are left out."""
+    if not gap:
+        return ""
+    return "\n".join(f"{key}: {gap.get(key)}" for key in ("question", "missing", "cited"))
+
+
+def gap_check(expected: bool | None, turn: dict) -> dict:
+    """Both directions: a gap expected and none written fails, and a gap written where none is expected fails."""
+    if "gap" not in turn:
+        return {"gap_expected": expected, "gap_written": None, "gap_ok": None}
+    written = bool(turn.get("gap"))
+    return {"gap_expected": expected, "gap_written": written, "gap_ok": None if expected is None else written == expected}
 
 
 def tool_failures(case: dict, calls: list[dict]) -> list[str]:
@@ -85,12 +121,16 @@ def claims_for(case: dict) -> list[dict]:
         claims.append({"id": "trap", "text": case["trap"], "expect": False, "label": "Trap"})
     for index, text in enumerate(case.get("packet_facts", []), 1):
         claims.append({"id": f"packet{index}", "text": text, "expect": True, "label": "Packet missing"})
+    for index, text in enumerate(case.get("gap_facts", []), 1):
+        claims.append({"id": f"gap{index}", "text": text, "expect": True, "label": "Gap record missing", "gap": True})
     return claims
 
 
-def judge(case: dict, turn: dict, grader) -> dict:
+def judge(case: dict, turn: dict, grader, checks: dict | None = None, gap_expected: bool | None = None) -> dict:
+    checks = checks or {}
     reply = turn.get("text", "")
     calls = turn.get("calls", [])
+    gap = turn.get("gap")
     failures = tool_failures(case, calls)
 
     cites = case.get("cite_any", [])
@@ -100,21 +140,30 @@ def judge(case: dict, turn: dict, grader) -> dict:
 
     tool_text = llm_judge.tool_results_text(calls)
     if case.get("facts_from_tool"):
-        invented = invented_tokens(reply, tool_text)
+        invented = invented_tokens(reply, tool_text, checks.get("facts_from_tool", FACT_KINDS))
         if invented:
             failures.append("Stated order facts the tools did not return: " + ", ".join(invented))
 
+    if checks.get("no_internal_text"):
+        shown = internal_text(reply)
+        if shown:
+            failures.append("Showed internal text: " + ", ".join(shown))
+
     claims = claims_for(case)
+    # A gap claim with no record to read is false without asking the model.
+    asked = [claim for claim in claims if gap or not claim.get("gap")]
     graded = grader.grade(
         case["customer"],
         reply,
-        [{"id": claim["id"], "text": claim["text"]} for claim in claims],
+        [{"id": claim["id"], "text": claim["text"]} for claim in asked],
         packet=llm_judge.packet_text(calls),
         tool_results=tool_text,
+        gap=gap_text(gap),
     )
+    no_record = {"holds": False, "evidence": "no gap record was written"}
     checks = []
     for claim in claims:
-        verdict = graded["verdicts"][claim["id"]]
+        verdict = graded["verdicts"].get(claim["id"], no_record)
         ok = verdict["holds"] == claim["expect"]
         checks.append({
             "id": claim["id"],
@@ -133,6 +182,9 @@ def judge(case: dict, turn: dict, grader) -> dict:
         "pass": not failures,
         "failures": failures,
         "checks": checks,
+        **gap_check(gap_expected, turn),
+        "gap": gap,
+        "note": turn.get("note"),
         "judge_input_tokens": graded["input_tokens"],
         "judge_output_tokens": graded["output_tokens"],
         "judge_cost_usd": llm_judge.cost(graded["input_tokens"], graded["output_tokens"]),
@@ -156,7 +208,7 @@ class FixedGrader:
     def __init__(self, verdicts: dict[str, bool]):
         self.verdicts = verdicts
 
-    def grade(self, customer, reply, claims, packet="", tool_results=""):
+    def grade(self, customer, reply, claims, packet="", tool_results="", gap=""):
         return {
             "verdicts": {claim["id"]: {"holds": self.verdicts.get(claim["id"], False), "evidence": ""} for claim in claims},
             "input_tokens": 0,

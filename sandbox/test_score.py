@@ -361,7 +361,140 @@ def test_reply_guards():
     assert agent.with_follow_up("Sorry, something went wrong.", failed) == "Sorry, something went wrong."
 
 
+def test_gap_note():
+    import os
+
+    import agent
+
+    parse = agent.parse_note
+    assert parse(["step: 4 | missing: whether points transfer\nkb/09 is silent."]) == {"step": 4, "missing": "whether points transfer"}
+    assert parse(["**step: 3 | missing: none**\nkb/02 lists Overnight."]) == {"step": 3, "missing": ""}
+    assert parse(["Step: 3 | Missing: gift receipts.\nkb/05 gives wrap."]) == {"step": 3, "missing": "gift receipts"}
+    assert parse(["step: 1\nRefund above $150."]) == {"step": 1, "missing": ""}
+    assert parse(["I think this is about shipping."]) == {"step": None, "missing": ""}
+    # Seen on 2026-11-15: reasons on the same line, and a revised decision.
+    assert parse(["step: 3 | missing: none. kb/09-account-faq.md states 1 point per dollar."]) == {"step": 3, "missing": ""}
+    assert parse(["step: 4 | missing: whether PO box delivery is supported. The policy is silent."]) == {"step": 4, "missing": "whether PO box delivery is supported"}
+    assert parse(["step: 4 | missing: same-day delivery. Actually the list is closed.\nstep: 3 | missing: none."]) == {"step": 3, "missing": ""}
+    assert parse(["step: 3 | missing: none", "step: 4 | missing: post-purchase price adjustment policy"]) == {"step": 4, "missing": "post-purchase price adjustment policy"}
+    assert parse(["step: 4 | missing: nonexistent rental terms"]) == {"step": 4, "missing": "nonexistent rental terms"}
+    assert agent.cited_paths("See kb/02-shipping-policy.md.", "kb\\02-shipping-policy.md and kb/11-promotions.md") == [
+        "kb/02-shipping-policy.md",
+        "kb/11-promotions.md",
+    ]
+
+    os.environ["TRAILFORGE_TOOLS"] = "local"
+    try:
+        note = {"step": 4, "missing": "PO box shipping"}
+        gap = agent.record_gap("Can you ship to a PO box?", note, "Not in kb/02-shipping-policy.md.", [])
+        assert gap["recorded"] and not gap["stored"] and gap["missing"] == "PO box shipping"
+        assert gap["cited"] == ["kb/02-shipping-policy.md"]
+        assert agent.record_gap("How much is shipping?", {"step": 3, "missing": ""}, "", []) is None
+    finally:
+        del os.environ["TRAILFORGE_TOOLS"]
+
+    record = shop.gap_record({"question": "q", "missing": "m", "cited": ["kb/02-shipping-policy.md", ""], "step": 4}, "g1", "2026-11-15T00:00:00+00:00")
+    assert record == {
+        "gap_id": "g1",
+        "question": "q",
+        "missing": "m",
+        "cited": ["kb/02-shipping-policy.md"],
+        "step": 4,
+        "status": "open",
+        "created_at": "2026-11-15T00:00:00+00:00",
+    }
+
+
+def test_gap_judge():
+    import json
+
+    import judge as schema3
+    import score
+
+    expect = {}
+    for name in ("cases-v2.json", "cases-holdout.json", "cases-v3.json"):
+        cases = json.loads((ROOT / name).read_text(encoding="utf-8"))["cases"]
+        expect[name] = sum(bool(score.gap_expected(case, name)) for case in cases)
+    assert expect == {"cases-v2.json": 5, "cases-holdout.json": 6, "cases-v3.json": 6}, expect
+    assert score.gap_expected({"id": "ship-standard"}, "cases.json") is None
+
+    v3 = json.loads((ROOT / "cases-v3.json").read_text(encoding="utf-8"))
+    cases = {case["id"]: case for case in v3["cases"]}
+    checks = v3["checks"]
+    gap = {"question": "Can you ship to a PO box?", "missing": "PO box shipping", "cited": []}
+    holds = schema3.FixedGrader({"state1": True, "gap1": True})
+
+    row = schema3.judge(cases["ship-po-box"], {"text": "That is not in our policies.", "gap": gap}, holds, checks, True)
+    assert row["pass"] and row["gap_ok"] is True and row["gap_written"] is True, row["failures"]
+
+    row = schema3.judge(cases["ship-po-box"], {"text": "That is not in our policies.", "gap": None}, holds, checks, True)
+    assert row["gap_ok"] is False and not row["pass"]
+    assert any(item.startswith("Gap record missing") for item in row["failures"])
+
+    row = schema3.judge(cases["pay-venmo"], {"text": "We accept only cards. See kb/08-payment-billing-faq.md.", "gap": gap}, holds, checks, False)
+    assert row["gap_ok"] is False, "a gap written where none is expected fails the gap check"
+
+    leaked = schema3.judge(cases["ship-po-box"], {"text": "Step 4 applies: not in the policies.", "gap": gap}, holds, checks, True)
+    assert any(item.startswith("Showed internal text") for item in leaked["failures"])
+
+    once = {"text": "TF-77777 was not found. A tracking number is emailed once it has shipped.", "calls": [
+        {"tool": "lookup_order_status", "arguments": {"order_id": "TF-77777"}, "result": {"found": False, "order_id": "TF-77777"}}
+    ], "gap": None}
+    row = schema3.judge(cases["lookup-unknown-shipped"], once, schema3.FixedGrader({"state1": True}), checks, False)
+    assert row["pass"], f"schema 3 leaves status phrases to the trap claim: {row['failures']}"
+    assert schema3.invented_tokens(once["text"], "{}"), "schema 2 still checks status phrases in code"
+
+    old = schema3.judge(cases["ship-po-box"], {"text": "Not in the policies."}, holds, checks, True)
+    assert old["gap_ok"] is None and old["gap_written"] is None, "a turn from before the gap record has no gap check"
+
+
+def test_gap_stability():
+    import json
+    import tempfile
+
+    import stability
+
+    with tempfile.TemporaryDirectory() as folder:
+        paths = []
+        for index, gap_oks in enumerate(([True, False], [True, False], [True, True])):
+            run = {"set": "cases-v3.json", "cases": [
+                {"id": "a", "pass": True, "gap_ok": gap_oks[0]},
+                {"id": "b", "pass": True, "gap_ok": gap_oks[1]},
+            ]}
+            path = Path(folder) / f"r{index}.json"
+            path.write_text(json.dumps(run), encoding="utf-8")
+            paths.append(str(path))
+        _, _, gaps = stability.load(paths)
+        assert stability.summarize(gaps)["broken"] == ["b"]
+        sys.argv = ["stability.py", *paths]
+        assert stability.main() == 1, "a gap-broken case fails without a baseline"
+
+
+def test_gap_report():
+    import gaps
+
+    records = [
+        {"gap_id": "old", "question": "PO box?", "missing": "PO boxes", "cited": ["kb/02-shipping-policy.md"], "status": "open", "created_at": "2026-11-14T10:00:00+00:00"},
+        {"gap_id": "new", "question": "Date pick?", "missing": "choosing a date", "cited": ["kb/02-shipping-policy.md", "kb/06-order-tracking-faq.md"], "status": "open", "created_at": "2026-11-15T10:00:00+00:00"},
+        {"gap_id": "tent", "question": "Rent a tent?", "missing": "rental", "cited": [], "status": "open", "created_at": "2026-11-15T09:00:00+00:00"},
+        {"gap_id": "seen", "question": "Gift receipt?", "missing": "gift receipts", "cited": ["kb/05-product-faq-general.md"], "status": "reviewed", "created_at": "2026-11-15T11:00:00+00:00"},
+    ]
+    grouped = gaps.group(records)
+    assert [policy for policy, _ in grouped] == ["kb/02-shipping-policy.md", gaps.NO_CITE]
+    assert [item["gap_id"] for item in grouped[0][1]] == ["new", "old"]
+    assert len(gaps.group(records, include_reviewed=True)) == 3
+    text = gaps.text_report(grouped)
+    assert text.startswith("3 gaps in 2 groups") and "also cited: kb/06-order-tracking-faq.md" in text
+    md = gaps.md_report(grouped, "2026-11-15")
+    assert "## kb/02-shipping-policy.md" in md and "| 2026-11-15 | Date pick? | choosing a date | `new` |" in md
+    assert gaps.text_report([]) == "No open gaps.\n"
+
+
 if __name__ == "__main__":
+    test_gap_note()
+    test_gap_judge()
+    test_gap_stability()
+    test_gap_report()
     test_schema2()
     test_escalation_record()
     test_shop()

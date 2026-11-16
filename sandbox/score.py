@@ -3,6 +3,9 @@
 cases.json is set v1, five cases, judged by the hand-written judge below.
 cases-v2.json is schema 2: each case declares what is right, and judge.py
 checks it, with the LLM judge in llm_judge.py for claims about meaning.
+cases-v3.json is schema 3: the same judge plus set-level checks and gap_facts.
+Every schema 2 and 3 run also reports a gap check per case, kept out of the
+pass count (see README.md).
 
 Usage:
   python score.py
@@ -51,20 +54,42 @@ def load_cases() -> list[dict]:
     return load_set()["cases"]
 
 
-def judge_for(case_set: dict):
-    """The judge a set declares. Schema 2 grades claims with the LLM judge."""
-    if case_set.get("schema") == 2:
+GAP_EXPECT = ROOT / "gap-expect.json"
+
+
+def gap_expected(case: dict, set_name: str) -> bool | None:
+    """Whether a correct turn writes a policy gap record. Schema 3 says so on each case.
+
+    Older frozen files are not edited, so gap-expect.json derives it: a refuse
+    case expects a gap unless that file lists an exception. A set it does not
+    name (set v1) has no expectation, and its gap check is left empty.
+    """
+    if "gap" in case:
+        return bool(case["gap"])
+    rules = json.loads(GAP_EXPECT.read_text(encoding="utf-8"))
+    overrides = rules["overrides"].get(set_name)
+    if overrides is None:
+        return None
+    if case["id"] in overrides:
+        return bool(overrides[case["id"]])
+    return case.get("outcome") == "refuse" and bool(rules["derive"].get("refuse"))
+
+
+def judge_for(case_set: dict, set_name: str = ""):
+    """The judge a set declares. Schemas 2 and 3 grade claims with the LLM judge."""
+    if case_set.get("schema") in (2, 3):
         import judge as schema2
         from llm_judge import BedrockJudge
 
         grader = BedrockJudge()
-        return lambda case, turn: schema2.judge(case, turn, grader)
+        checks = case_set.get("checks") or {}
+        return lambda case, turn: schema2.judge(case, turn, grader, checks, gap_expected(case, set_name))
     return judge
 
 
 def set_meta(path: Path, case_set: dict) -> dict:
     meta = {"set": path.name, "set_frozen": case_set.get("frozen")}
-    if case_set.get("schema") == 2:
+    if case_set.get("schema") in (2, 3):
         import llm_judge
 
         meta["judge"] = llm_judge.describe()
@@ -294,21 +319,26 @@ TEXT_ONLY = {"ship-standard", "points-redeem", "return-window"}
 def rescore(path: Path, label: str, cases_path: Path = CASES) -> int:
     old = json.loads(path.read_text(encoding="utf-8"))
     case_set = load_set(cases_path)
-    grade = judge_for(case_set)
+    grade = judge_for(case_set, Path(cases_path).name)
     cases = {case["id"]: case for case in case_set["cases"]}
     rows = []
     failed = 0
     for stored in old["cases"]:
         case = cases[stored["id"]]
         calls = stored.get("calls")
-        if calls is None and (case_set.get("schema") == 2 or stored["id"] not in TEXT_ONLY):
+        if calls is None and (case_set.get("schema") in (2, 3) or stored["id"] not in TEXT_ONLY):
             row = dict(stored, carried=True)
         else:
             sample = {
                 "text": stored["text"],
                 "calls": calls if calls is not None else [{"tool": name, "arguments": {}, "result": {}} for name in stored["tools"]],
                 "sources": stored.get("sources", []),
+                "decision": stored.get("decision", []),
             }
+            # A run from before the gap record has no gap field, so its gap check stays empty.
+            if stored.get("gap_written") is not None:
+                sample["gap"] = stored.get("gap")
+                sample["note"] = stored.get("note")
             row = grade(case, sample)
             for key in ("latency_ms", "agent_ms", "input_tokens", "output_tokens", "cost_usd", "session_id"):
                 row[key] = stored.get(key)
@@ -347,7 +377,7 @@ def runtime_asker(arn: str, region: str):
         )
         body = json.loads(response["response"].read())
         latency_ms = int((time.perf_counter() - started) * 1000)
-        return {
+        turn = {
             "text": body.get("result", ""),
             "calls": body.get("tools", []),
             "decision": body.get("decision", []),
@@ -358,8 +388,20 @@ def runtime_asker(arn: str, region: str):
             "output_tokens": body.get("output_tokens"),
             "session_id": session_id,
         }
+        # A runtime from before the gap record returns no gap field; its gap check stays empty.
+        if "gap" in body:
+            turn["gap"] = body["gap"]
+            turn["note"] = body.get("note")
+        return turn
 
     return ask
+
+
+def gap_mark(row: dict) -> str:
+    if row.get("gap_ok") is None:
+        return ""
+    wrote = "gap written" if row["gap_written"] else "no gap"
+    return f"  [{wrote}, {'right' if row['gap_ok'] else 'WRONG'}]"
 
 
 def price(row: dict, price_in: float | None, price_out: float | None) -> None:
@@ -406,7 +448,7 @@ def main() -> int:
 
     cases_path = Path(args.cases)
     case_set = load_set(cases_path)
-    grade = judge_for(case_set)
+    grade = judge_for(case_set, cases_path.name)
     cases = case_set["cases"]
     if args.only:
         cases = [case for case in cases if case["id"] == args.only]
@@ -423,7 +465,7 @@ def main() -> int:
         mark = "pass" if row["pass"] else "fail"
         if not row["pass"]:
             failed += 1
-        print(f"{row['id']}: {mark}")
+        print(f"{row['id']}: {mark}{gap_mark(row)}")
         if row["failures"]:
             print("  " + "; ".join(row["failures"]))
     # The run file is public. Name the runtime, not its ARN, which carries the account id.
@@ -438,6 +480,9 @@ def main() -> int:
         }
     path = write_run(rows, args.label, meta)
     print(f"{len(rows) - failed} of {len(rows)} passed")
+    gapped = [row for row in rows if row.get("gap_ok") is not None]
+    if gapped:
+        print(f"gap check: {sum(row['gap_ok'] for row in gapped)} of {len(gapped)} right (separate from the pass count)")
     print(f"wrote {path}")
     return 1 if failed else 0
 

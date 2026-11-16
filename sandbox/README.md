@@ -53,7 +53,25 @@ The judge tests run without AWS: `test_score.py` covers the code half with a sta
 
 Every v3 case states `gap`, whether a correct turn writes a gap record. `gap_facts` are claims about that record. Every reply is checked in code for internal text, a step number or a decision tag. `facts_from_tool` checks tracking numbers and dates in code, and a status phrase is judged by the case's trap claim.
 
-The frozen v2 and holdout files predate the gap record. Their expectation comes from `gap-expect.json`: a refusal expects a gap, except the three v2 refusals that ask for an order number.
+The frozen v2 and holdout files predate the gap record. Their expectation comes from `gap-expect.json`: a refusal expects a gap, except the three v2 refusals that ask for an order number. That leaves 5 expected gaps in v2 and 6 in the holdout.
+
+### How the gap is checked
+
+The agent's note opens with a line code can read: `step: N | missing: WHAT`. When WHAT is anything but `none`, the runtime writes a gap record through the tools Lambda. The model has no tool for it. A run row carries `note` (the parsed line), `gap` (the record written, or null), and three gap fields:
+
+- `gap_expected`: whether a correct turn writes a gap, from the case's `gap` or from `gap-expect.json`.
+- `gap_written`: whether this turn wrote one.
+- `gap_ok`: whether the two agree. A gap expected and none written fails, and a gap written where none is expected fails.
+
+The gap check is its own column. It never changes the case's pass bit, so v2 and holdout pass rates stay comparable with runs from before the gap record. In v3, `gap_facts` are claims inside the case and do count toward its pass; with no record written they are false without a model call. A run against a runtime from before the gap record, and a rescore of a run file from before it, leave the gap fields empty.
+
+The judge sees the gap record only on a case that has one, in its own section with one added rule. A grading call without a gap record is exactly judge prompt version 1, so v2 and holdout verdicts are graded on the same input as before.
+
+`stability.py` applies the stop rule to the gap check on its own terms: a case is gap-broken if its gap check fails in two of three runs. Any gap-broken case fails the run group, with or without `--against`, because runs from before the gap record have nothing to compare against.
+
+### The owner's queue
+
+`gaps.py` reads the `trailforge-gaps` table and prints open gaps newest first, grouped by the first policy file cited near the question. `--md <file>` writes the same report as markdown for a demo. `--done <id> [<id> ...]` marks records reviewed, so the queue drains; records are kept and `--all` shows them. It uses your own AWS credentials. Scoring runs against the Lambda write real records, so a scoring round fills the queue.
 
 Each run row also carries `decision`: the agent's note on which move it chose and why, which the runtime keeps out of the reply. It is recorded, not scored.
 

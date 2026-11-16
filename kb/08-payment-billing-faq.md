@@ -1,7 +1,7 @@
 # Payment and Billing FAQ
 
 ## What payment methods do you accept?
-Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay.
+We accept only Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay.
 
 ## I was charged twice. What should I do?
 Contact support immediately with your order number. Duplicate charges are usually authorization holds that drop off within 3–5 business days. If both charges post, we will refund the duplicate.

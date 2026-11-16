@@ -34,4 +34,6 @@ def local(tool: str, arguments: dict) -> dict:
         return shop.check_return(arguments.get("order_id") or "", arguments.get("reason") or "")
     if tool == "escalate_to_human":
         return {"queued": True, "order_id": arguments.get("order_id") or ""}
+    if tool == "record_policy_gap":
+        return {"recorded": True, "stored": False}
     raise ValueError(f"unknown tool {tool}")

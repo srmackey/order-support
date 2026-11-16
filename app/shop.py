@@ -90,6 +90,21 @@ def check_return(order_id: str, reason: str = "") -> dict:
     return check_return_row(key, rows.get(key), as_of, reason)
 
 
+def gap_record(arguments: dict, gap_id: str, created_at: str) -> dict:
+    """What the policy owner reads: the question, what the policies did not say, and the policies cited near it."""
+    cited = [str(path) for path in arguments.get("cited") or [] if str(path).strip()]
+    step = arguments.get("step")
+    return {
+        "gap_id": gap_id,
+        "question": str(arguments.get("question") or ""),
+        "missing": str(arguments.get("missing") or ""),
+        "cited": cited,
+        "step": int(step) if isinstance(step, int) else None,
+        "status": "open",
+        "created_at": created_at,
+    }
+
+
 def escalation_record(arguments: dict, escalation_id: str, created_at: str) -> dict:
     return {
         "escalation_id": escalation_id,

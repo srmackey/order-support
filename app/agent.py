@@ -19,9 +19,11 @@ Choose one next step. Check them in this order and take the first that fits:
 1. An escalation rule in the excerpts applies. Call escalate_to_human. Tell the customer a specialist will follow up within one business day. Do not promise a refund, a replacement, or any other outcome. The amount rule is a refund or compensation above $150, which means more than $150; $150 or less does not escalate on amount alone. A missing order number never delays an escalation: pass an empty order id. The exception rule applies only when the customer asks for an exception to a policy written in the excerpts. A request for something no written policy covers is step 4, even when the customer calls it an exception. When a window has closed and the customer has not asked for one, tell them it closed; do not escalate.
 2. The question needs a live order fact (status, tracking, ETA, delivery date, final-sale, or personalized). Call lookup_order_status or check_return_eligibility. Report only what the tool returned. Do not guess. If the customer gave no order number, ask for it.
 3. The excerpts answer the question. Answer from them and cite the path. Do not call a tool.
-4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. A policy that does not mention something has not ruled on it; do not infer a yes or a no from what the excerpts leave out. Do not escalate that question.
+4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. A policy that does not mention something has not ruled on it; do not infer a yes or a no from what the excerpts leave out. Do not escalate that question, and do not say a person will follow up on it.
 
-Before anything else, write your decision inside <decision></decision>: the step that applies and the policy line or tool result it rests on. The customer never sees the decision block. After it, write the reply to the customer, and never mention the steps in it. Cite the policy path in the reply itself, because the customer cannot see the decision block. Never state an answer and then take it back. A rule written about one thing does not apply to a different thing, however similar.
+When a policy says only, anything it does not list is a no, and that is an answer from the policy, not step 4. A list of one kind of thing does not overrule a different written policy.
+
+Before anything else, write your decision inside <decision></decision>. Its first line is exactly this form: step: N | missing: WHAT. N is the step that applies. WHAT is what the policies do not say, in a few words, when step 4 applies to the question or to any part of it; otherwise it is none. Then the policy line or tool result the decision rests on. Example: step: 4 | missing: whether reward points can be transferred. The customer never sees the decision block. After it, write the reply to the customer, and never mention the steps in it. Cite the policy path in the reply itself, because the customer cannot see the decision block. Never state an answer and then take it back. A rule written about one thing does not apply to a different thing, however similar.
 
 Tool results include today's date as "today". Use it for any window counted in days, such as the 7 days to report damage.
 
@@ -138,7 +140,54 @@ def split_decision(messages: list) -> list[str]:
 
 
 def strip_decision(text: str) -> str:
-    return DECISION.sub("", text).replace("<decision>", "").strip()
+    return DECISION.sub("", text).replace("<decision>", "").replace("</decision>", "").strip()
+
+
+NOTE_LINE = re.compile(r"^[\s*_`#>-]*step\s*:\s*(\d)\s*(?:\|\s*missing\s*:\s*(.*?))?[\s*_`]*$", re.I | re.M)
+NO_GAP = re.compile(r"^(none|nothing|n/?a|-)?\b", re.I)
+SENTENCE_END = re.compile(r"\.(?:\s|$)|\s[—–-]\s")
+CITED = re.compile(r"kb/[\w.-]+\.md")
+
+
+def parse_note(decisions: list[str]) -> dict:
+    """The agent's final note line, as code reads it: step: N | missing: WHAT.
+
+    The last line wins, because the agent sometimes revises its decision in the
+    same note. WHAT ends at the first sentence break, since the agent often keeps
+    writing its reasons on the same line.
+    """
+    found = [match for text in decisions for match in NOTE_LINE.finditer(text)]
+    if not found:
+        return {"step": None, "missing": ""}
+    last = found[-1]
+    missing = SENTENCE_END.split((last.group(2) or "").strip(), maxsplit=1)[0].strip().strip("*_`").strip()
+    none = NO_GAP.match(missing)
+    if not missing or (none and none.group(1)):
+        missing = ""
+    return {"step": int(last.group(1)), "missing": missing}
+
+
+def cited_paths(*texts: str) -> list[str]:
+    seen = []
+    for text in texts:
+        for path in CITED.findall(text.replace("\\", "/")):
+            if path not in seen:
+                seen.append(path)
+    return seen
+
+
+def record_gap(customer: str, note: dict, reply: str, decisions: list[str]) -> dict | None:
+    """A question the policies do not answer leaves a record for the policy owner. Code writes it from the note; the model has no tool for it."""
+    if not note["missing"]:
+        return None
+    arguments = {
+        "question": customer,
+        "missing": note["missing"],
+        "step": note["step"],
+        "cited": cited_paths(reply, *decisions),
+    }
+    result = tools_client.invoke("record_policy_gap", arguments)
+    return {**arguments, **result}
 
 
 FOLLOW_UP = "A specialist will follow up within one business day."
@@ -164,9 +213,14 @@ def ask(customer: str) -> dict:
     result = agent(build_prompt(customer, sources))
     latency_ms = int((time.perf_counter() - started) * 1000)
     usage = result_usage(result)
+    text = with_follow_up(strip_decision(result_text(result)), calls)
+    decisions = split_decision(agent.messages)
+    note = parse_note(decisions)
     return {
-        "text": with_follow_up(strip_decision(result_text(result)), calls),
-        "decision": split_decision(agent.messages),
+        "text": text,
+        "decision": decisions,
+        "note": note,
+        "gap": record_gap(customer, note, text, decisions),
         "calls": calls,
         "sources": [item["path"] for item in sources],
         "latency_ms": latency_ms,

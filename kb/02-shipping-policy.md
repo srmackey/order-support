@@ -4,6 +4,7 @@
 Orders are processed within 1–2 business days after payment confirmation.
 
 ## Shipping Methods and Estimated Delivery
+We offer only these shipping methods:
 - **Standard Ground**: 5–7 business days — $5.95 (free on orders over $75)
 - **Expedited**: 2–3 business days — $12.95
 - **Overnight**: Next business day (order by 1 PM local time) — $24.95

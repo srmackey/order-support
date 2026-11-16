@@ -20,6 +20,8 @@ def invoke(payload):
     return {
         "result": turn["text"],
         "decision": turn["decision"],
+        "note": turn["note"],
+        "gap": turn["gap"],
         "tools": turn["calls"],
         "sources": turn["sources"],
         "agent_ms": turn["latency_ms"],

@@ -1,4 +1,4 @@
-"""The three Trailforge tools. Orders and escalation packets live in DynamoDB."""
+"""The three Trailforge tools, plus the policy gap write the runtime makes. Orders, escalation packets, and gap records live in DynamoDB."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import shop
 
 ORDERS = boto3.resource("dynamodb").Table(os.environ["ORDERS_TABLE"])
 ESCALATIONS = boto3.resource("dynamodb").Table(os.environ["ESCALATIONS_TABLE"])
+GAPS = boto3.resource("dynamodb").Table(os.environ["GAPS_TABLE"])
 
 
 def plain(value):
@@ -49,4 +50,9 @@ def handler(event, _context):
         record = shop.escalation_record(arguments, uuid4().hex, datetime.now(timezone.utc).isoformat())
         ESCALATIONS.put_item(Item=record)
         return {"queued": True, "order_id": record["order_id"], "escalation_id": record["escalation_id"]}
+    if tool == "record_policy_gap":
+        # Called by the runtime from the agent's note, never by the model.
+        record = shop.gap_record(arguments, uuid4().hex, datetime.now(timezone.utc).isoformat())
+        GAPS.put_item(Item={key: value for key, value in record.items() if value is not None})
+        return {"recorded": True, "stored": True, "gap_id": record["gap_id"]}
     raise ValueError(f"unknown tool {tool}")
