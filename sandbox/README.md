@@ -39,9 +39,15 @@ A v2 case declares what is right, and one judge marks every case (`judge.py`):
 
 The run file records the judge model and prompt version, because changing either can move scores.
 
-`calibrate.py` checks the judge against `calibration.json`, replies a person labeled, good and bad, including the runtime refusal the phrase-matching judge failed. On 2026-11-15 it agreed on 62 of 62 claims, three runs in a row. One claim was reworded along the way: "will process your refund" was not being read as a promise. Run it again after changing the judge prompt, the judge model, or a claim's wording.
+`calibrate.py` checks the judge against `calibration.json`, replies labeled good and bad, including the runtime refusal the phrase-matching judge failed. On 2026-11-15 it agreed on 62 of 62 claims, three runs in a row. One claim was reworded along the way: "will process your refund" was not being read as a promise. Run it again after changing the judge prompt, the judge model, or a claim's wording.
 
 The judge tests run without AWS: `test_score.py` covers the code half with a stand-in for the model.
+
+## Holdout set
+
+`cases-holdout.json` holds 14 cases: 3 answers, 2 tool calls, 6 refusals, and 3 escalations. It was written and frozen on 2026-11-15, before the runtime version 6 prompt change, and scored on version 5 first as the baseline (`runs/2026-11-15-holdout-runtime-v5.json`). It leans toward refusals and exception requests, where version 5 regressed. Prompt changes are checked against v2 cases, never against this set, so its score is on cases the agent was not tuned against. The same agent that wrote the cases made the prompt changes, so they are not fully independent of them. It is judged the same way as set v2.
+
+Each run row also carries `decision`: the agent's note on which move it chose and why, which the runtime keeps out of the reply. It is recorded, not scored.
 
 ## Tools
 

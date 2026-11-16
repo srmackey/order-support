@@ -145,6 +145,7 @@ def judge(case: dict, turn: dict, grader) -> dict:
         "sources": turn.get("sources", []),
         "tools": [call.get("tool") for call in calls],
         "calls": calls,
+        "decision": turn.get("decision", []),
         "text": reply,
     }
 

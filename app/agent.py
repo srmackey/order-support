@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 
 from strands import Agent, tool
@@ -15,10 +16,12 @@ SYSTEM = """You are Trailforge support. Trailforge sells outdoor apparel, footwe
 The message includes policy excerpts. They are the only policies you may use. When you use one, cite its path exactly, for example kb/02-shipping-policy.md.
 
 Choose one next step. Check them in this order and take the first that fits:
-1. An escalation rule in the excerpts applies. Call escalate_to_human. Tell the customer a specialist will follow up within one business day. Do not promise a refund, a replacement, or any other outcome. The amount rule is a refund or compensation above $150, which means more than $150; $150 or less does not escalate on amount alone. A missing order number never delays an escalation: pass an empty order id. The exception rule applies only when the customer asks for an exception. When a window has closed and the customer has not asked for one, tell them it closed; do not escalate.
+1. An escalation rule in the excerpts applies. Call escalate_to_human. Tell the customer a specialist will follow up within one business day. Do not promise a refund, a replacement, or any other outcome. The amount rule is a refund or compensation above $150, which means more than $150; $150 or less does not escalate on amount alone. A missing order number never delays an escalation: pass an empty order id. The exception rule applies only when the customer asks for an exception to a policy written in the excerpts. A request for something no written policy covers is step 4, even when the customer calls it an exception. When a window has closed and the customer has not asked for one, tell them it closed; do not escalate.
 2. The question needs a live order fact (status, tracking, ETA, delivery date, final-sale, or personalized). Call lookup_order_status or check_return_eligibility. Report only what the tool returned. Do not guess. If the customer gave no order number, ask for it.
 3. The excerpts answer the question. Answer from them and cite the path. Do not call a tool.
-4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. Do not escalate that question.
+4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. A policy that does not mention something has not ruled on it; do not infer a yes or a no from what the excerpts leave out. Do not escalate that question.
+
+Before anything else, write your decision inside <decision></decision>: the step that applies and the policy line or tool result it rests on. The customer never sees the decision block. After it, write the reply to the customer, and never mention the steps in it. Cite the policy path in the reply itself, because the customer cannot see the decision block. Never state an answer and then take it back. A rule written about one thing does not apply to a different thing, however similar.
 
 Tool results include today's date as "today". Use it for any window counted in days, such as the 7 days to report damage.
 
@@ -119,6 +122,25 @@ def result_usage(result) -> dict:
     }
 
 
+DECISION = re.compile(r"<decision>(.*?)</decision>", re.S)
+
+
+def split_decision(messages: list) -> list[str]:
+    """The agent decides in a tagged block before it replies. The block is kept for the record and never sent."""
+    decisions = []
+    for message in messages:
+        if message.get("role") != "assistant":
+            continue
+        for block in message.get("content", []):
+            if isinstance(block, dict) and block.get("text"):
+                decisions += [found.strip() for found in DECISION.findall(block["text"])]
+    return decisions
+
+
+def strip_decision(text: str) -> str:
+    return DECISION.sub("", text).replace("<decision>", "").strip()
+
+
 def ask(customer: str) -> dict:
     sources = policies.with_rulebook(policies.retrieve_index(customer))
     calls: list[dict] = []
@@ -128,7 +150,8 @@ def ask(customer: str) -> dict:
     latency_ms = int((time.perf_counter() - started) * 1000)
     usage = result_usage(result)
     return {
-        "text": result_text(result),
+        "text": strip_decision(result_text(result)),
+        "decision": split_decision(agent.messages),
         "calls": calls,
         "sources": [item["path"] for item in sources],
         "latency_ms": latency_ms,

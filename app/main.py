@@ -19,6 +19,7 @@ def invoke(payload):
     turn = ask(prompt)
     return {
         "result": turn["text"],
+        "decision": turn["decision"],
         "tools": turn["calls"],
         "sources": turn["sources"],
         "agent_ms": turn["latency_ms"],

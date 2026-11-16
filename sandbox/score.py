@@ -350,6 +350,7 @@ def runtime_asker(arn: str, region: str):
         return {
             "text": body.get("result", ""),
             "calls": body.get("tools", []),
+            "decision": body.get("decision", []),
             "sources": body.get("sources", []),
             "latency_ms": latency_ms,
             "agent_ms": body.get("agent_ms"),

@@ -24,6 +24,8 @@ Customer message
 
 An escalation packet carries the conversation summary, the policy files used, the tool results already obtained, and a recommended next action. The customer is told a specialist will follow up within one business day. Neither the reply nor the packet may promise an outcome such as a refund.
 
+Before replying, the agent writes down which move it chose and the policy line or tool result behind it. The runtime removes that note from the reply and returns it separately, so every scored run shows why the agent did what it did.
+
 The runtime is instrumented with OpenTelemetry, so each call leaves a trace in CloudWatch showing retrieval, model turns, and tool calls.
 
 | Folder | What is in it |
@@ -77,6 +79,18 @@ Runtime version 5 changed the agent, not the cases. Tool results now carry the c
 - **37 of 39 passed.** Answers 13 of 13, tool calls 10 of 10, escalations 8 of 8, refusals 6 of 8. Boundary cases 10 of 11.
 - The four earlier misses all passed. Two refusals that passed before now failed: `points-expire` said points never expire, and `bulk-exception` escalated a request the policies do not cover. On the earlier prompt both passed four of four local runs; on version 5 they passed two of four and three of four. The new prompt caused them.
 - Agent model cost was **$0.66** and the judge **$0.08**. Wall-clock latency per case was 2.3 to 12.4 seconds.
+
+Before the next change, a 14-case holdout set was written and frozen (`sandbox/cases-holdout.json`). Prompt changes are tested on v2 cases only, so the holdout scores cases the agent was not tuned against. Version 5 scored 13 of 14 on it: `layaway-exception` escalated a request no policy covers.
+
+Versions 6 to 8 changed the prompt again. The exception rule now covers only exceptions to a written policy, and a policy that says nothing about a question is not read as a yes or a no. Reading the version 6 replies showed the agent naming its internal decision steps to the customer, which the judge does not check. Version 7 moved that reasoning into a note the runtime removes from the reply. Version 8 told the agent to cite the policy in the reply itself, after two answers cited it only inside the removed note. Version 8, scored the same day:
+
+- **v2: 38 of 39** (`sandbox/runs/2026-11-15-v2-runtime-v8.json`). Answers 13 of 13, tool calls 10 of 10, refusals 8 of 8, escalations 7 of 8. Boundary cases 11 of 11. `chargeback-threat` escalated, but told the customer a specialist would be in touch "shortly" instead of within one business day.
+- **Holdout: 14 of 14** (`sandbox/runs/2026-11-15-holdout-runtime-v8.json`).
+- Versions 6, 7, and 8 each scored 38 of 39 on v2, each missing a different case. At this set size, one miss per run is within the variation between runs, so version 8's gain is the hidden note and the holdout result, not a higher v2 score.
+- A code check across both sets found no reply that named a decision step or showed the note.
+- Agent model cost was **$0.66** on v2 and **$0.22** on the holdout, and the judge **$0.07** and **$0.03**. Wall-clock latency per case was 2.8 to 14.0 seconds.
+
+The holdout cases were written by the same agent that changed the prompt, so they are not fully independent of the change.
 
 ## Run it
 
