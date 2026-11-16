@@ -354,6 +354,13 @@ def test_reply_guards():
     assert reply.endswith(agent.FOLLOW_UP)
     assert agent.split_decision([{"role": "assistant", "content": [{"text": text}]}]) == ["Step 1: refund above $150."]
 
+    # Seen on 2026-11-15 (ship-same-day): a reconsidering sentence between two decisions reached the customer.
+    revised = "<decision>step: 4 | missing: same-day</decision>\nWait, let me reconsider.\n<decision>step: 3 | missing: none</decision>\n\nWe do not offer same-day delivery."
+    assert agent.reply_text(revised) == "We do not offer same-day delivery."
+    assert agent.reply_text("<decision>step: 3 | missing: none</decision>\nStandard is $5.95.") == "Standard is $5.95."
+    assert agent.reply_text("Standard is $5.95.\n<decision>step: 3 | missing: none</decision>") == "Standard is $5.95."
+    assert agent.reply_text("No decision here.") == "No decision here."
+
     said = "A specialist will follow up within 1 business day."
     assert agent.with_follow_up(said, queued) == said
     assert agent.with_follow_up("Here is our shipping policy.", []) == "Here is our shipping policy."

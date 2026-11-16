@@ -21,9 +21,11 @@ Choose one next step. Check them in this order and take the first that fits:
 3. The excerpts answer the question. Answer from them and cite the path. Do not call a tool.
 4. The policy the customer needs is not in the excerpts. Say it is not in the policies. Do not invent a rule, a price, or a points redemption rate. A policy that does not mention something has not ruled on it; do not infer a yes or a no from what the excerpts leave out. Do not escalate that question, and do not say a person will follow up on it.
 
-When a policy says only, anything it does not list is a no, and that is an answer from the policy, not step 4. A list of one kind of thing does not overrule a different written policy.
+When a policy says only, anything of the kind it lists that it does not list is a no, and that is an answer from the policy, not step 4. A closed list rules only on the kind of thing it lists: a list of shipping methods does not say whether a customer can choose a delivery date, and a list of payment methods does not overrule a different written policy.
 
-Before anything else, write your decision inside <decision></decision>. Its first line is exactly this form: step: N | missing: WHAT. N is the step that applies. WHAT is what the policies do not say, in a few words, when step 4 applies to the question or to any part of it; otherwise it is none. Then the policy line or tool result the decision rests on. Example: step: 4 | missing: whether reward points can be transferred. The customer never sees the decision block. After it, write the reply to the customer, and never mention the steps in it. Cite the policy path in the reply itself, because the customer cannot see the decision block. Never state an answer and then take it back. A rule written about one thing does not apply to a different thing, however similar.
+A question can have parts. Answer each part from the excerpts where you can, and say a part is not in the policies where it is not.
+
+Before anything else, write your decision inside <decision></decision>. Its first line is exactly this form, alone on its line: step: N | missing: WHAT. N is the step that applies. WHAT is what the policies do not say, in a few words, when step 4 applies to the question or to any part of it, even when another part is answered from the excerpts; otherwise it is none. Write the policy line or tool result the decision rests on on the next line. Examples: step: 4 | missing: whether reward points can be transferred. For a question about the warranty length and about a military discount: step: 3 | missing: whether there is a military discount. The customer never sees the decision block. After it, write the reply to the customer, and never mention the steps in it. Cite the policy path in the reply itself, because the customer cannot see the decision block. Never state an answer and then take it back. A rule written about one thing does not apply to a different thing, however similar.
 
 Tool results include today's date as "today". Use it for any window counted in days, such as the 7 days to report damage.
 
@@ -143,6 +145,19 @@ def strip_decision(text: str) -> str:
     return DECISION.sub("", text).replace("<decision>", "").replace("</decision>", "").strip()
 
 
+def reply_text(text: str) -> str:
+    """Only what follows the last decision block goes to the customer.
+
+    The agent sometimes decides, writes a sentence reconsidering, and decides
+    again. Text before the final decision is reasoning, not the reply.
+    """
+    if "</decision>" in text:
+        tail = strip_decision(text.rsplit("</decision>", 1)[1])
+        if tail:
+            return tail
+    return strip_decision(text)
+
+
 NOTE_LINE = re.compile(r"^[\s*_`#>-]*step\s*:\s*(\d)\s*(?:\|\s*missing\s*:\s*(.*?))?[\s*_`]*$", re.I | re.M)
 NO_GAP = re.compile(r"^(none|nothing|n/?a|-)?\b", re.I)
 SENTENCE_END = re.compile(r"\.(?:\s|$)|\s[—–-]\s")
@@ -213,7 +228,7 @@ def ask(customer: str) -> dict:
     result = agent(build_prompt(customer, sources))
     latency_ms = int((time.perf_counter() - started) * 1000)
     usage = result_usage(result)
-    text = with_follow_up(strip_decision(result_text(result)), calls)
+    text = with_follow_up(reply_text(result_text(result)), calls)
     decisions = split_decision(agent.messages)
     note = parse_note(decisions)
     return {

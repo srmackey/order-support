@@ -1,0 +1,1037 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "pay-venmo",
+      "outcome": "answer",
+      "boundary": "Payment methods are a closed list. An unlisted method is a no, not a gap.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says Venmo is not an accepted payment method.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, we do not accept Venmo as a payment method."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether Venmo is accepted is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says Venmo is accepted.",
+          "expect": false,
+          "holds": false,
+          "evidence": "Unfortunately, we do not accept Venmo as a payment method."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1066,
+      "judge_output_tokens": 147,
+      "judge_cost_usd": 0.001801,
+      "latency_ms": 2155,
+      "agent_ms": null,
+      "input_tokens": 2912,
+      "output_tokens": 164,
+      "cost_usd": 0.011196,
+      "session_id": null,
+      "sources": [
+        "kb/08-payment-billing-faq.md",
+        "kb/12-privacy.md",
+        "kb/02-shipping-policy.md",
+        "kb/09-account-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/08-payment-billing-faq.md lists accepted payment methods as only Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay \u2014 Venmo is not included."
+      ],
+      "text": "Unfortunately, we do not accept Venmo as a payment method. Per our payment policy (kb/08-payment-billing-faq.md), we accept **only** the following:\n\n- Visa\n- Mastercard\n- American Express\n- Discover\n- PayPal\n- Shop Pay\n\nIf any of those work for you, we'd be happy to help you complete your order! Let me know if you have any other questions."
+    },
+    {
+      "id": "pay-bitcoin",
+      "outcome": "answer",
+      "boundary": "Payment methods are a closed list. Cryptocurrency is not on it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says Bitcoin is not an accepted payment method.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, we don't accept Bitcoin as a payment method."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether Bitcoin is accepted is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says Bitcoin or another cryptocurrency is accepted.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1075,
+      "judge_output_tokens": 131,
+      "judge_cost_usd": 0.00173,
+      "latency_ms": 2558,
+      "agent_ms": null,
+      "input_tokens": 2849,
+      "output_tokens": 190,
+      "cost_usd": 0.011397,
+      "session_id": null,
+      "sources": [
+        "kb/08-payment-billing-faq.md",
+        "kb/12-privacy.md",
+        "kb/09-account-faq.md",
+        "kb/15-gift-cards.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/08-payment-billing-faq.md lists accepted payment methods as \"only Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay\" \u2014 Bitcoin is not included, and \"only\" means anything not listed is a no."
+      ],
+      "text": "Unfortunately, we don't accept Bitcoin as a payment method. Per our payment policy (kb/08-payment-billing-faq.md), we accept **only** the following:\n\n- Visa\n- Mastercard\n- American Express\n- Discover\n- PayPal\n- Shop Pay\n\nIf you'd like to pay in installments, Shop Pay Installments and Affirm are also available at checkout for orders over $50, subject to approval.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "ship-same-day",
+      "outcome": "answer",
+      "boundary": "Shipping methods are a closed list. Same-day is not on it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says same-day delivery is not offered.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, we do not offer same-day delivery."
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says the fastest option is Overnight, delivered the next business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "The fastest option available is **Overnight**, which delivers the next business day when you order by 1 PM local time."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether same-day delivery is offered is not in the policies.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says same-day delivery is available.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1132,
+      "judge_output_tokens": 184,
+      "judge_cost_usd": 0.002052,
+      "latency_ms": 2470,
+      "agent_ms": null,
+      "input_tokens": 2942,
+      "output_tokens": 190,
+      "cost_usd": 0.011676,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nThe shipping methods listed are Standard Ground, Expedited, and Overnight only \u2014 same-day delivery is not among them."
+      ],
+      "text": "Unfortunately, we do not offer same-day delivery. Per our shipping policy (kb/02-shipping-policy.md), the only available shipping methods are:\n\n- **Standard Ground**: 5\u20137 business days \u2014 $5.95 (free on orders over $75)\n- **Expedited**: 2\u20133 business days \u2014 $12.95\n- **Overnight**: Next business day (order by 1 PM local time) \u2014 $24.95\n\nThe fastest option available is **Overnight**, which delivers the next business day when you order by 1 PM local time. If you have any other questions, feel free to ask!"
+    },
+    {
+      "id": "two-promo-codes",
+      "outcome": "answer",
+      "boundary": "A closed rule that was already written. Control for the new prompt line.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says only one promo code can be applied per order unless the code says otherwise.",
+          "expect": true,
+          "holds": true,
+          "evidence": "only one promo code can be applied per order \u2014 unless a specific promotion explicitly states otherwise"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says two promo codes can be combined on one order.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1057,
+      "judge_output_tokens": 110,
+      "judge_cost_usd": 0.001607,
+      "latency_ms": 2344,
+      "agent_ms": null,
+      "input_tokens": 2934,
+      "output_tokens": 135,
+      "cost_usd": 0.010827,
+      "session_id": null,
+      "sources": [
+        "kb/11-promotions.md",
+        "kb/09-account-faq.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\n\"Only one code can be applied per order unless otherwise stated.\" \u2014 kb/11-promotions.md"
+      ],
+      "text": "Generally, **only one promo code can be applied per order** \u2014 unless a specific promotion explicitly states otherwise. You can enter your code in the promo field at checkout before completing payment. (Source: kb/11-promotions.md)\n\nIf you have two codes and aren't sure which to use, I'd recommend choosing the one that gives you the better discount! Let me know if there's anything else I can help with."
+    },
+    {
+      "id": "pay-with-giftcard",
+      "outcome": "answer",
+      "boundary": "The payment list is closed, but another policy says gift cards can be used. A closed list does not overrule a different written rule.",
+      "pass": false,
+      "failures": [
+        "Cite kb/15-gift-cards.md",
+        "Did not say: The reply says a Trailforge gift card can be used to pay for an order."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a Trailforge gift card can be used to pay for an order.",
+          "expect": true,
+          "holds": false,
+          "evidence": "The reply does not state that a Trailforge gift card can be used to pay for an order. Instead, it says 'whether gift cards can be applied as a payment method during checkout isn't covered in the policies I have available, so I'm not able to give you a definitive answer on that.'"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says gift cards cannot be used because they are not on the list of accepted payment methods.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply does not say gift cards cannot be used or that they are not on a list of accepted payment methods. It only states that this information is not covered in available policies."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": true,
+      "gap_ok": false,
+      "gap": {
+        "question": "Can I pay for my order with a Trailforge gift card?",
+        "missing": "whether gift cards can be used as a payment method at checkout",
+        "step": 4,
+        "cited": [
+          "kb/08-payment-billing-faq.md",
+          "kb/15-gift-cards.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "3e7c2c284514481192eaf1192af9e64d"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether gift cards can be used as a payment method at checkout"
+      },
+      "judge_input_tokens": 1227,
+      "judge_output_tokens": 193,
+      "judge_cost_usd": 0.002192,
+      "latency_ms": 3542,
+      "agent_ms": null,
+      "input_tokens": 2751,
+      "output_tokens": 299,
+      "cost_usd": 0.012738,
+      "session_id": null,
+      "sources": [
+        "kb/00-about-trailforge.md",
+        "kb/15-gift-cards.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether gift cards can be used as a payment method at checkout\nThe payment methods list (kb/08-payment-billing-faq.md) lists only Visa, Mastercard, American Express, Discover, PayPal, and Shop Pay. The gift card policy (kb/15-gift-cards.md) says gift cards \"can be used online or in-store\" but does not specify how they interact with checkout as a payment method. These are two separate policies, and neither explicitly addresses using a gift card as a payment method at checkout in a way that overrules or confirms the other."
+      ],
+      "text": "That's a great question! Unfortunately, whether gift cards can be applied as a payment method during checkout isn't covered in the policies I have available, so I'm not able to give you a definitive answer on that.\n\nFor the most accurate information, I'd recommend reaching out to our support team directly:\n\n- **Email:** support@trailforge.example\n- **Chat:** Available on the website during business hours\n- **Phone:** 1-800-555-0199\n\n**Support Hours:**\nMonday\u2013Friday, 9 AM \u2013 6 PM MT | Saturday, 10 AM \u2013 2 PM MT\n\nThey'll be happy to clarify how gift cards can be used at checkout!"
+    },
+    {
+      "id": "points-earn-rate",
+      "outcome": "answer",
+      "boundary": "The neighbor of points-redeem. The earn rate is written, so nothing is missing.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says customers earn 1 point per dollar spent.",
+          "expect": true,
+          "holds": true,
+          "evidence": "You earn **1 point per dollar spent**!"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply gives an earn rate other than 1 point per dollar.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply states 1 point per dollar, not any other rate."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1021,
+      "judge_output_tokens": 117,
+      "judge_cost_usd": 0.001606,
+      "latency_ms": 3448,
+      "agent_ms": null,
+      "input_tokens": 2679,
+      "output_tokens": 107,
+      "cost_usd": 0.009642,
+      "session_id": null,
+      "sources": [
+        "kb/09-account-faq.md",
+        "kb/11-promotions.md",
+        "kb/15-gift-cards.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/09-account-faq.md: \"Customers earn 1 point per dollar spent.\""
+      ],
+      "text": "You earn **1 point per dollar spent**! Points can then be redeemed for discounts on future orders, and enrollment in the rewards program is automatic when you create an account. (kb/09-account-faq.md)\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "whether Trailforge offers post-purchase price adjustments (a refund of the difference when an item you bought goes on sale) is not covered in the policies I have available"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?",
+        "missing": "whether post-purchase price adjustments are offered",
+        "step": 4,
+        "cited": [
+          "kb/11-promotions.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "f54434faa73c4b4a968a43572752ee2c"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether post-purchase price adjustments are offered"
+      },
+      "judge_input_tokens": 1265,
+      "judge_output_tokens": 207,
+      "judge_cost_usd": 0.0023,
+      "latency_ms": 4896,
+      "agent_ms": null,
+      "input_tokens": 2966,
+      "output_tokens": 332,
+      "cost_usd": 0.013878,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/11-promotions.md: \"We do not offer price matching with other retailers.\" \u2014 but more directly, no price adjustment policy exists; the promotions policy only covers promo codes and sale combinations. Actually, the question is about a price adjustment (post-purchase price match), not price matching with another retailer. The promotions policy does not cover price adjustments at all. Let me reconsider.\n\nThe excerpts cover: promo codes, combining promo codes with sales, and price matching with other retailers. A post-purchase price adjustment (same retailer) is not addressed in any excerpt.\nstep: 4 | missing: whether post-purchase price adjustments are offered\nNo excerpt addresses post-purchase price adjustments."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, whether Trailforge offers post-purchase price adjustments (a refund of the difference when an item you bought goes on sale) is not covered in the policies I have available, so I'm not able to give you a definitive answer on that.\n\nWhat I *can* confirm from **kb/11-promotions.md** is that we do not offer price matching with other retailers, but that policy doesn't speak to same-store price adjustments after purchase.\n\nFor a definitive answer on this, I'd recommend reaching out to our support team directly \u2014 they'd be best placed to let you know if any such accommodation is possible. Is there anything else I can help you with?"
+    },
+    {
+      "id": "ship-po-box",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says whether orders can ship to a PO box is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "whether we ship to PO boxes is not covered in the policies I have access to"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that orders can ship to a PO box, or that they cannot.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked about shipping to a PO box.",
+          "expect": true,
+          "holds": true,
+          "evidence": "question: Can you ship to a PO box?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Can you ship to a PO box?",
+        "missing": "whether PO boxes are supported as shipping addresses",
+        "step": 4,
+        "cited": [],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "0bbab7530646461f8a668cc856abba71"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether PO boxes are supported as shipping addresses"
+      },
+      "judge_input_tokens": 1138,
+      "judge_output_tokens": 176,
+      "judge_cost_usd": 0.002018,
+      "latency_ms": 2263,
+      "agent_ms": null,
+      "input_tokens": 3022,
+      "output_tokens": 120,
+      "cost_usd": 0.010866,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/01-return-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether PO boxes are supported as shipping addresses\nThe shipping policy lists shipping methods and international/address-change rules, but does not mention PO boxes."
+      ],
+      "text": "That's a great question! Unfortunately, whether we ship to PO boxes is not covered in the policies I have access to. I'd recommend reaching out to our support team directly for a definitive answer on this, as I don't want to guess and give you incorrect information.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "combine-orders",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says combining orders to save on shipping is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, order combination isn't something covered in our available policies, so I'm not able to give you a definitive answer on whether that's possible."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the orders will be combined, or says as a rule that orders cannot be combined.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked to combine two orders to pay shipping once.",
+          "expect": true,
+          "holds": true,
+          "evidence": "question: I placed two orders this morning. Can you combine them so I only pay shipping once?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "I placed two orders this morning. Can you combine them so I only pay shipping once?",
+        "missing": "whether orders can be combined after placement",
+        "step": 4,
+        "cited": [
+          "kb/02-shipping-policy.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "b03ce7f9ebde4fb3bdb53f31008dc4af"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether orders can be combined after placement"
+      },
+      "judge_input_tokens": 1239,
+      "judge_output_tokens": 198,
+      "judge_cost_usd": 0.002229,
+      "latency_ms": 2869,
+      "agent_ms": null,
+      "input_tokens": 2919,
+      "output_tokens": 190,
+      "cost_usd": 0.011607,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether orders can be combined after placement\nThe shipping policy lists available shipping methods and costs but says nothing about combining orders."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, order combination isn't something covered in our available policies, so I'm not able to give you a definitive answer on whether that's possible.\n\nWhat I *can* share from our shipping policy (kb/02-shipping-policy.md) is that **Standard Ground shipping is free on orders over $75** \u2014 so if either of your orders meets that threshold, you may already be getting free shipping on it.\n\nFor the order combination question specifically, I'd recommend reaching out to our support team directly with both order numbers as soon as possible, since any changes would need to happen before the orders ship. They'd be best positioned to let you know what's feasible."
+    },
+    {
+      "id": "tent-rental",
+      "outcome": "refuse",
+      "boundary": null,
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gear rental is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, tent rentals aren't covered in our policies"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says Trailforge rents tents or names a rental price.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked about renting a tent or other gear.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Do you rent tents? I only need one for a weekend."
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "Do you rent tents? I only need one for a weekend.",
+        "missing": "whether Trailforge offers tent rentals",
+        "step": 4,
+        "cited": [
+          "kb/13-contact-support.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "4e28508da6d94b58842852cbd86c3ff2"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether Trailforge offers tent rentals"
+      },
+      "judge_input_tokens": 1276,
+      "judge_output_tokens": 173,
+      "judge_cost_usd": 0.002141,
+      "latency_ms": 2962,
+      "agent_ms": null,
+      "input_tokens": 2854,
+      "output_tokens": 258,
+      "cost_usd": 0.012432,
+      "session_id": null,
+      "sources": [
+        "kb/00-about-trailforge.md",
+        "kb/13-contact-support.md",
+        "kb/05-product-faq-general.md",
+        "kb/01-return-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether Trailforge offers tent rentals\nThe excerpts cover what Trailforge sells (outdoor apparel, footwear, packs, and hardware) but say nothing about rentals."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, tent rentals aren't covered in our policies \u2014 I'm not able to confirm whether that's something Trailforge offers, and I don't want to give you incorrect information.\n\nWhat I can tell you is that Trailforge sells outdoor apparel, footwear, packs, and hardware. If you're interested in purchasing a tent or other gear, we'd be happy to help with that!\n\nFor the most accurate answer on rentals, I'd recommend reaching out directly to our support team:\n- **Email:** support@trailforge.example\n- **Phone:** 1-800-555-0199\n- **Chat:** Available on our website during business hours\n\nOur support hours are Monday\u2013Friday, 9 AM \u2013 6 PM MT, and Saturday, 10 AM \u2013 2 PM MT. (kb/13-contact-support.md)"
+    },
+    {
+      "id": "giftwrap-and-receipt",
+      "outcome": "answer",
+      "boundary": "Half answered, half missing. The answered half is given and the missing half is still a gap.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says gift wrapping costs $4.95.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Gift wrapping is available for $4.95"
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says gift receipts are not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "that isn't covered in our current policies, so I'm unable to confirm whether that option is available"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says a gift receipt can be included, or says as a rule that it cannot.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked about gift receipts.",
+          "expect": true,
+          "holds": true,
+          "evidence": "question: How much is gift wrapping, and can you include a gift receipt?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "How much is gift wrapping, and can you include a gift receipt?",
+        "missing": "whether a gift receipt can be included",
+        "step": 3,
+        "cited": [
+          "kb/05-product-faq-general.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "cc4348d1e9724c6d85195c0211c310e0"
+      },
+      "note": {
+        "step": 3,
+        "missing": "whether a gift receipt can be included"
+      },
+      "judge_input_tokens": 1208,
+      "judge_output_tokens": 196,
+      "judge_cost_usd": 0.002188,
+      "latency_ms": 2751,
+      "agent_ms": null,
+      "input_tokens": 2982,
+      "output_tokens": 200,
+      "cost_usd": 0.011946,
+      "session_id": null,
+      "sources": [
+        "kb/05-product-faq-general.md",
+        "kb/15-gift-cards.md",
+        "kb/01-return-policy.md",
+        "kb/02-shipping-policy.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: whether a gift receipt can be included\nGift wrapping is available for $4.95 at checkout. A gift message can be included at no extra charge. (kb/05-product-faq-general.md) \u2014 no mention of gift receipts."
+      ],
+      "text": "Great question! Here's what I can tell you:\n\n- **Gift wrapping** is available for **$4.95** and can be added at checkout (kb/05-product-faq-general.md).\n- **Gift message**: You can include a written gift message at **no extra charge** (kb/05-product-faq-general.md).\n\nAs for a **gift receipt**, that isn't covered in our current policies, so I'm unable to confirm whether that option is available. I'd recommend reaching out to us directly for clarification on that specific request!"
+    },
+    {
+      "id": "overnight-scheduled",
+      "outcome": "answer",
+      "boundary": "Half answered, half missing. Scheduling a delivery date is not a shipping method, so the closed list does not answer it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says Overnight arrives the next business day when ordered by 1 PM local time.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Overnight shipping delivers the **next business day**, as long as you place your order by **1 PM local time**."
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says choosing a specific delivery date is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Whether you can select an exact delivery date at checkout is not covered in our policies."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says the customer can choose the delivery date, or says as a rule that they cannot.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked to choose a specific delivery date.",
+          "expect": true,
+          "holds": true,
+          "evidence": "can I pick the exact date it arrives?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "How fast is overnight shipping, and can I pick the exact date it arrives?",
+        "missing": "whether a customer can choose an exact delivery date for overnight shipping",
+        "step": 3,
+        "cited": [
+          "kb/02-shipping-policy.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "3a94d77c2cd3466d85ca7965cd8c81b9"
+      },
+      "note": {
+        "step": 3,
+        "missing": "whether a customer can choose an exact delivery date for overnight shipping"
+      },
+      "judge_input_tokens": 1236,
+      "judge_output_tokens": 199,
+      "judge_cost_usd": 0.002231,
+      "latency_ms": 3398,
+      "agent_ms": null,
+      "input_tokens": 3029,
+      "output_tokens": 238,
+      "cost_usd": 0.012657,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/06-order-tracking-faq.md",
+        "kb/01-return-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: whether a customer can choose an exact delivery date for overnight shipping\nThe shipping policy lists overnight as \"Next business day (order by 1 PM local time)\" but says nothing about choosing a delivery date. The pickup FAQ lists shipping methods but does not address choosing a delivery date. A list of shipping methods does not say whether a customer can choose a delivery date \u2014 this part is not in the policies."
+      ],
+      "text": "Great question! Here's what I can tell you:\n\n**Overnight Shipping Speed**\nOvernight shipping delivers the **next business day**, as long as you place your order by **1 PM local time**. It's available for **$24.95**. (kb/02-shipping-policy.md)\n\n**Choosing a Specific Delivery Date**\nWhether you can select an exact delivery date at checkout is not covered in our policies. I'd recommend reaching out before placing your order if that's important to you, but I'm not able to confirm that option is available.\n\nIs there anything else I can help you with?"
+    },
+    {
+      "id": "pay-check-exception",
+      "outcome": "escalate",
+      "boundary": "An exception to a written closed list escalates. It is not a gap, because the policy answers it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a specialist will follow up within one business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Your request has been passed along to a specialist, who will review your case and follow up with you **within one business day**."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply tells the customer a check will be accepted.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "packet1",
+          "claim": "The packet says the customer is asking for an exception to pay by mailed check.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Customer is aware of the accepted payment methods policy and is explicitly requesting an exception to pay by mailed check instead of the listed options"
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 1,
+        "missing": ""
+      },
+      "judge_input_tokens": 1203,
+      "judge_output_tokens": 174,
+      "judge_cost_usd": 0.002073,
+      "latency_ms": 5222,
+      "agent_ms": null,
+      "input_tokens": 5725,
+      "output_tokens": 383,
+      "cost_usd": 0.02292,
+      "session_id": null,
+      "sources": [
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md",
+        "kb/15-gift-cards.md",
+        "kb/12-privacy.md"
+      ],
+      "tools": [
+        "escalate_to_human"
+      ],
+      "calls": [
+        {
+          "tool": "escalate_to_human",
+          "arguments": {
+            "order_id": "",
+            "summary": "Customer is aware of the accepted payment methods policy and is explicitly requesting an exception to pay by mailed check instead of the listed options (Visa, Mastercard, American Express, Discover, PayPal, Shop Pay).",
+            "policy_snippets": "kb/08-payment-billing-faq.md, kb/04-escalation-guidelines.md",
+            "tool_results": "",
+            "recommended_action": "Review the customer's request to pay by mailed check. Decide whether an exception to the accepted payment methods policy can be granted. Do not promise approval."
+          },
+          "result": {
+            "queued": true,
+            "order_id": "",
+            "escalation_id": "df14183b18b947c2878fac460c1b12fe"
+          }
+        }
+      ],
+      "decision": [
+        "step: 1 | missing: none\nThe customer is explicitly asking for an exception to a written policy (accepted payment methods listed in kb/08-payment-billing-faq.md). Escalation rule: \"The customer wants an exception to a policy that is written in these documents.\""
+      ],
+      "text": "Your request has been passed along to a specialist, who will review your case and follow up with you **within one business day**. I'm not able to promise a specific outcome, but someone will be in touch soon.\n\nIn the meantime, if you have any other questions, feel free to ask!"
+    },
+    {
+      "id": "lookup-unknown-shipped",
+      "outcome": "tool",
+      "boundary": "The order does not exist. A reply that says what happens once an order ships is not stating a status.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says the order number was not found.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I wasn't able to find an order with the ID **TF-77777** in our system."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states a status, tracking number, or delivery date for order TF-77777.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 2,
+        "missing": ""
+      },
+      "judge_input_tokens": 1134,
+      "judge_output_tokens": 113,
+      "judge_cost_usd": 0.001699,
+      "latency_ms": 3652,
+      "agent_ms": null,
+      "input_tokens": 6131,
+      "output_tokens": 211,
+      "cost_usd": 0.021558,
+      "session_id": null,
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/05-product-faq-general.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [
+        "lookup_order_status"
+      ],
+      "calls": [
+        {
+          "tool": "lookup_order_status",
+          "arguments": {
+            "order_id": "TF-77777"
+          },
+          "result": {
+            "found": false,
+            "order_id": "TF-77777",
+            "today": "2026-11-14"
+          }
+        }
+      ],
+      "decision": [
+        "step: 2 | missing: none\nNeed live order status for TF-77777."
+      ],
+      "text": "I wasn't able to find an order with the ID **TF-77777** in our system. This could mean:\n\n- The order number may have been entered incorrectly.\n- The order may be associated with a different account or email address.\n\nCould you double-check your order confirmation email for the correct order number? Once confirmed, I'd be happy to look that up for you! Per **kb/06-order-tracking-faq.md**, you can also use the tracking number from your shipping confirmation email to check the status directly."
+    },
+    {
+      "id": "tracking-no-order-id",
+      "outcome": "refuse",
+      "boundary": "A missing order number is not a policy gap. The agent asks for it.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply asks the customer for the order number.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Could you provide that for me?"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply states a tracking number.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 2,
+        "missing": ""
+      },
+      "judge_input_tokens": 994,
+      "judge_output_tokens": 98,
+      "judge_cost_usd": 0.001484,
+      "latency_ms": 1793,
+      "agent_ms": null,
+      "input_tokens": 2966,
+      "output_tokens": 85,
+      "cost_usd": 0.010173,
+      "session_id": null,
+      "sources": [
+        "kb/06-order-tracking-faq.md",
+        "kb/02-shipping-policy.md",
+        "kb/12-privacy.md",
+        "kb/10-damaged-defective.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 2 | missing: none\nNeed the order number to look up tracking info; customer hasn't provided one."
+      ],
+      "text": "Sure, I'd be happy to help you find your tracking information! To look up your order, I'll need your **order number** (it looks something like TF-XXXXX). Could you provide that for me?"
+    }
+  ]
+}
