@@ -49,6 +49,16 @@ The judge tests run without AWS: `test_score.py` covers the code half with a sta
 
 Each run row also carries `decision`: the agent's note on which move it chose and why, which the runtime keeps out of the reply. It is recorded, not scored.
 
+## When a miss gets fixed
+
+One run of a case is one sample, and the agent does not answer the same way every time. A single miss is not evidence of a defect, so a change is never made because of one.
+
+- **Score each set three times.** A case is broken when it fails in at least two of the three runs. A case that fails once is noise: it is listed and left alone.
+- **Gate every change.** A change to the prompt or the code ships only if no case is broken on v2 or the holdout that was not broken before. A change that fixes one case and breaks another is rejected, not followed by another change.
+- **Put rules that must always hold in code.** The model follows instructions most of the time, not every time. Where a rule has one right output, code makes it: the runtime removes the decision note from the reply, and when an escalation is queued and the reply does not say when a person will follow up, the runtime adds that sentence.
+
+`stability.py` applies the rule to a group of run files, and with `--against` applies the gate to a baseline group. Its exit code is 1 when the gate fails.
+
 ## Tools
 
 `lookup_order_status` takes `order_id`.

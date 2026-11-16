@@ -141,6 +141,21 @@ def strip_decision(text: str) -> str:
     return DECISION.sub("", text).replace("<decision>", "").strip()
 
 
+FOLLOW_UP = "A specialist will follow up within one business day."
+SAYS_FOLLOW_UP = re.compile(r"\b(one|1) business day\b", re.I)
+
+
+def with_follow_up(text: str, calls: list[dict]) -> str:
+    """A customer whose case was queued is always told when a person will reply. Code guarantees it; the prompt only phrases it."""
+    queued = any(
+        call["tool"] == "escalate_to_human" and isinstance(call.get("result"), dict) and call["result"].get("queued")
+        for call in calls
+    )
+    if not queued or SAYS_FOLLOW_UP.search(text):
+        return text
+    return f"{text}\n\n{FOLLOW_UP}"
+
+
 def ask(customer: str) -> dict:
     sources = policies.with_rulebook(policies.retrieve_index(customer))
     calls: list[dict] = []
@@ -150,7 +165,7 @@ def ask(customer: str) -> dict:
     latency_ms = int((time.perf_counter() - started) * 1000)
     usage = result_usage(result)
     return {
-        "text": strip_decision(result_text(result)),
+        "text": with_follow_up(strip_decision(result_text(result)), calls),
         "decision": split_decision(agent.messages),
         "calls": calls,
         "sources": [item["path"] for item in sources],

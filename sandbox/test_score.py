@@ -344,6 +344,23 @@ def test_schema2():
         raise SystemExit(f"v2 must_not should fail when it holds: {row['failures']}")
 
 
+def test_reply_guards():
+    import agent
+
+    text = "<decision>Step 1: refund above $150.</decision>\n\nYour case is queued. A specialist will be in touch shortly."
+    queued = [{"tool": "escalate_to_human", "arguments": {}, "result": {"queued": True}}]
+    reply = agent.with_follow_up(agent.strip_decision(text), queued)
+    assert "decision" not in reply.lower() and "step 1" not in reply.lower()
+    assert reply.endswith(agent.FOLLOW_UP)
+    assert agent.split_decision([{"role": "assistant", "content": [{"text": text}]}]) == ["Step 1: refund above $150."]
+
+    said = "A specialist will follow up within 1 business day."
+    assert agent.with_follow_up(said, queued) == said
+    assert agent.with_follow_up("Here is our shipping policy.", []) == "Here is our shipping policy."
+    failed = [{"tool": "escalate_to_human", "arguments": {}, "result": {"error": "timeout"}}]
+    assert agent.with_follow_up("Sorry, something went wrong.", failed) == "Sorry, something went wrong."
+
+
 if __name__ == "__main__":
     test_schema2()
     test_escalation_record()
@@ -351,4 +368,5 @@ if __name__ == "__main__":
     test_source_path()
     test_retrieve()
     test_judge()
+    test_reply_guards()
     print("ok")

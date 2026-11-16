@@ -92,6 +92,19 @@ Versions 6 to 8 changed the prompt again. The exception rule now covers only exc
 
 The holdout cases were written by the same agent that changed the prompt, so they are not fully independent of the change.
 
+### Repeated runs
+
+A single run is one sample, and the agent does not answer the same way every time, so from version 9 each set is scored three times. A case counts as broken only if it fails in two of the three runs, and a change ships only if no case becomes broken. The rule and the script that applies it are in `sandbox/README.md`. Version 9 also has the runtime add the follow-up sentence when an escalation is queued and the reply leaves it out, so that rule no longer depends on the model.
+
+Version 9, three runs of each set on 2026-11-15 (`sandbox/runs/2026-11-15-*-runtime-v9-r*.json`):
+
+- **v2: 38, 39, and 38 of 39. No case is broken.** Two cases failed once each. `giftcard-return` left out its citation. `lookup-unknown` was marked down for "a tracking number (once shipped)", which the code check reads as an order status; the reply was correct, so that miss belongs to the judge. The judge was not changed after the run.
+- **Holdout: 14 of 14 in all three runs.**
+- No reply named a decision step or showed the note. The model said when a specialist would follow up in all 33 escalations, so the runtime never had to add the sentence.
+- Agent model cost for the six runs was **$2.69** and the judge **$0.30**. Wall-clock latency per case was 2.9 to 18.2 seconds.
+
+This is the baseline the next change is gated against.
+
 ## Run it
 
 Python 3.11 or newer.
