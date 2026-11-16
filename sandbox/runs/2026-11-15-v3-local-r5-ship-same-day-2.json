@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "ship-same-day",
+      "outcome": "answer",
+      "boundary": "Shipping methods are a closed list. Same-day is not on it.",
+      "pass": false,
+      "failures": [
+        "Did not say: The reply says same-day delivery is not offered.",
+        "Said: The reply says whether same-day delivery is offered is not in the policies."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says same-day delivery is not offered.",
+          "expect": true,
+          "holds": false,
+          "evidence": "The reply says 'that's not something covered in our current policies, so I'm unable to confirm whether same-day delivery is offered' - it does not say same-day delivery is not offered, only that it cannot be confirmed."
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says the fastest option is Overnight, delivered the next business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "our fastest available shipping option, per **kb/02-shipping-policy.md**, is **Overnight delivery** (next business day)"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether same-day delivery is offered is not in the policies.",
+          "expect": false,
+          "holds": true,
+          "evidence": "that's not something covered in our current policies"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says same-day delivery is available.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply explicitly states it cannot confirm whether same-day delivery is offered and does not say it is available."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": true,
+      "gap_ok": false,
+      "gap": {
+        "question": "Do you offer same-day delivery?",
+        "missing": "whether same-day delivery is offered",
+        "step": 4,
+        "cited": [
+          "kb/02-shipping-policy.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "4dd3b9d6f6c94b9fbcb5e809600f9a79"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether same-day delivery is offered"
+      },
+      "judge_input_tokens": 1172,
+      "judge_output_tokens": 257,
+      "judge_cost_usd": 0.002457,
+      "latency_ms": 2685,
+      "agent_ms": null,
+      "input_tokens": 3045,
+      "output_tokens": 168,
+      "cost_usd": 0.011655,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether same-day delivery is offered\nThe shipping policy lists only Standard Ground, Expedited, and Overnight \u2014 it does not mention same-day delivery, and no other excerpt covers it."
+      ],
+      "text": "Unfortunately, that's not something covered in our current policies, so I'm unable to confirm whether same-day delivery is offered.\n\nWhat I can tell you is that our fastest available shipping option, per **kb/02-shipping-policy.md**, is **Overnight delivery** (next business day), available for $24.95 when you order by 1 PM local time.\n\nIf you have further questions about shipping or need help with an order, feel free to reach out \u2014 we're happy to help!"
+    }
+  ]
+}

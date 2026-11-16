@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, whether Trailforge offers post-purchase price adjustments when an item goes on sale after you've bought it isn't covered in our available policies."
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?",
+        "missing": "whether post-purchase price adjustments are offered",
+        "step": 4,
+        "cited": [
+          "kb/11-promotions.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "23ec3ccc74e643679e03ab34340446de"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether post-purchase price adjustments are offered"
+      },
+      "judge_input_tokens": 1270,
+      "judge_output_tokens": 202,
+      "judge_cost_usd": 0.00228,
+      "latency_ms": 5424,
+      "agent_ms": null,
+      "input_tokens": 3069,
+      "output_tokens": 395,
+      "cost_usd": 0.015132,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\n\"We do not offer price matching with other retailers.\" \u2014 but more relevantly, the promotions policy addresses combining promo codes with sale prices. The direct question here is about a price adjustment/price match after purchase, which is covered by kb/11-promotions.md: \"We do not offer price matching with other retailers.\" While this specifically mentions other retailers, a post-purchase price adjustment is a form of price matching. However, the policy only explicitly rules on price matching *with other retailers*, not an internal price adjustment request.\n\nActually, re-evaluating: the policy says \"We do not offer price matching with other retailers.\" This is specifically about other retailers. An internal price adjustment (same store, item went on sale) is not addressed. That would be step 4.\nstep: 4 | missing: whether post-purchase price adjustments are offered\nThe policy only addresses price matching with other retailers (kb/11-promotions.md), not internal price adjustments when an item goes on sale after purchase."
+      ],
+      "text": "That's a great question! Unfortunately, whether Trailforge offers post-purchase price adjustments when an item goes on sale after you've bought it isn't covered in our available policies. I'm not able to confirm or deny that this is possible, as I can only go by what's written in our policy documents.\n\nWhat I *can* tell you is that our policy in **kb/11-promotions.md** states we do not offer price matching with other retailers, but that policy doesn't address internal price adjustments.\n\nI'd recommend reaching out to our support team directly so they can look into this for you \u2014 they'll be best placed to let you know if any adjustment can be made. Is there anything else I can help you with?"
+    }
+  ]
+}

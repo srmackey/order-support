@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "pay-with-giftcard",
+      "outcome": "answer",
+      "boundary": "The payment list is closed, but another policy says gift cards can be used. A closed list does not overrule a different written rule.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a Trailforge gift card can be used to pay for an order.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Yes, absolutely! You can use a Trailforge gift card to pay for your order."
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says gift cards cannot be used because they are not on the list of accepted payment methods.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": false,
+      "gap_ok": true,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1069,
+      "judge_output_tokens": 111,
+      "judge_cost_usd": 0.001624,
+      "latency_ms": 2290,
+      "agent_ms": null,
+      "input_tokens": 2854,
+      "output_tokens": 154,
+      "cost_usd": 0.010872,
+      "session_id": null,
+      "sources": [
+        "kb/00-about-trailforge.md",
+        "kb/15-gift-cards.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\nkb/08-payment-billing-faq.md lists accepted payment methods; kb/15-gift-cards.md states gift cards can be used online or in-store."
+      ],
+      "text": "Yes, absolutely! You can use a Trailforge gift card to pay for your order. According to **kb/15-gift-cards.md**, gift cards can be used **online or in-store**, so you're all set to apply it at checkout.\n\nIf you need to check your gift card balance beforehand, you can do so on the website using your card number and PIN.\n\nIs there anything else I can help you with?"
+    }
+  ]
+}

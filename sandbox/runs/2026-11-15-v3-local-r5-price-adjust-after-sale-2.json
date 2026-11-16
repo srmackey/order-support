@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": true,
+      "failures": [],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "Unfortunately, a post-purchase price adjustment policy isn't something covered in the policy documents I have access to"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": true,
+          "evidence": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": true,
+      "gap_ok": true,
+      "gap": {
+        "question": "I bought a jacket from you last week and now it's on sale. Can I get the difference back?",
+        "missing": "whether post-purchase price adjustments are offered",
+        "step": 4,
+        "cited": [
+          "kb/11-promotions.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "57ab7e6cf60f4611924b164c47abc5bf"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether post-purchase price adjustments are offered"
+      },
+      "judge_input_tokens": 1267,
+      "judge_output_tokens": 191,
+      "judge_cost_usd": 0.002222,
+      "latency_ms": 12564,
+      "agent_ms": null,
+      "input_tokens": 3069,
+      "output_tokens": 371,
+      "cost_usd": 0.014772,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\n\"We do not offer price matching with other retailers.\" \u2014 but more relevantly, there is no price adjustment policy in the excerpts, and the promo/discounts policy only covers price matching with other retailers. However, the question is about a price adjustment (post-purchase price match with Trailforge's own sale), which is not covered in the excerpts at all.\n\nActually, re-evaluating: the excerpts don't mention post-purchase price adjustments at all. The price match policy only says \"We do not offer price matching with other retailers.\" That rules on retailer price matching only, not on Trailforge's own sale price adjustments. This is step 4 \u2014 the policy the customer needs (post-purchase price adjustment) is not in the excerpts.\nstep: 4 | missing: whether post-purchase price adjustments are offered\nNo policy in the excerpts addresses this."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, a post-purchase price adjustment policy isn't something covered in the policy documents I have access to, so I'm not able to give you a definitive answer on that. I'd recommend reaching out to us directly (phone, email, or chat) to ask our team whether a price adjustment is available for your order \u2014 I wouldn't want to guess either way.\n\nWhat I can tell you from our policies is that **we do not offer price matching with other retailers** (kb/11-promotions.md), but that only speaks to competitor pricing, not to our own sales.\n\nIf there's anything else I can help you with \u2014 like checking your order status or starting a return \u2014 just let me know!"
+    }
+  ]
+}

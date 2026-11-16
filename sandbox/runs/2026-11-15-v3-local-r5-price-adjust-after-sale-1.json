@@ -1,0 +1,90 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "price-adjust-after-sale",
+      "outcome": "refuse",
+      "boundary": "The price-match rule is about other retailers. It does not rule on Trailforge's own later sale.",
+      "pass": false,
+      "failures": [
+        "Gap record missing: The gap record says the customer asked for a price adjustment after a Trailforge sale."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says a price adjustment for a later Trailforge sale is not in the policies.",
+          "expect": true,
+          "holds": true,
+          "evidence": "a post-purchase price adjustment policy isn't something covered in the policy documents I have access to"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says a person or specialist will follow up.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says as a rule that Trailforge will refund the difference, or that it will not.",
+          "expect": false,
+          "holds": false,
+          "evidence": ""
+        },
+        {
+          "id": "gap1",
+          "claim": "The gap record says the customer asked for a price adjustment after a Trailforge sale.",
+          "expect": true,
+          "holds": false,
+          "evidence": "no gap record was written"
+        }
+      ],
+      "gap_expected": true,
+      "gap_written": false,
+      "gap_ok": false,
+      "gap": null,
+      "note": {
+        "step": 3,
+        "missing": ""
+      },
+      "judge_input_tokens": 1151,
+      "judge_output_tokens": 139,
+      "judge_cost_usd": 0.001846,
+      "latency_ms": 4470,
+      "agent_ms": null,
+      "input_tokens": 3069,
+      "output_tokens": 301,
+      "cost_usd": 0.013722,
+      "session_id": null,
+      "sources": [
+        "kb/01-return-policy.md",
+        "kb/11-promotions.md",
+        "kb/07-returns-process-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 3 | missing: none\n\"We do not offer price matching with other retailers.\" \u2014 but the more relevant policy is the general no-price-match stance; however the customer is asking for a price adjustment on their own order, not a competitor match. The policy only explicitly rules on price matching with other retailers. That said, there is no policy covering post-purchase price adjustments/price protection in the excerpts.\nActually, re-evaluating: \"We do not offer price matching with other retailers\" \u2014 this is about competitors. A post-purchase price adjustment from Trailforge's own sale is not covered. This is step 4."
+      ],
+      "text": "Thanks for reaching out! Unfortunately, a post-purchase price adjustment policy isn't something covered in the policy documents I have access to, so I'm not able to give you a definitive answer on that.\n\nWhat I *can* tell you is that if you'd prefer, you're welcome to return the jacket (provided it's still within the 30-day return window, unused, and in original packaging per **kb/01-return-policy.md**) and place a new order at the sale price. Keep in mind that for a standard return, return shipping costs would be your responsibility.\n\nIf you'd like to explore the return route, just share your order number and we can get that process started for you!"
+    }
+  ]
+}

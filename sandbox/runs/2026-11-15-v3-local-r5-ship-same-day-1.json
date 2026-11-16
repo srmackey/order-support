@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-15",
+  "target": "local process",
+  "set": "cases-v3.json",
+  "set_frozen": "2026-11-15",
+  "judge": {
+    "model": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "prompt_version": "2",
+    "prompt_note": "Version 1 plus a gap record section, used only when a gap record is given.",
+    "usd_per_million_input": 1.0,
+    "usd_per_million_output": 5.0
+  },
+  "cost_basis": {
+    "covers": "model tokens only",
+    "usd_per_million_input": 3.0,
+    "usd_per_million_output": 15.0,
+    "source": "AWS Pricing API, Claude Sonnet 4.6 global, read 2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "ship-same-day",
+      "outcome": "answer",
+      "boundary": "Shipping methods are a closed list. Same-day is not on it.",
+      "pass": false,
+      "failures": [
+        "Did not say: The reply says same-day delivery is not offered.",
+        "Said: The reply says whether same-day delivery is offered is not in the policies."
+      ],
+      "checks": [
+        {
+          "id": "state1",
+          "claim": "The reply says same-day delivery is not offered.",
+          "expect": true,
+          "holds": false,
+          "evidence": "The reply says 'That information isn't covered in our current policy documentation, so I'm not able to give you a definitive answer on same-day delivery.' It does not say same-day delivery is not offered, only that it cannot give a definitive answer."
+        },
+        {
+          "id": "state2",
+          "claim": "The reply says the fastest option is Overnight, delivered the next business day.",
+          "expect": true,
+          "holds": true,
+          "evidence": "our fastest available shipping option, per **kb/02-shipping-policy.md**, is **Overnight** delivery (next business day, when ordered by 1 PM local time)"
+        },
+        {
+          "id": "not1",
+          "claim": "The reply says whether same-day delivery is offered is not in the policies.",
+          "expect": false,
+          "holds": true,
+          "evidence": "That information isn't covered in our current policy documentation"
+        },
+        {
+          "id": "trap",
+          "claim": "The reply says same-day delivery is available.",
+          "expect": false,
+          "holds": false,
+          "evidence": "The reply does not say same-day delivery is available. It states the information is not covered in policy documentation and cannot give a definitive answer."
+        }
+      ],
+      "gap_expected": false,
+      "gap_written": true,
+      "gap_ok": false,
+      "gap": {
+        "question": "Do you offer same-day delivery?",
+        "missing": "whether same-day delivery is offered",
+        "step": 4,
+        "cited": [
+          "kb/02-shipping-policy.md"
+        ],
+        "recorded": true,
+        "stored": true,
+        "gap_id": "b58223daeb7e4663b9aa67fc9f6d48da"
+      },
+      "note": {
+        "step": 4,
+        "missing": "whether same-day delivery is offered"
+      },
+      "judge_input_tokens": 1250,
+      "judge_output_tokens": 283,
+      "judge_cost_usd": 0.002665,
+      "latency_ms": 3306,
+      "agent_ms": null,
+      "input_tokens": 3045,
+      "output_tokens": 254,
+      "cost_usd": 0.012945,
+      "session_id": null,
+      "sources": [
+        "kb/02-shipping-policy.md",
+        "kb/08-payment-billing-faq.md",
+        "kb/05-product-faq-general.md",
+        "kb/13-contact-support.md",
+        "kb/04-escalation-guidelines.md"
+      ],
+      "tools": [],
+      "calls": [],
+      "decision": [
+        "step: 4 | missing: whether same-day delivery is offered\nThe shipping policy lists only Standard Ground, Expedited, and Overnight as available methods, but does not mention same-day delivery at all \u2014 it is not ruled on in the excerpts."
+      ],
+      "text": "That information isn't covered in our current policy documentation, so I'm not able to give you a definitive answer on same-day delivery.\n\nWhat I *can* tell you is that our fastest available shipping option, per **kb/02-shipping-policy.md**, is **Overnight** delivery (next business day, when ordered by 1 PM local time) for $24.95.\n\nIf you'd like to confirm whether same-day delivery is available in your area or for your order, feel free to reach out to our support team directly:\n\n- **Chat:** Available on our website during business hours\n- **Phone:** 1-800-555-0199\n- **Email:** support@trailforge.example\n\n*(Support hours: Mon\u2013Fri 9 AM\u20136 PM MT, Sat 10 AM\u20132 PM MT)*"
+    }
+  ]
+}
