@@ -1,6 +1,6 @@
-# Trailforge order support agent
+# Order support agent
 
-One agent reads a customer message for Trailforge, a fictional outdoor retailer, and decides the next step:
+One agent reads a customer message for a fictional outdoor shop and decides the next step:
 
 - **Answer** from the policy documents and cite the file it used.
 - **Call a tool** when the question needs a live order fact.
