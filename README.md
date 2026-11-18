@@ -161,4 +161,4 @@ Every call to the runtime and the tools needs IAM credentials. There is no unaut
 
 ---
 
-Copyright 2026 Scott Mackey. All rights reserved.
+Copyright 2026 Scott Mackey. [MIT License](LICENSE).
